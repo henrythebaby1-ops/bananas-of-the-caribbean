@@ -64,6 +64,17 @@ Hit an enemy with your sword to peel it, then get close and eat it before the pe
 - **Combos:** quick hits in a row build a combo, which gives bonus coins.
 - **Power-ups:** enemies sometimes drop a rainbow star (you can't get hurt for a few seconds) or a hot pepper (double damage). Bosses drop a pepper when they get furious.
 
+## Game modes
+
+Pick **Game modes** on the title screen:
+
+- **Endless Survival:** fight wave after wave in the Fruit Colosseum. Every 5th wave is a boss, and the waves keep getting harder. Your best wave is saved.
+- **Boss Rush:** all 34 bosses back to back, with a timer. You heal a little between bosses.
+- **Time Attack:** pick a chapter and clear it as fast as you can, with no story scenes. Your best time for each chapter is saved.
+- **One Life:** the whole story, but if you get knocked out even once, the run is over and its save is deleted. It uses its own save slot, so your normal story save is safe.
+
+Every mode can be played on Normal or Impossible. When playing online, the host can pick Story, Endless Survival or Boss Rush.
+
 ## Difficulty
 
 From chapter 9 on, every chapter is harder than the last, and it speeds up the further you go. By the end, enemies have about 3 times the health and hit about twice as hard.

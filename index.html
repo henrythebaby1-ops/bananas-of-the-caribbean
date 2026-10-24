@@ -963,20 +963,64 @@ const LEVELS=[
        "SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS"],
   intro:[['Narrator','The Fruit Throne, at the center of every world. The five seeds fly out of your hands and melt into one huge, shining fruit.'],['Fruitus Omega','I am reborn! Stronger than before! Asteroids, fire, every fruit of every world, ATTACK!'],['Tip','This is the true final battle. Asteroids fly past, fire rains down, and Fruitus Omega uses everything. Save your Super for when it is peeled.']],
   outro:[['Narrator','You take the very last bite of Fruitus Omega. The seeds are gone for good.'],
-         ['Narrator','The portal carries you all the way home. From a little village in Europe, across the world, through space, beyond the universe and between worlds, every evil fruit has been eaten. The old baker bakes you the biggest fruit cake that has ever existed.']]}
+         ['Narrator','The portal carries you all the way home. From a little village in Europe, across the world, through space, beyond the universe and between worlds, every evil fruit has been eaten. The old baker bakes you the biggest fruit cake that has ever existed.']]},
+ {name:'The Fruit Colosseum',hidden:'endless',floor:'§',wall:'stone',goal:'Enemies',intro:[],outro:[],
+  map:["##############################",
+       "#............................#",
+       "#..C......................C..#",
+       "#............................#",
+       "#.......C............C.......#",
+       "#............................#",
+       "#............................#",
+       "#.............@..............#",
+       "#............................#",
+       "#............................#",
+       "#.......C............C.......#",
+       "#............................#",
+       "#..C......................C..#",
+       "#............................#",
+       "#............................#",
+       "#............................#",
+       "##############################"]},
+ {name:'The Boss Arena',hidden:'bossrush',floor:'¤',wall:'castle',goal:'Bosses',intro:[],outro:[],
+  map:["##############################",
+       "#............................#",
+       "#............................#",
+       "#..L......................L..#",
+       "#............................#",
+       "#............................#",
+       "#............................#",
+       "#............................#",
+       "#............................#",
+       "#............................#",
+       "#............................#",
+       "#..L......................L..#",
+       "#............................#",
+       "#.............@..............#",
+       "#............................#",
+       "#............................#",
+       "##############################"]}
 ];
+const STORY_N=LEVELS.filter(l=>!l.hidden).length,IDX={endless:LEVELS.findIndex(l=>l.hidden==='endless'),bossrush:LEVELS.findIndex(l=>l.hidden==='bossrush')};
+const MODES={story:'Story',endless:'Endless Survival',bossrush:'Boss Rush',timeattack:'Time Attack',onelife:'One Life'},GAMES=Object.keys(MODES);
+const MINION_POOL=['scout','bandit','sky','snake','melon','seedMelon','apple','greenApple','tangerine','lantern','kiwiRunner','kiwiSpitter','grapeSoldier','grapeCannon','coconutRoller','coconutThrower','pinePunk','pineSpiky','ninja','shuriken','mummy','squirter','dancer','toucan','rhino','papayaSpit','orangeDiver','zester','plum','snowPlum','moonBerry','blaster','martian','rayGunner','ufoCherry','comet','flare','sunspot','stinker','durianSpiker','jackRoller','jackThrower','berryDiver','berryFrost','figScout','figSnow','voidDragon','voidFlyer','cosmicSalad','ghost','ghostPear','pumpkinBat','oliveHoplite','oliveArcher','gooseRoller','gooseSpitter','lycheeRunner','lycheeGunner','limeBit','limeBug'].filter(k=>ENEMY[k]);
+const BOSS_POOL=['gladiator','blimp','boss','snakeKing','final','melonBoss','appleKing','dragon','kiwiBoss','grapeBoss','kahuna','pineRex','shogun','pharaoh','mangoKing','lionPapaya','orangeGiant','frozenPlum','commander','emperor','ringCherry','solar','durianQueen','jackGiant','triton','lonelyFig','holeBoss','overlord','countPumpkula','minotaur','volcanoGoose','lycheeKing','glitchLime','omega'].filter(k=>ENEMY[k]);
 const CONTROLS_DESK='Move with WASD or the arrow keys. J or Space swings your sword, K eats, Shift dashes through attacks, Q eats a coconut snack to heal, and R unleashes your super attack.';
 const CONTROLS_TOUCH='Move with the joystick. Sword peels, Eat bites, Dash zips through attacks, Snack heals you, and Super unleashes your super attack.';
 
 /* ================= State ================= */
-const NEW=()=>({level:0,lvl:1,xp:0,hp:40,maxHp:40,atk:6,coins:0,snacks:2,sword:false,diamond:false,boots:false,done:false,mode:'normal'});
+const NEW=()=>({level:0,lvl:1,xp:0,hp:40,maxHp:40,atk:6,coins:0,snacks:2,sword:false,diamond:false,boots:false,done:false,mode:'normal',game:'story'});
 let S=NEW(),L=null,P=null,PL=[];
 const COLORS=['#2f6fb0','#c0392b','#2f8f4f','#8e44ad'];
 const NET={room:null,game:null,role:'solo',code:'',name:'',ep:0,sendT:0,barT:0,hostSeen:0,gotHost:false,joinT:0,myPeer:null,lastSnap:null,lastSnapObj:null,cnt:{s:0,e:0,q:0,u:0},others:new Map(),ents:new Map(),seenFloat:0};
 try{NET.name=(localStorage.getItem('botc-name')||'').slice(0,14)}catch(e){}
 const KEY='bananas-caribbean-topdown';
-function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
-function loadSave(){try{const d=JSON.parse(localStorage.getItem(KEY));return d&&typeof d.level==='number'?d:null}catch(e){return null}}
+function save(){if(S.game&&S.game!=='story'&&S.game!=='onelife')return;try{localStorage.setItem(S.game==='onelife'?KEY+'-onelife':KEY,JSON.stringify(S))}catch(e){}}
+function loadSave(game){try{const d=JSON.parse(localStorage.getItem(game==='onelife'?KEY+'-onelife':KEY));return d&&typeof d.level==='number'?d:null}catch(e){return null}}
+const BEST_KEY='botc-best';let BEST={};try{BEST=JSON.parse(localStorage.getItem(BEST_KEY))||{}}catch(e){}
+function getBest(k){return BEST[k]}
+function setBest(k,v,better){if(BEST[k]==null||better(v,BEST[k])){BEST[k]=v;try{localStorage.setItem(BEST_KEY,JSON.stringify(BEST))}catch(e){}return true}return false}
+function fmtTime(t){if(t==null)return'none yet';const m=Math.floor(t/60),sec=t-m*60;return`${m}:${sec<10?'0':''}${sec.toFixed(1)}`}
 const G={fid:0,menuKind:'',waitMsg:'',mode:'title',t:0,shake:0,keys:{},pressed:new Set(),joy:{x:0,y:0},cam:{x:0,y:0},dlg:null,trav:null,floats:[],parts:[],banner:null,hintT:0,dlgShownT:0,playT:0};
 const power=pl=>(S.atk+(S.sword?12:0))*(pl&&pl.pepperT>0?2:1);
 const roll=v=>Math.max(1,Math.round(v*rnd(.85,1.15)));
@@ -1191,7 +1235,7 @@ function buildLevel(i,withEnemies){
   if(withEnemies)for(const [k,x,y] of spawns)spawn(k,x,y,false);
   prerender();
   G.floats=[];G.parts=[];G.banner=null;G.playT=0;G.keys={};
-  where.textContent=`Chapter ${i+1} of ${LEVELS.length} · ${def.name}`}
+  const pre=S.game&&S.game!=='story'?MODES[S.game]+' · ':'';where.textContent=def.hidden?pre+def.name:`${pre}Chapter ${i+1} of ${STORY_N} · ${def.name}`}
 function makePlayer(x,y,slot){return{isPlayer:true,x,y,vx:0,vy:0,r:11,cr:10,face:0,cd:0,swingT:0,swingAng:0,inv:0,dashT:0,dashCd:0,dashDir:0,kx:0,ky:0,jaw:0,jawLock:false,lastBite:-9,biteCd:0,poison:0,poisonTick:0,walk:0,moving:false,hp:S.maxHp,down:false,reviveT:0,slot,name:'',local:false,peer:null,s:0,e:0,q:0,u:0,sup:0,combo:0,comboT:0,starT:0,pepperT:0,spinT:0,tpLock:false}}
 function spotNear(k){const o=[[0,0],[30,0],[-30,0],[0,30]][k%4];const x=L.start.x+o[0],y=L.start.y+o[1];return blocked(x,y,10)?[L.start.x,L.start.y]:[x,y]}
 const introLines=def=>def.intro.map(([w,t])=>[w,t==='CONTROLS'?(TOUCH?CONTROLS_TOUCH:CONTROLS_DESK):t]);
@@ -1439,7 +1483,7 @@ function updEnemy(e,dt){const d=e.def;e.t+=dt;e.hitFlash-=dt;
   if(canHurt)for(const pl of PL)if(!pl.down&&Math.hypot(pl.x-e.x,pl.y-e.y)<e.r+pl.r-2)hurtPlayer(pl,d.dmg,e.x,e.y,d.poison)}
 
 function update(dt){
-  G.playT+=dt;for(const pl of PL)tickPlayer(pl,dt);updPlayer(dt);if(G.mode!=='play')return;
+  G.playT+=dt;if(S.game==='timeattack'||S.game==='bossrush')G.timer=(G.timer||0)+dt;for(const pl of PL)tickPlayer(pl,dt);updPlayer(dt);if(G.mode!=='play')return;
   for(const pl of PL){if(!pl.down)continue;const helper=PL.some(o=>o!==pl&&!o.down&&Math.hypot(o.x-pl.x,o.y-pl.y)<48);pl.reviveT=helper?pl.reviveT+dt:Math.max(0,pl.reviveT-dt*.5);
     if(pl.reviveT>=1.6){pl.down=false;pl.hp=Math.round(S.maxHp*.4);pl.inv=1.5;pl.reviveT=0;addFloat(pl.x,pl.y-60,'Revived!','#9be37a');addParts(pl.x,pl.y,'#9be37a',14)}}
   for(const e of L.enemies)updEnemy(e,dt);
@@ -1472,7 +1516,8 @@ function update(dt){
   if(L.cleared&&L.exit&&alive().some(pl=>Math.hypot(pl.x-L.exit.x,pl.y-L.exit.y)<28))leaveLevel();
   if(L.def.final&&L.cleared&&!L.endT)L.endT=G.t+1.6;
   if(L.endT&&G.t>L.endT){L.endT=Infinity;finishGame()}
-  if(L.shop&&!P.down){const d=Math.hypot(P.x-L.shop.x,P.y-(L.shop.y+T*1.5));if(d<40&&!L.nearShop){L.nearShop=true;openShop()}if(d>70)L.nearShop=false}}
+  if(L.shop&&!P.down){const d=Math.hypot(P.x-L.shop.x,P.y-(L.shop.y+T*1.5));if(d<40&&!L.nearShop){L.nearShop=true;openShop()}if(d>70)L.nearShop=false}
+  if(S.game==='endless')endlessTick(dt);if(S.game==='bossrush')rushTick(dt)}
 
 /* ================= Render ================= */
 function drawEnemy(e){const d=e.def;if(d.ai==='snake')return drawSnake(e);if(d.ai==='dragon')drawDragonBody(e);
@@ -1619,6 +1664,9 @@ function drawHUDInner(W,H){
   if(L.def.goal==='shop')goal=S.sword?'Board the ship to Banana Island':'Visit the merchant’s stall';
   else if(L.def.goal==='final')goal=L.cleared?'You did it!':L.def.goalText;
   else goal=L.cleared?L.def.exitText+'!':`${L.def.goal} left: ${alive}`;
+  if(S.game==='endless')goal=`Wave ${L.wave||0} · ${alive} left · Best ${getBest('endless-'+S.mode)||0}`;
+  if(S.game==='bossrush')goal=`Boss ${Math.max(1,(L.bossI??-1)+1)} of ${BOSS_POOL.length} · ${fmtTime(G.timer||0)}`;
+  if(S.game==='timeattack')goal=`${fmtTime(G.timer||0)} · ${goal}`;
   ctx.font='800 16px "Alegreya Sans", sans-serif';const gw=ctx.measureText(goal).width+28;ctx.fillStyle='rgba(8,24,34,.74)';rr(ctx,W/2-gw/2,10,gw,30,15);ctx.fill();ctx.fillStyle='#fff4c9';ctx.textAlign='center';ctx.fillText(goal,W/2,31);
   const boss=L.enemies.find(e=>e.def.boss&&!e.dead&&!e.minion);
   if(boss){const bw=440,bx=W/2-bw/2,by=H-50;ctx.fillStyle='rgba(8,24,34,.78)';rr(ctx,bx-12,by-30,bw+24,boss.maxPeel?62:50,10);ctx.fill();
@@ -1662,30 +1710,78 @@ function advance(){if(NET.role==='guest')return;if(G.mode==='travel'){nextLeg();
   const d=G.dlg;d.i++;if(d.i>=d.lines.length){dlg.hidden=true;G.dlg=null;G.mode='play';d.done&&d.done()}else showLine()}
 function travel(legs,done){if(!legs||!legs.length)return done();G.mode='travel';G.trav={legs,i:0,start:G.t,done}}
 function nextLeg(){const tr=G.trav;if(!tr)return;tr.i++;tr.start=G.t;if(tr.i>=tr.legs.length){G.trav=null;G.mode='play';tr.done()}}
-function leaveLevel(){dialog(L.def.outro,()=>{S.level++;save();const nx=LEVELS[S.level];travel(nx.arrive,()=>loadLevel(S.level))},'o')}
-function finishGame(){dialog(L.def.outro,()=>{S.done=true;save();showEnd()},'o')}
+function leaveLevel(){if(S.game==='timeattack')return taFinish();dialog(L.def.outro,()=>{S.level++;save();const nx=LEVELS[S.level];travel(nx.arrive,()=>loadLevel(S.level))},'o')}
+function finishGame(){if(S.game==='timeattack')return taFinish();dialog(L.def.outro,()=>{S.done=true;save();showEnd()},'o')}
 function showMenu(html,cls=''){menu.innerHTML=`<div class="card ${cls}">${html}</div>`;menu.hidden=false;G.keys={};G.joy={x:0,y:0};const b=menu.querySelector('button.primary:not(:disabled)')||menu.querySelector('button:not(:disabled)');if(b)b.focus({preventScroll:true})}
 function hideMenu(){menu.hidden=true;menu.innerHTML=''}
 function title(note){G.mode='title';G.menuKind='';L=null;PL=[];P=null;dlg.hidden=true;where.textContent='';const sv=loadSave();const can=sv&&!sv.done;
   showMenu(`<p class="eyebrow">A top-down banana adventure</p><h1>The Bananas of the Caribbean</h1>
   <p>Every banana in Europe has come alive and run off to the Caribbean. Fight your way from a little village to Rome, sail past the banana whales, battle the sky bananas, beat the Banana Boss and the Snake King, and peel the Final Banana with a diamond sword. Then the real trouble starts: watermelons in Mexico, Canada’s favorite apples, the tangerines of China, the kiwis of India, the grapes of France, the coconuts of Hawaii, the pineapples of Australia, the strawberries of Japan, the lemons of Egypt, the mangoes of Brazil, the papayas of Kenya, the oranges of South Africa, and the Frozen Plum of Antarctica. Then it is off to the Moon, Mars, Saturn, the Sun, the outer planets, a black hole, beyond the universe, and into the strange worlds between worlds.</p>
   ${note?`<p class="note" id="mNote"></p>`:''}
-  <div class="row"><button class="btn primary" id="mNew">New adventure</button>${can?`<button class="btn" id="mCont">Continue<small>Chapter ${sv.level+1}, level ${sv.lvl}${sv.mode==='impossible'?', Impossible':''}</small></button>`:''}<button class="btn" id="mPick">Pick a chapter<small>Start from any chapter</small></button><button class="btn" id="mFriends">Play with friends<small>Online co-op, up to 4 players</small></button></div>`);
-  if(note)$('#mNote').textContent=note;$('#mFriends').onclick=()=>mpMenu();$('#mPick').onclick=()=>pickMode(m=>chapterMenu(m));
+  <div class="row"><button class="btn primary" id="mNew">New adventure</button>${can?`<button class="btn" id="mCont">Continue<small>Chapter ${sv.level+1}, level ${sv.lvl}${sv.mode==='impossible'?', Impossible':''}</small></button>`:''}<button class="btn" id="mModes">Game modes<small>Endless, Boss Rush, Time Attack, One Life</small></button><button class="btn" id="mPick">Pick a chapter<small>Start from any chapter</small></button><button class="btn" id="mFriends">Play with friends<small>Online co-op, up to 4 players</small></button></div>`);
+  if(note)$('#mNote').textContent=note;$('#mFriends').onclick=()=>mpMenu();$('#mPick').onclick=()=>pickMode(m=>chapterMenu(m));$('#mModes').onclick=()=>gameModes();
   $('#mNew').onclick=()=>pickMode(m=>{hideMenu();S=NEW();S.mode=m;loadLevel(0)});if(can)$('#mCont').onclick=()=>{hideMenu();S=Object.assign(NEW(),sv);loadLevel(S.level)}}
 function statsFor(i){const st=NEW(),lv=1+Math.round(i*1.6);st.lvl=lv;st.maxHp=40+10*(lv-1);st.atk=6+3*(lv-1);st.sword=i>=7;st.diamond=i===6;st.coins=Math.min(400,40*i);st.snacks=i?4:2;st.boots=i>=20;st.level=i;return st}
 function startAt(i,mode){hideMenu();S=statsFor(i);S.mode=mode;PL=[];loadLevel(i)}
 const PARTS=[[0,'Part 1: The Caribbean'],[8,'Part 2: Around the world'],[21,'Part 3: Outer space'],[31,'Part 4: Between worlds']];
-function chapterMenu(mode){showMenu(`<p class="eyebrow">${mode==='impossible'?'Impossible mode':'Normal mode'}</p><h2>Pick a chapter</h2><p>Start anywhere in the story. Your hero starts at a level that fits that chapter.</p><div id="chList" class="chlist"></div><div class="row"><button class="btn" id="chBack">Back</button></div>`);
-  const box=$('#chList');LEVELS.forEach((lv,i)=>{const part=PARTS.find(q=>q[0]===i);if(part){const h=document.createElement('h3');h.className='sub';h.textContent=part[1];box.append(h)}const b=document.createElement('button');b.className='btn';b.textContent=`${i+1}. ${lv.name}`;b.onclick=()=>startAt(i,mode);box.append(b)});
+function chapterMenu(mode,game){showMenu(`<p class="eyebrow">${mode==='impossible'?'Impossible mode':'Normal mode'}</p><h2>${game==='timeattack'?'Time Attack: pick a chapter':'Pick a chapter'}</h2><p>${game==='timeattack'?'Clear the chapter as fast as you can. The clock stops when you reach the exit.':'Start anywhere in the story.'} Your hero starts at a level that fits that chapter.</p><div id="chList" class="chlist"></div><div class="row"><button class="btn" id="chBack">Back</button></div>`);
+  const box=$('#chList');LEVELS.forEach((lv,i)=>{if(lv.hidden)return;const part=PARTS.find(q=>q[0]===i);if(part){const h=document.createElement('h3');h.className='sub';h.textContent=part[1];box.append(h)}const b=document.createElement('button');b.className='btn';b.textContent=`${i+1}. ${lv.name}`;if(game==='timeattack'){const sm=document.createElement('small');sm.textContent='Best: '+fmtTime(getBest(`ta-${i}-${mode}`));b.append(sm)}b.onclick=()=>game==='timeattack'?startMode('timeattack',mode,i):startAt(i,mode);box.append(b)});
   $('#chBack').onclick=()=>title()}
+/* ================= Game modes ================= */
+function spawnAway(key,x0,y0){let best=x0!=null?[x0,y0]:null;
+  for(let t=0;!best&&t<60;t++){const x=(1+Math.floor(Math.random()*(L.mw-2)))*T+16,y=(1+Math.floor(Math.random()*(L.mh-2)))*T+16;if(blocked(x,y,14))continue;if(PL.every(p=>Math.hypot(p.x-x,p.y-y)>230)||t>50)best=[x,y]}
+  if(!best)best=[L.mw*T/2,T*3];const e=spawn(key,best[0],best[1],false);e.aggro=true;addParts(e.x,e.y,'#ffffff',12);return e}
+function endlessTick(dt){
+  if(L.enemies.some(e=>!e.dead))return;
+  if(L.nextT==null){if(L.wave>0){PL.forEach(p=>{if(!p.down)p.hp=Math.min(S.maxHp,p.hp+Math.round(S.maxHp*.3))});if(L.wave%3===0&&S.mode!=='impossible')S.snacks++;banner(`Wave ${L.wave} cleared!`,2)}L.nextT=2.5;return}
+  L.nextT-=dt;if(L.nextT>0)return;L.nextT=null;L.wave++;const w=L.wave;L.D=diff(8+Math.floor(w*1.4));
+  const boss=w%5===0;banner(boss?`Wave ${w}: BOSS WAVE!`:`Wave ${w}`,2);
+  if(boss)spawnAway(BOSS_POOL[Math.min(w/5-1,BOSS_POOL.length-1)]);
+  const lo=Math.max(0,Math.min(MINION_POOL.length-6,w*2-6)),pool=MINION_POOL.slice(lo,lo+8),n=Math.min(14,(boss?1:3)+w);
+  for(let k=0;k<n;k++)spawnAway(pool[Math.floor(Math.random()*pool.length)])}
+function rushTick(dt){
+  if(L.enemies.some(e=>!e.dead&&!e.minion))return;
+  if(L.nextT==null){if(L.bossI>=0){PL.forEach(p=>{if(!p.down)p.hp=Math.min(S.maxHp,p.hp+Math.round(S.maxHp*.5))});if(S.mode!=='impossible')S.snacks++;banner(`${ENEMY[BOSS_POOL[L.bossI]].name.split(',')[0]} is eaten!`,2)}
+    if(L.bossI>=BOSS_POOL.length-1)return rushWin();L.nextT=2.5;return}
+  L.nextT-=dt;if(L.nextT>0)return;L.nextT=null;L.bossI++;L.D=diff(8+L.bossI);
+  for(const m of L.enemies)m.dead=true;const key=BOSS_POOL[L.bossI];
+  banner(`Boss ${L.bossI+1} of ${BOSS_POOL.length}: ${ENEMY[key].name.split(',')[0]}`,2.5);spawnAway(key,L.mw*T/2,T*4)}
+function startMode(game,mode,ch){hideMenu();G.timer=0;if(!NET.game)PL=[];
+  if(game==='endless'){S=statsFor(12);S.snacks=3;S.game=game;S.mode=mode;loadLevel(IDX.endless,true);L.wave=0;L.nextT=1.5;banner('Endless Survival! Get ready…',2)}
+  else if(game==='bossrush'){S=statsFor(18);S.snacks=6;S.game=game;S.mode=mode;loadLevel(IDX.bossrush,true);L.bossI=-1;L.nextT=1.5;banner('Boss Rush! Here they come…',2)}
+  else if(game==='timeattack'){S=statsFor(ch);S.game=game;S.mode=mode;loadLevel(ch,true);banner('Go!',1.5)}
+  else{S=NEW();S.game='onelife';S.mode=mode;loadLevel(0)}}
+function overButtons(again){return`<div class="row"><button class="btn primary" id="goAgain">${again||'Play again'}</button><button class="btn" id="goTitle">Title screen</button></div>`}
+function bindOver(fn){$('#goAgain').onclick=fn;$('#goTitle').onclick=()=>{if(NET.game)leaveGame();title()}}
+function gameOver(){G.mode='menu';G.menuKind='over';const m=S.mode,imp=m==='impossible'?' on Impossible':'';let head='',text='',better=false;
+  if(S.game==='endless'){const v=Math.max(0,(L.wave||1)-1),k='endless-'+m;better=setBest(k,v,(a,b)=>a>b);head=`You survived ${v} wave${v===1?'':'s'}`;text=`Your best${imp} is ${getBest(k)} waves.`}
+  if(S.game==='bossrush'){const v=Math.max(0,L.bossI),k='rushreach-'+m;better=setBest(k,v,(a,b)=>a>b);head=`You beat ${v} of ${BOSS_POOL.length} bosses`;text=`Your best${imp} is ${getBest(k)} bosses.`}
+  if(S.game==='onelife'){const v=L.i+1,k='one-'+m;better=setBest(k,v,(a,b)=>a>b);try{localStorage.removeItem(KEY+'-onelife')}catch(e){}head=`Your One Life run ended in chapter ${v}`;text=`${L.def.name}. Your best${imp} is chapter ${getBest(k)}.`}
+  showMenu(`<p class="eyebrow">Game over${better?' · New record!':''}</p><h2>${head}</h2><p>${text}</p>${overButtons()}`);bindOver(()=>startMode(S.game,m))}
+function rushWin(){G.mode='menu';G.menuKind='over';const m=S.mode,k='rush-'+m,better=setBest(k,G.timer,(a,b)=>a<b);setBest('rushreach-'+m,BOSS_POOL.length,(a,b)=>a>b);
+  showMenu(`<p class="eyebrow">Boss Rush complete${better?' · New record!':''}</p><h2>You beat all ${BOSS_POOL.length} bosses!</h2><p>Your time: ${fmtTime(G.timer)}. Best${m==='impossible'?' on Impossible':''}: ${fmtTime(getBest(k))}.</p>${overButtons()}`);bindOver(()=>startMode('bossrush',m))}
+function taFinish(){G.mode='menu';G.menuKind='over';const i=L.i,m=S.mode,k=`ta-${i}-${m}`,better=setBest(k,G.timer,(a,b)=>a<b);
+  showMenu(`<p class="eyebrow">Time Attack${better?' · New record!':''}</p><h2>${L.def.name} cleared in ${fmtTime(G.timer)}</h2><p>Best time${m==='impossible'?' on Impossible':''}: ${fmtTime(getBest(k))}.</p><div class="row"><button class="btn primary" id="goAgain">Try again</button><button class="btn" id="goPick">Pick another chapter</button><button class="btn" id="goTitle">Title screen</button></div>`);
+  bindOver(()=>startMode('timeattack',m,i));$('#goPick').onclick=()=>chapterMenu(m,'timeattack')}
+function gameModes(){const one=loadSave('onelife'),bb=(k,f)=>getBest(k)==null?'none yet':f(getBest(k));
+  showMenu(`<p class="eyebrow">Game modes</p><h2>How do you want to play?</h2><div class="shop">
+  <button class="btn" id="gmE">Endless Survival<small>Fight wave after wave in the Fruit Colosseum. Every 5th wave is a boss. Best: ${bb('endless-normal',v=>'wave '+v)}</small></button>
+  <button class="btn" id="gmB">Boss Rush<small>All ${BOSS_POOL.length} bosses back to back, as fast as you can. Best time: ${bb('rush-normal',fmtTime)}</small></button>
+  <button class="btn" id="gmT">Time Attack<small>Pick a chapter and clear it as fast as you can. No story scenes.</small></button>
+  <button class="btn" id="gmO">One Life<small>The whole story, but one knockout and the run is over. Best: ${bb('one-normal',v=>'chapter '+v)}</small></button></div>
+  ${one&&!one.done?`<div class="row"><button class="btn primary" id="gmOC">Continue your One Life run<small>Chapter ${one.level+1}, level ${one.lvl}${one.mode==='impossible'?', Impossible':''}</small></button></div>`:''}
+  <div class="row"><button class="btn" id="gmBack">Back</button></div>`);
+  $('#gmE').onclick=()=>pickMode(m=>startMode('endless',m));$('#gmB').onclick=()=>pickMode(m=>startMode('bossrush',m));
+  $('#gmT').onclick=()=>pickMode(m=>chapterMenu(m,'timeattack'));$('#gmO').onclick=()=>pickMode(m=>startMode('onelife',m));
+  if(one&&!one.done)$('#gmOC').onclick=()=>{hideMenu();S=Object.assign(NEW(),one);S.game='onelife';PL=[];loadLevel(S.level)};
+  $('#gmBack').onclick=()=>title()}
 function pickMode(go){showMenu(`<p class="eyebrow">New adventure</p><h2>Choose your difficulty</h2>
-  <div class="shop"><button class="btn primary" id="pmN">Normal<small>The full story. It starts easy and gets much harder in later chapters.</small></button>
+  <div class="shop"><button class="btn primary" id="pmN">Normal<small>Tough but fair. Enemies get harder the further you go.</small></button>
   <button class="btn imp" id="pmI">Impossible<small>Enemies have 3 times the health and hit 2.5 times as hard. They are faster, bosses attack nonstop, and nothing drops snacks. Good luck.</small></button></div>
   <div class="row"><button class="btn" id="pmB">Back</button></div>`);$('#pmN').onclick=()=>go('normal');$('#pmI').onclick=()=>go('impossible');$('#pmB').onclick=()=>title()}
-function die(){G.mode='menu';G.menuKind='wipe';const name=(L.enemies.find(e=>e.def.boss&&!e.dead)||{}).def?.name;
+function die(){if(S.game==='endless'||S.game==='bossrush'||S.game==='onelife')return gameOver();G.mode='menu';G.menuKind='wipe';const name=(L.enemies.find(e=>e.def.boss&&!e.dead)||{}).def?.name;
   showMenu(`<p class="eyebrow">Knocked out</p><h2>${name?name+' wins this round':'The bananas got you'}</h2><p>${PL.length>1?'Your whole team':'You'} wake${PL.length>1?'s':''} up at the start of ${L.def.name} with full health. Remember: peel, then eat, and dash away from attacks.</p><div class="row"><button class="btn primary" id="mRetry">Try again</button></div>`);
-  $('#mRetry').onclick=()=>{hideMenu();G.menuKind='';S=JSON.parse(L.snapshot);if(S.snacks<1)S.snacks=1;loadLevel(S.level,true)}}
+  $('#mRetry').onclick=()=>{hideMenu();G.menuKind='';G.timer=0;S=JSON.parse(L.snapshot);if(S.snacks<1)S.snacks=1;loadLevel(S.level,true)}}
 function showEnd(){G.mode='menu';G.menuKind='end';showMenu(`<p class="eyebrow">The end</p><h2>Every evil fruit is eaten</h2><p>${S.mode==='impossible'?'You beat IMPOSSIBLE mode! ':''}You ate your way around the whole world, from the bananas of the Caribbean to the Frozen Plum of Antarctica, then blasted into space, ate your way past the Sun, Venus, Jupiter, Neptune, Pluto and a black hole, ate the Fruit of Everything beyond the edge of the universe, chased its seeds through five strange worlds, and finally defeated Fruitus Omega on the Fruit Throne. You finished at level ${S.lvl} with ${S.coins} coins.</p><div class="row"><button class="btn primary" id="mAgain">Play again</button></div>`);
   $('#mAgain').onclick=()=>{hideMenu();G.menuKind='';S=NEW();loadLevel(0)}}
 const SHOP=[{id:'snack',name:'Coconut snack',desc:'Heals half your health.',cost:15},{id:'stone',name:'Whetstone',desc:'+3 strength for peeling and biting.',cost:40},{id:'belly',name:'Iron stomach',desc:'+12 max health.',cost:40},{id:'boots',name:'Grip boots',desc:'No more slipping on ice.',cost:60}];
@@ -1731,7 +1827,7 @@ const FC=['#ffffff','#f6c624','#fff4c9','#ff7b6b','#9be37a','#b9e27a','#ef8a2c',
 const r1=Math.round,num=(v,d)=>typeof v==='number'&&isFinite(v)?v:d;
 function buildSnap(){
   const m=G.mode==='play'?'p':G.mode==='dialog'?'d':G.mode==='travel'?'t':'s';
-  const sn={ep:NET.ep,lv:S.level,m,mk:G.menuKind||'',S:[S.lvl,S.xp,S.atk,S.coins,S.snacks,S.sword?1:0,S.boots?1:0,S.maxHp,S.diamond?1:0,S.mode==='impossible'?1:0],cl:L.cleared?1:0,gt:(L.gates.a?1:0)|(L.gates.b?2:0),as:L.rocks.slice(0,10).map(k=>[r1(k.x),r1(k.y),r1(k.r),r1(k.vx),r1(k.vy)]),
+  const sn={ep:NET.ep,lv:S.level,m,mk:G.menuKind||'',S:[S.lvl,S.xp,S.atk,S.coins,S.snacks,S.sword?1:0,S.boots?1:0,S.maxHp,S.diamond?1:0,S.mode==='impossible'?1:0],cl:L.cleared?1:0,md:[GAMES.indexOf(S.game||'story'),L.wave||0,L.bossI??-1,r1((G.timer||0)*10),r1(L.D.hp*100)],gt:(L.gates.a?1:0)|(L.gates.b?2:0),as:L.rocks.slice(0,10).map(k=>[r1(k.x),r1(k.y),r1(k.r),r1(k.vx),r1(k.vy)]),
     pl:PL.slice(0,4).map(p=>[p.peer||'host',r1(p.x),r1(p.y),Math.ceil(p.hp),p.inv>0?1:0,p.down?1:0,Math.round(p.face*100)/100,p.swingT>0?1:0,r1(p.jaw),p.jawLock?1:0,p.slot,(p.name||'').slice(0,14),p.moving?1:0,p.poison>0?1:0,r1((p.reviveT||0)*10),p.dashT>0?1:0,r1(p.sup||0),(p.starT>0?1:0)|(p.pepperT>0?2:0)|(p.spinT>0?4:0),p.combo||0]),
     en:L.enemies.slice(0,24).map(e=>[e.id,KEYS.indexOf(e.key),r1(e.x),r1(e.y),r1(e.hp),r1(e.peel),(e.dead?1:0)|(e.flip?2:0)|(e.moving?4:0)|(e.windT>0?8:0)|(e.enraged?16:0)|(e.landed?32:0)|(e.state==='up'?64:0)|(e.minion?128:0)|(e.fade?256:0),r1((e.ang||0)*10),r1((e.peeledT||0)*10),r1(e.air||0),e.slam?[r1(e.slam.tx),r1(e.slam.ty),r1(e.slam.t/e.slam.dur*10)]:0,r1(e.tx||0),r1(e.ty||0)]),
     pr:L.proj.slice(0,36).map(q=>[r1(q.x),r1(q.y),PJ.indexOf(q.kind),r1(q.vx),r1(q.vy)]),
@@ -1770,6 +1866,7 @@ function guestLine([who,text]){$('#dlgWho').textContent=who;$('#dlgText').textCo
 function applySnap(sn){NET.lastSnap=sn;S.mode=sn.S&&sn.S[9]?'impossible':'normal';
   if(!L||sn.ep!==NET.ep||L.i!==sn.lv){NET.ep=sn.ep;guestLoadLevel(sn.lv)}
   const a=sn.S||[];Object.assign(S,{level:sn.lv,lvl:a[0],xp:a[1],atk:a[2],coins:a[3],snacks:a[4],sword:!!a[5],boots:!!a[6],maxHp:a[7],diamond:!!a[8]});
+  if(sn.md){S.game=GAMES[sn.md[0]]||'story';L.wave=sn.md[1];L.bossI=sn.md[2];G.timer=sn.md[3]/10;L.D=Object.assign({},L.D,{hp:sn.md[4]/100})}
   L.cleared=!!sn.cl;if(sn.gt&1)openGates('a',true);if(sn.gt&2)openGates('b',true);L.rocks=(sn.as||[]).map(q=>({x:q[0],y:q[1],r:q[2],vx:q[3],vy:q[4]}));const seen=new Set();let mine=null;
   for(const q of sn.pl||[]){if(q[0]===NET.myPeer){mine=q;continue}const id=String(q[0]);seen.add(id);let o=NET.others.get(id);
     if(!o){o=makePlayer(q[1],q[2],q[10]);NET.others.set(id,o)}
@@ -1795,7 +1892,7 @@ function applySnap(sn){NET.lastSnap=sn;S.mode=sn.S&&sn.S[9]?'impossible':'normal
   else if(sn.m==='d'&&sn.dl){G.mode='dialog';const lines=sn.dl[0]==='i'?introLines(LEVELS[sn.lv]):LEVELS[sn.lv].outro;if(lines[sn.dl[1]])guestLine(lines[sn.dl[1]])}
   else if(sn.m==='t'&&sn.tr){G.mode='travel';dlg.hidden=true;const legs=LEVELS[sn.lv].arrive||[];if(legs[sn.tr[0]])G.trav={legs,i:sn.tr[0],start:G.t-sn.tr[1]/10};else G.mode='wait'}
   else{dlg.hidden=true;if(sn.mk==='end'){if(G.mode!=='menu'){G.mode='menu';showMenu(`<p class="eyebrow">The end</p><h2>Every evil fruit is eaten</h2><p>${S.mode==='impossible'?'You beat IMPOSSIBLE mode! ':''}Your team ate its way from Europe to beyond the universe and defeated Fruitus Omega. Your host can start a new adventure.</p><div class="row"><button class="btn primary" id="gEnd">Back to the title</button></div>`);$('#gEnd').onclick=()=>leaveGame()}}
-    else{if(G.mode==='menu')hideMenu();G.mode='wait';G.waitMsg=sn.mk==='shop'?'The host is shopping…':sn.mk==='wipe'?'Everyone was knocked out. Waiting for the host to try again…':'Waiting for the host…'}}}
+    else{if(G.mode==='menu')hideMenu();G.mode='wait';G.waitMsg=sn.mk==='over'?'Game over! Waiting for the host\u2026':sn.mk==='shop'?'The host is shopping…':sn.mk==='wipe'?'Everyone was knocked out. Waiting for the host to try again…':'Waiting for the host…'}}}
 function guestUpdate(dt){if(!L)return;
   P.spinT-=dt;if(G.mode==='play'){G.playT+=dt;updPlayer(dt)}
   const k=Math.min(1,dt*12);
@@ -1828,13 +1925,14 @@ function mpMenu(){const sv=loadSave(),can=sv&&!sv.done;
   showMenu(`<p class="eyebrow">Play with friends</p><h2>Online co-op</h2>
   <p>Up to 4 players. One person hosts and runs the game; friends join with the 4-letter code. ${NET.room&&NET.room.kind==='sb'?'Send your friends the link to this page. You can see open games below.':'Everyone needs to be signed in to Claude, and the game must be shared with your friends from the Share menu.'}</p>
   <label class="fld" for="mpName">Your name<input id="mpName" maxlength="14" autocomplete="off" spellcheck="false"></label>
-  <label class="fld" for="mpCh">Start new games at<select id="mpCh"></select></label>
+  <label class="fld" for="mpGame">Game mode<select id="mpGame"><option value="story">Story</option><option value="endless">Endless Survival</option><option value="bossrush">Boss Rush</option></select></label>
+  <label class="fld" for="mpCh">Story starts at<select id="mpCh"></select></label>
   <label class="chk" for="mpImp"><input type="checkbox" id="mpImp"> Impossible mode for new games</label>
   <div class="row"><button class="btn primary" id="mpHostNew">Host a new game</button>${can?`<button class="btn" id="mpHostSave">Host from my save<small>Chapter ${sv.level+1}, level ${sv.lvl}</small></button>`:''}</div>
   <h3 class="sub">Join a friend</h3><div id="mpList" class="mplist"></div>
   <div class="row"><label class="sr" for="mpCode">Game code</label><input id="mpCode" class="code" maxlength="4" placeholder="CODE" autocomplete="off" spellcheck="false"><button class="btn" id="mpJoin">Join</button></div>
   <p class="note" id="mpMsg"></p><div class="row"><button class="btn" id="mpBack">Back</button></div>`);
-  $('#mpName').value=NET.name;const msg=$('#mpMsg'),chSel=$('#mpCh');LEVELS.forEach((lv,i)=>{const o=document.createElement('option');o.value=i;o.textContent=`${i+1}. ${lv.name}`;chSel.append(o)});
+  $('#mpName').value=NET.name;const msg=$('#mpMsg'),chSel=$('#mpCh');LEVELS.forEach((lv,i)=>{if(lv.hidden)return;const o=document.createElement('option');o.value=i;o.textContent=`${i+1}. ${lv.name}`;chSel.append(o)});
   if(!NET.room){msg.textContent='Online play is not available right now. Check your internet connection and reload the page.';['mpHostNew','mpHostSave','mpJoin'].forEach(id=>{const b=$('#'+id);if(b)b.disabled=true})}
   $('#mpBack').onclick=()=>title();
   $('#mpHostNew').onclick=()=>hostGame(false);if(can)$('#mpHostSave').onclick=()=>hostGame(true);
@@ -1848,7 +1946,7 @@ function renderLobby(){const box=$('#mpList');if(!box||!NET.room)return;
 async function hostGame(fromSave){readName();const msg=$('#mpMsg');msg.textContent='Opening a game room…';const code=randCode();
   try{NET.game=await NET.room.join('botc-'+code.toLowerCase())}catch(e){msg.textContent='Could not open a game room right now. Try again in a moment.';return}
   NET.role='host';NET.code=code;NET.ep=0;NET.room.presence({hosting:code,nm:NET.name}).catch(()=>{});
-  const imp=$('#mpImp')&&$('#mpImp').checked,ch=Math.max(0,Math.min(LEVELS.length-1,+($('#mpCh')&&$('#mpCh').value)||0));hideMenu();S=fromSave?Object.assign(NEW(),loadSave()):statsFor(ch);if(!fromSave)S.mode=imp?'impossible':'normal';PL=[];loadLevel(S.level);banner(`Your game code is ${code}. Friends can join now!`,6);updNetbar()}
+  const gm=($('#mpGame')||{}).value||'story',imp=$('#mpImp')&&$('#mpImp').checked,ch=Math.max(0,Math.min(LEVELS.length-1,+($('#mpCh')&&$('#mpCh').value)||0));hideMenu();S=fromSave?Object.assign(NEW(),loadSave()):statsFor(ch);if(!fromSave)S.mode=imp?'impossible':'normal';PL=[];if(!fromSave&&gm!=='story')startMode(gm,S.mode);else loadLevel(S.level);banner(`Your game code is ${code}. Friends can join now!`,6);updNetbar()}
 async function joinGame(raw){readName();const msg=$('#mpMsg');const code=String(raw||'').toUpperCase().replace(/[^A-Z]/g,'');
   if(code.length!==4){if(msg)msg.textContent='Game codes are 4 letters.';return}
   if(msg)msg.textContent='Joining…';
