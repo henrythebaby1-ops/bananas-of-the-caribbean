@@ -1,11 +1,12 @@
 # The Bananas of the Caribbean
 
-A top-down action RPG. Every banana in Europe has come alive and run off to the Caribbean, and it's up to you to peel them and eat them. After that, the trouble spreads around the world, all the way to the Frozen Plum of Antarctica.
+A top-down action RPG. Every banana in Europe has come alive and run off to the Caribbean, and it's up to you to peel them and eat them. After that, the trouble spreads around the world and all the way into outer space.
 
 **Play it:** https://henrythebaby1-ops.github.io/bananas-of-the-caribbean/
 
 ## Chapters
 
+**Part 1: The Caribbean**
 1. Villages of Europe
 2. Rome
 3. The Atlantic (banana whales)
@@ -14,6 +15,8 @@ A top-down action RPG. Every banana in Europe has come alive and run off to the 
 6. Snake Island (the Snake King)
 7. Merchant Isle (forge the diamond sword)
 8. Banana Island (the Final Banana)
+
+**Part 2: Around the world**
 9. The Watermelons of Mexico
 10. Canada's Favorite Apples
 11. The Tangerines of China (the Tangerine Dragon)
@@ -21,7 +24,18 @@ A top-down action RPG. Every banana in Europe has come alive and run off to the 
 13. The Grapes of France
 14. The Coconuts of Hawaii
 15. The Pineapples of Australia
-16. The Frozen Plum of Antarctica
+16. The Strawberries of Japan
+17. The Lemons of Egypt
+18. The Mangoes of Brazil
+19. The Papayas of Kenya
+20. The Oranges of South Africa
+21. The Frozen Plum of Antarctica
+
+**Part 3: Outer space**
+22. The Blueberries of the Moon
+23. The Pomegranates of Mars
+24. The Cherries of Saturn
+25. The Starfruit of the Sun
 
 ## How to play
 
