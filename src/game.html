@@ -1,0 +1,1297 @@
+<title>The Bananas of the Caribbean</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Pirata+One&family=Alegreya+Sans:wght@400;500;700;800&display=swap">
+<style>
+/* Layout: one-column game console. Top-down play field, touch controls under it on phones, menus float over everything. */
+:root{
+  --night:#0d2433;
+  --sea:#16405a;
+  --parch:#f4e4bf;
+  --parch-2:#e2c98f;
+  --ink:#2b1b0e;
+  --banana:#f6c624;
+  --coral:#e0573f;
+  --muted:#93b4c5;
+  --rust:#8a3a12;
+  --display:"Pirata One","Trattatello",fantasy,serif;
+  --body:"Alegreya Sans","Trebuchet MS",system-ui,sans-serif;
+  color-scheme:dark;
+}
+html,body{background:var(--night);touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+body{color:var(--parch);font-family:var(--body);font-size:16px}
+.app{max-width:980px;margin:0 auto;padding-block:12px 28px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:10px}
+.top{display:flex;justify-content:space-between;align-items:baseline;gap:4px 14px;flex-wrap:wrap}
+.brand{font-family:var(--display);font-size:1.7rem;color:var(--banana);line-height:1}
+.where{font-size:.78rem;text-transform:uppercase;letter-spacing:.12em;color:var(--muted);font-weight:700}
+.screen{position:relative}
+canvas{display:block;width:100%;max-width:100%;aspect-ratio:16/9;border-radius:10px;border:3px solid #061520;background:var(--sea);touch-action:none}
+.dlg{position:absolute;left:14px;right:14px;bottom:14px;background:var(--parch);color:var(--ink);border:3px solid var(--ink);border-radius:10px;padding:12px 16px 26px;cursor:pointer;box-shadow:0 5px 0 rgba(0,0,0,.45)}
+.dlg:focus-visible{outline:3px solid var(--coral);outline-offset:2px}
+.dlg .who{font-family:var(--display);font-size:1.4rem;color:var(--rust);line-height:1}
+.dlg p{margin:6px 0 0;font-size:1.06rem;line-height:1.45;max-width:72ch}
+.dlg .nx{position:absolute;right:14px;bottom:6px;font-size:.74rem;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:#8a6a2a}
+.keys{margin:0;font-size:.85rem;color:var(--muted);line-height:1.6}
+.keys kbd{font-family:var(--body);font-weight:800;color:var(--parch);background:var(--sea);border:1px solid #2c5c78;border-radius:4px;padding:0 6px}
+.touch{display:flex;justify-content:space-between;align-items:center;gap:12px;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
+.tools{display:flex;gap:8px;align-items:center}
+.rotate{display:none;margin:0;font-size:.85rem;color:var(--muted);text-align:center}
+.joy{width:132px;height:132px;border-radius:50%;background:var(--sea);border:3px solid #2c5c78;position:relative;touch-action:none;flex:none}
+.knob{position:absolute;left:50%;top:50%;width:54px;height:54px;margin:-27px 0 0 -27px;border-radius:50%;background:var(--banana);border:3px solid var(--ink)}
+.tbtns{display:grid;grid-template-columns:repeat(2,70px);gap:10px}
+.tbtns button{width:70px;height:70px;border-radius:50%;font:inherit;font-weight:800;font-size:.85rem;color:var(--ink);background:var(--parch);border:3px solid var(--ink);box-shadow:0 3px 0 var(--ink);touch-action:none}
+.tbtns button.big{background:var(--banana)}
+.menu{position:fixed;inset:0;z-index:10;display:flex;align-items:center;justify-content:center;background:rgba(5,15,22,.62);overflow:auto;padding-block:max(16px,env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-bottom,0px));padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.card{background:var(--parch);color:var(--ink);border:3px solid var(--parch-2);border-radius:12px;padding:20px;max-width:580px;width:100%;box-shadow:0 8px 0 #061520;margin:auto}
+.card h1{font-family:var(--display);font-weight:400;font-size:2.6rem;line-height:1;margin:2px 0 6px;color:var(--rust);text-wrap:balance}
+.card h2{font-family:var(--display);font-weight:400;font-size:2rem;line-height:1.05;margin:2px 0 4px;text-wrap:balance}
+.card p{font-size:1.05rem;line-height:1.5;margin:6px 0 14px;max-width:65ch}
+.eyebrow{font-size:.74rem!important;text-transform:uppercase;letter-spacing:.14em;color:#8a6a2a;font-weight:800;margin:0!important}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.btn{font:inherit;font-weight:800;color:var(--ink);background:#fff8e6;border:2px solid var(--ink);border-radius:8px;padding:10px 14px;cursor:pointer;text-align:left;box-shadow:0 3px 0 var(--ink);transition:transform .08s,box-shadow .08s}
+.btn:hover:not(:disabled){transform:translateY(-1px);box-shadow:0 4px 0 var(--ink)}
+.btn:active:not(:disabled){transform:translateY(2px);box-shadow:0 1px 0 var(--ink)}
+.btn:disabled{opacity:.42;cursor:not-allowed}
+.btn:focus-visible{outline:3px solid var(--coral);outline-offset:2px}
+.btn.primary{background:var(--banana)}
+.btn small{display:block;font-weight:500;font-size:.8rem;opacity:.8;margin-top:2px}
+.cost{float:right;font-size:.82rem;font-weight:800;color:var(--rust);margin-left:10px}
+.shop{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:8px;margin:12px 0}
+.stats{font-size:.88rem;color:#6b5330;font-variant-numeric:tabular-nums}
+.note{font-style:italic;color:#6b5330;margin:0 0 12px!important;font-size:.95rem!important}
+.netbar{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;background:var(--sea);border:2px solid #2c5c78;border-radius:8px;padding:8px 12px;font-size:.9rem;font-weight:700}
+.netbar span{min-width:0;overflow-wrap:anywhere}
+.btn.small{padding:6px 10px;font-size:.85rem}
+.fld{display:grid;gap:4px;font-weight:800;font-size:.85rem;margin:0 0 12px;max-width:280px}
+.fld input,.code{font:inherit;font-weight:700;font-size:1rem;color:var(--ink);background:#fff8e6;border:2px solid var(--ink);border-radius:8px;padding:9px 12px}
+.code{width:7.5ch;text-transform:uppercase;letter-spacing:.2em;font-variant-numeric:tabular-nums}
+.fld input:focus-visible,.code:focus-visible{outline:3px solid var(--coral);outline-offset:2px}
+.sub{font-family:var(--display);font-weight:400;font-size:1.4rem;margin:18px 0 6px;color:var(--rust)}
+.mplist{display:grid;gap:8px;margin-bottom:10px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+@media (max-width:640px){
+  .dlg{position:static;margin-top:8px}
+  .brand{font-size:1.4rem}
+  .card h1{font-size:2.1rem}
+}
+@media (pointer:coarse) and (orientation:portrait){
+  .rotate{display:block}
+  .joy{width:150px;height:150px}
+  .tbtns{grid-template-columns:repeat(2,78px)}
+  .tbtns button{width:78px;height:78px;font-size:.95rem}
+}
+/* Phone held sideways: the game fills the screen and the controls float over it. */
+@media (pointer:coarse) and (orientation:landscape) and (max-height:560px){
+  .app{max-width:none;padding-block:0;gap:0}
+  .top,.keys,.rotate{display:none}
+  .screen{display:flex;justify-content:center}
+  canvas{width:auto;height:calc(100dvh - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px));max-width:100%;border:0;border-radius:0}
+  .touch{position:fixed;left:0;right:0;bottom:0;z-index:5;pointer-events:none;padding-block:0 max(10px,env(safe-area-inset-bottom,0px));padding-left:max(14px,env(safe-area-inset-left,0px));padding-right:max(14px,env(safe-area-inset-right,0px))}
+  .touch>*{pointer-events:auto}
+  .joy{width:128px;height:128px;background:rgba(22,64,90,.55)}
+  .tbtns{grid-template-columns:repeat(2,64px);gap:8px}
+  .tbtns button{width:64px;height:64px;opacity:.88}
+  .netbar{position:fixed;top:max(6px,env(safe-area-inset-top,0px));left:50%;transform:translateX(-50%);z-index:6;font-size:.75rem;padding:4px 8px;max-width:70vw}
+  .dlg{position:absolute;margin-top:0;max-height:45%;overflow:auto}
+  body.talking .touch{visibility:hidden}
+}
+@media (prefers-reduced-motion:reduce){.btn{transition:none}}
+</style>
+
+<div class="app">
+  <header class="top">
+    <span class="brand">The Bananas of the Caribbean</span>
+    <span class="tools"><button class="btn small" id="fsBtn" hidden>Full screen</button></span>
+    <span id="where" class="where"></span>
+  </header>
+  <div class="screen">
+    <canvas id="cv" role="img" aria-label="Top-down game world"></canvas>
+    <div id="dlg" class="dlg" role="button" tabindex="0" hidden>
+      <div class="who" id="dlgWho"></div>
+      <p id="dlgText"></p>
+      <span class="nx" id="dlgNext">Next</span>
+    </div>
+  </div>
+  <p class="rotate" id="rotate" hidden>Turn your phone sideways for a bigger view.</p>
+  <div id="touch" class="touch" hidden>
+    <div id="joy" class="joy" aria-label="Move"><div id="knob" class="knob"></div></div>
+    <div class="tbtns">
+      <button data-k="snack">Snack</button>
+      <button data-k="dash">Dash</button>
+      <button data-k="eat" class="big">Eat</button>
+      <button data-k="attack" class="big">Sword</button>
+    </div>
+  </div>
+  <div id="netbar" class="netbar" hidden><span id="netInfo"></span><button class="btn small" id="netLeave">Leave game</button></div>
+  <p class="keys" id="keys">Move <kbd>WASD</kbd> or arrows · Sword <kbd>J</kbd> or <kbd>Space</kbd> · Eat <kbd>K</kbd> · Dash <kbd>Shift</kbd> · Snack <kbd>Q</kbd> · Skip talk <kbd>Enter</kbd></p>
+</div>
+<div id="menu" class="menu" hidden></div>
+
+<script>
+const $=s=>document.querySelector(s);
+const cv=$('#cv'),ctx=cv.getContext('2d'),menu=$('#menu'),dlg=$('#dlg'),where=$('#where');
+const W=960,H=540,T=32,DPR=Math.min(2,window.devicePixelRatio||1);
+cv.width=W*DPR;cv.height=H*DPR;
+const off=document.createElement('canvas');off.width=off.height=320;const oc=off.getContext('2d');
+const RM=matchMedia('(prefers-reduced-motion: reduce)').matches;
+let TOUCH=matchMedia('(pointer: coarse)').matches;
+const rnd=(a,b)=>a+Math.random()*(b-a),lerp=(a,b,p)=>a+(b-a)*p,clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+const angDiff=(a,b)=>{let d=a-b;while(d>Math.PI)d-=2*Math.PI;while(d<-Math.PI)d+=2*Math.PI;return d};
+function hr(x,y,k=0){let h=(x*374761393+y*668265263+k*1442695041)|0;h=Math.imul(h^(h>>>13),1274126177);return((h^(h>>>16))>>>0)/4294967295}
+
+/* ================= Content ================= */
+const ENEMY={
+  scout:{name:'Banana Scout',ai:'walker',peel:10,hp:16,speed:62,dmg:4,size:1,xp:10,coins:6,sight:200,look:'leaf'},
+  bandit:{name:'Banana Bandit',ai:'walker',peel:14,hp:22,speed:78,dmg:5,size:1,xp:14,coins:9,sight:230,dash:2.6,look:'mask'},
+  gladiator:{name:'Bananus Maximus',ai:'walker',peel:40,hp:50,speed:70,dmg:7,size:2.3,xp:40,coins:25,sight:999,look:'helmet',boss:true,snack:1,attacks:['charge','slam','spread','charge'],rate:3.2,shot:'chunk',shotDmg:4},
+  whale:{name:'Banana Whale',ai:'whale',peel:18,hp:28,speed:120,dmg:6,size:1.4,xp:16,coins:10},
+  whaleBig:{name:'Great Yellow Whale',ai:'whale',peel:34,hp:46,speed:105,dmg:8,size:2.8,xp:40,coins:25,boss:true,snack:1,shot:'spout',shotDmg:5},
+  sky:{name:'Sky Banana',ai:'flyer',peel:16,hp:24,speed:130,dmg:6,size:1,xp:16,coins:10,look:'propeller'},
+  blimp:{name:'Banana Blimp',ai:'blimp',peel:36,hp:50,speed:60,dmg:7,size:2.7,xp:40,coins:25,look:'propeller',boss:true,snack:1,attacks:['rain','summon','ring'],rate:4,shot:'chunk',shotDmg:4,rain:'banana',summon:'sky'},
+  boss:{name:'Captain Plantain, the Banana Boss',ai:'walker',peel:90,hp:200,speed:72,dmg:10,size:3.1,xp:90,coins:60,sight:999,look:'pirate',boss:true,tough:.6,regrow:5,regrowFrac:0.45,attacks:['spread','slam','summon','ring','spread','rain'],rate:2.8,shot:'coconut',shotDmg:5,rain:'coconut',summon:'scout',snack:2},
+  snake:{name:'Island Snake',ai:'snake',hp:34,speed:105,dmg:6,size:1,xp:18,coins:10,sight:240,poison:.35,color:'#4f9a3a',stripe:'#a6d06a'},
+  snakeKing:{name:'The Snake King',ai:'snake',hp:220,speed:85,dmg:9,size:2.9,xp:90,coins:50,sight:320,poison:.45,color:'#6b3fa0',stripe:'#e1b93f',crown:true,boss:true,attacks:['spread','charge','summon','ring','spread','charge'],rate:2.8,shot:'venom',shotDmg:4,summon:'snake',drop:'diamond'},
+  final:{name:'The Final Banana',ai:'walker',peel:160,hp:280,speed:40,dmg:10,size:3.7,xp:150,coins:100,sight:999,look:'crown',boss:true,tough:.65,regrow:4,regrowFrac:0.4,needDiamond:true,attacks:['wave','spread','slam','summon','rain','ring'],rate:2.6,shot:'chunk',shotDmg:6,rain:'banana',summon:'sky',snack:2},
+  melon:{name:'Watermelon Bandito',fruit:'melon',skin:'rind',ai:'walker',peel:34,hp:50,speed:72,dmg:8,size:1.2,xp:26,coins:12,sight:240,dash:2.6,look:'sombrero'},
+  seedMelon:{name:'Seed Spitter',fruit:'melon',skin:'rind',ai:'shooter',peel:28,hp:42,speed:60,dmg:7,size:1.1,xp:26,coins:12,sight:300,shot:'seed',shotDmg:7},
+  melonBoss:{name:'El Melón Gigante',fruit:'melon',skin:'rind',ai:'walker',peel:150,hp:300,speed:62,dmg:11,size:3.5,xp:130,coins:80,sight:330,look:'sombrero',boss:true,tough:.65,regrow:5,regrowFrac:.35,attacks:['ring','charge','spread','slam','summon','rain'],rate:2.8,shot:'seed',shotDmg:6,rain:'melon',summon:'melon',snack:2},
+  apple:{name:'Red Apple',fruit:'apple',skin:'skin',ai:'walker',peel:44,hp:64,speed:88,dmg:10,size:1.1,xp:32,coins:14,sight:240,dash:2.3,look:'leaf'},
+  greenApple:{name:'Sour Green Apple',fruit:'green',skin:'skin',ai:'shooter',peel:38,hp:54,speed:72,dmg:9,size:1.05,xp:34,coins:15,sight:300,shot:'seed',shotDmg:8},
+  appleKing:{name:'Big Mac, the Apple King',fruit:'apple',skin:'skin',ai:'walker',peel:170,hp:330,speed:70,dmg:11,size:3.4,xp:160,coins:90,sight:340,look:'lumberjack',boss:true,tough:.62,regrow:5,regrowFrac:.35,attacks:['charge','spread','rain','summon','slam','ring'],rate:2.7,shot:'seed',shotDmg:6,rain:'apple',summon:'apple',snack:2},
+  tangerine:{name:'Tangerine Warrior',fruit:'tangerine',ai:'walker',peel:54,hp:76,speed:98,dmg:11,size:1,xp:40,coins:16,sight:260,dash:2},
+  lantern:{name:'Lantern Tangerine',fruit:'tangerine',ai:'flyer',peel:48,hp:66,speed:125,dmg:11,size:1.05,xp:42,coins:16,look:'lantern'},
+  dragon:{name:'The Tangerine Dragon',fruit:'tangerine',ai:'dragon',peel:190,hp:370,speed:150,dmg:12,size:2.8,xp:200,coins:120,sight:420,look:'dragon',boss:true,tough:.6,regrow:5,regrowFrac:.35,attacks:['spread','charge','ring','summon','spread','rain'],rate:2.5,shot:'fire',shotDmg:7,rain:'fire',summon:'lantern',snack:2},
+  kiwiRunner:{name:'Kiwi Runner',fruit:'kiwi',ai:'walker',peel:46,hp:62,speed:118,dmg:10,size:.95,xp:38,coins:13,sight:260,dash:1.8},
+  kiwiSpitter:{name:'Kiwi Seed Spitter',fruit:'kiwi',ai:'shooter',peel:40,hp:56,speed:72,dmg:9,size:1,xp:40,coins:14,sight:320,shot:'seed',shotDmg:8},
+  kiwiBoss:{name:'The Maharaja Kiwi',fruit:'kiwi',ai:'walker',peel:170,hp:340,speed:66,dmg:12,size:3.2,xp:170,coins:95,sight:340,look:'turban',boss:true,tough:.62,regrow:5,regrowFrac:.35,attacks:['spread','charge','summon','ring','rain','slam'],rate:2.6,shot:'seed',shotDmg:7,rain:'kiwi',summon:'kiwiRunner',snack:2},
+  grapeSoldier:{name:'Grape Soldier',fruit:'grape',ai:'walker',peel:40,hp:56,speed:105,dmg:10,size:.85,xp:36,coins:12,sight:260,dash:2},
+  grapeCannon:{name:'Grape Cannon',fruit:'grape',ai:'shooter',peel:36,hp:50,speed:70,dmg:9,size:1,xp:38,coins:14,sight:320,shot:'grape',shotDmg:8,look:'beret'},
+  grapeBoss:{name:'Le Grand Raisin',fruit:'grape',ai:'walker',peel:180,hp:360,speed:62,dmg:12,size:3.3,xp:180,coins:100,sight:340,look:'beret',boss:true,tough:.62,regrow:5,regrowFrac:.35,attacks:['ring','summon','rain','charge','spread','slam'],rate:2.6,shot:'grape',shotDmg:7,rain:'grape',summon:'grapeSoldier',snack:2},
+  coconutRoller:{name:'Coconut Roller',fruit:'coconut',skin:'shell',ai:'walker',peel:60,hp:70,speed:95,dmg:11,size:1.05,xp:42,coins:15,sight:260,dash:1.8},
+  coconutThrower:{name:'Coconut Thrower',fruit:'coconut',skin:'shell',ai:'shooter',peel:50,hp:64,speed:70,dmg:10,size:1,xp:44,coins:15,sight:320,shot:'coconut',shotDmg:9,look:'lei'},
+  kahuna:{name:'Big Kahuna Coconut',fruit:'coconut',skin:'shell',ai:'walker',peel:200,hp:400,speed:60,dmg:12,size:3.4,xp:200,coins:110,sight:360,look:'lei',boss:true,tough:.6,regrow:5,regrowFrac:.35,attacks:['rain','slam','ring','summon','wave','spread'],rate:2.5,shot:'coconut',shotDmg:7,rain:'coconut',summon:'coconutRoller',snack:2},
+  pinePunk:{name:'Pineapple Punk',fruit:'pineapple',ai:'walker',peel:62,hp:80,speed:100,dmg:12,size:1.1,xp:46,coins:16,sight:260,dash:2,look:'pinecrown'},
+  pineSpiky:{name:'Spiky Pineapple',fruit:'pineapple',ai:'shooter',peel:56,hp:72,speed:70,dmg:11,size:1.05,xp:48,coins:16,sight:320,shot:'spike',shotDmg:10,look:'pinecrown'},
+  pineRex:{name:'Pineapple Rex',fruit:'pineapple',ai:'walker',peel:210,hp:420,speed:66,dmg:12,size:3.5,xp:220,coins:120,sight:340,look:'pinecrown',boss:true,tough:.6,regrow:5,regrowFrac:.35,attacks:['charge','spread','rain','summon','slam','ring'],rate:2.5,shot:'spike',shotDmg:8,rain:'pineapple',summon:'pinePunk',snack:2},
+  plum:{name:'Frozen Plum',fruit:'plum',skin:'ice',ai:'walker',peel:66,hp:90,speed:82,dmg:13,size:1.1,xp:50,coins:18,sight:260,dash:2.2},
+  snowPlum:{name:'Snowball Plum',fruit:'plum',skin:'ice',ai:'shooter',peel:56,hp:80,speed:70,dmg:11,size:1.05,xp:52,coins:18,sight:320,shot:'snow',shotDmg:10,look:'beanie'},
+  frozenPlum:{name:'The Frozen Plum',fruit:'plum',skin:'ice',ai:'walker',peel:230,hp:440,speed:55,dmg:12,size:4,xp:0,coins:0,sight:999,look:'icecrown',boss:true,tough:.6,regrow:4.5,regrowFrac:.3,needDiamond:true,attacks:['ring','rain','freeze','slam','spread','summon','wave'],rate:2.4,shot:'ice',shotDmg:7,rain:'icicle',summon:'plum'}
+};
+const FRUIT={
+  apple:{id:'apple',shape:'round',skin:'#d93a2b',flesh:'#f6edc8',line:'#7a1a12',stem:true},
+  green:{id:'apple',shape:'round',skin:'#8cc63f',flesh:'#f3f0c8',line:'#3e6b18',stem:true},
+  tangerine:{id:'tangerine',shape:'round',skin:'#f28c1c',flesh:'#ffb85c',line:'#a3520c',stem:true},
+  melon:{id:'melon',shape:'melon',skin:'#3f8f3f',flesh:'#e84a5f',line:'#1f4f1f',stem:false},
+  kiwi:{id:'kiwi',shape:'round',skin:'#8a6a3a',flesh:'#8cc63f',line:'#4a3418',stem:false},
+  grape:{id:'grape',shape:'round',skin:'#6b2fa0',flesh:'#bfe08a',line:'#3a1460',stem:true},
+  coconut:{id:'coconut',shape:'round',skin:'#7a4a24',flesh:'#fbf7ee',line:'#3a2412',stem:false},
+  pineapple:{id:'pineapple',shape:'tall',skin:'#d9a521',flesh:'#ffe066',line:'#7a5a12',stem:false},
+  plum:{id:'plum',shape:'round',skin:'rgba(205,238,252,.8)',flesh:'#6a2c70',line:'#3a1440',stem:true}
+};
+const SKIN_OFF={shell:'Shell cracked!',peel:'Peeled!',skin:'Skinned!',rind:'Rind off!',ice:'Ice cracked!'};
+const SKIN_BACK={shell:'Shell grew back!',peel:'Peel grew back!',skin:'Skin grew back!',rind:'Rind grew back!',ice:'Ice froze back!'};
+const SPAWN={'1':'scout','2':'bandit','3':'gladiator','4':'whale','5':'whaleBig','6':'sky','7':'blimp','8':'boss','9':'snake','K':'snakeKing','F':'final',
+  w:'melon',v:'seedMelon',Z:'melonBoss',a:'apple',b:'greenApple',G:'appleKing',t:'tangerine',l:'lantern',D:'dragon',u:'plum',y:'snowPlum',O:'frozenPlum',k:'grapeSoldier',q:'grapeCannon',V:'grapeBoss',o:'coconutRoller',x:'coconutThrower',J:'kahuna',f:'pinePunk',z:'pineSpiky',N:'pineRex',e:'kiwiRunner',h:'kiwiSpitter','&':'kiwiBoss'};
+const FLOOR={g:'#78b257',',':'#d6bd86',s:'#ecd59a',p:'#a8743f',c:'#f3f8fb',r:'#d4bc92',j:'#4f7d36',d:'#e3b778',i:'#cfeaf5',n:'#f4f8fb'};
+const SOLID=new Set(['#','T','H','W','S','C','X','B','P','R','m','M','Y','A','Q','U','L','I']);
+
+const LEVELS=[
+ {name:'Villages of Europe',floor:'g',wall:'hedge',exit:'sign',exitText:'To Rome',clearText:'Village clear! Follow the road east to Rome.',goal:'Bananas',
+  map:["TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT",
+       "T......HHHH.........T.......HHHH...........TT..T",
+       "T......HHHH....B.........1..HHHH...HHH.........T",
+       "T..@...HHHH.................HHHH...HHH....2....T",
+       "T.........,......T..........,......,,,.........T",
+       "T,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,E",
+       "T,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,T",
+       "T.........,.......,.........,..........,.......T",
+       "T...HHH...,..1....,...BB....,...T......,...2...T",
+       "T...HHH...,.......,.........,.........HHHH.....T",
+       "T.........,...HHHH,...1.....,....2....HHHH.....T",
+       "T....T........HHHH..........,.........HHHH..T..T",
+       "T.........B...HHHH......HHH.,..................T",
+       "T..1..........,.........HHH.,.....T.....1......T",
+       "T.............,.....T.......,..................T",
+       "T..T.....HHH..,..........B..,......HHH.....T...T",
+       "T........HHH..,.............,......HHH.........T",
+       "TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT"],
+  intro:[['Narrator','A quiet village somewhere in Europe. This morning every banana in the market woke up, grew angry eyebrows, and ran off toward the sea.'],
+         ['Old Baker','They are heading for the Caribbean! Somebody has to stop them. Somebody has to eat them.'],
+         ['Narrator','That somebody is you. Clear out the village bananas, then take the road to Rome.'],
+         ['How to fight','Hit a banana with your sword to peel it. Once it is peeled, get close and eat it. Be quick: peeled bananas grow their skin back.'],
+         ['Controls','CONTROLS']],
+  outro:[['Narrator','The village bananas are gone. On to Rome!']]},
+ {name:'Rome',floor:'r',wall:'stone',exit:'ship',exitText:'Board the ship',clearText:'Rome is clear! Board the ship at the harbor.',goal:'Bananas',arrive:[['walk','Walking the old roads to Rome']],
+  map:["##############################",
+       "#............................#",
+       "#..@.........................#",
+       "#.....C.....C......C.....C...#",
+       "#............................#",
+       "#........2.........2.........#",
+       "#...C....................C...#",
+       "#.............3..............#",
+       "#............................#",
+       "#...C....................C...#",
+       "#........1.........1.........#",
+       "#............................#",
+       "#.....C.....C......C.....C...#",
+       "#............................#",
+       "WWWWWWWWWWWWWWEWWWWWWWWWWWWWWW",
+       "WWWWWWWWWWWWWWWWWWWWWWWWWWWWWW",
+       "WWWWWWWWWWWWWWWWWWWWWWWWWWWWWW"],
+  intro:[['Narrator','Rome! A banana in a gladiator helmet guards the harbor, with a gang of banana bandits.'],['Bananus Maximus','No human passes the Colosseum. Are you not peeled?'],['Tip','When a banana shows a red "!", it is about to charge. Dash out of the way.']],
+  outro:[['Ship Captain','Nicely eaten! Climb aboard. We sail for America.']]},
+ {name:'The Atlantic',floor:'p',wall:'stone',exit:'plank',exitText:'Climb down to America',clearText:'All the banana whales are gone! Land ho!',goal:'Whales',arrive:[['ship','Setting sail from Rome toward America']],
+  map:["WWWWWWWWWWWWWWWWWWWWWWWWWWWWWW",
+       "WWW4WWWWWWWWWWWWWWWWWWW4WWWWWW",
+       "WWWWWWWWWWWWWWWWWWWWWWWWWWWWWW",
+       "WWWWWWWWWWWWWWWWWWWWWWWWWWWWWW",
+       "WWWWWWpppppppppppppppppWWWWWWW",
+       "WWWWWpppppppppppppppppppppWWWW",
+       "WWWWWppXpppppppppppppXpppppWWW",
+       "W4WWWpp@pppppppmppppppppppppEW",
+       "WWWWWppXpppppppppppppXpppppWWW",
+       "WWWWWpppppppppppppppppppppWWWW",
+       "WWWWWWpppppppppppppppppWWWWWWW",
+       "WWWWWWWWWWWWWWWWWWWWWWWWWWWWWW",
+       "WWWWWWWWWWWWWWWWWWWWWWWWWWWWWW",
+       "WWWW4WWWWWWWWWWWWWWWWW5WWWWWWW",
+       "WWWWWWWWWWWWWWWWWWWWWWWWWWWWWW",
+       "WWWWWWWWWWWWWWWWWWWWWWWWWWWWWW",
+       "WWWWWWWWWWWWWWWWWWWWWWWWWWWWWW"],
+  intro:[['Narrator','Halfway across the ocean the water turns yellow. Whales shaped exactly like bananas surface around the ship.'],['Ship Captain','Get all of them! You can only reach them when they come up beside the ship. Watch out for their spouts.']],
+  outro:[['Ship Captain','That was the last banana whale. Land ho! Welcome to America.']]},
+ {name:'America',floor:'c',wall:'stone',exit:'heli',exitText:'Fly to the Caribbean',clearText:'The sky is clear! Back to the helicopter.',goal:'Sky bananas',arrive:[['ship','Landing in America'],['heli','Taking off in a helicopter']],
+  map:["SSSSSSSSSSSSSSSSSSSSSSSSSSSSSS",
+       "SSSS6SSSSSSSSSSSSSSSSSSS6SSSSS",
+       "SSSSSSSccccccccccccccccSSSSSSS",
+       "SSSSSccccccccccccccccccccSSSSS",
+       "SSSScccccccccccccccccccccccSSS",
+       "SSSccccccccccccccccccccccccSSS",
+       "SSScccEcccccccccccccccccccccS6",
+       "SSSccccccc@cccccccccccccccccSS",
+       "S6SccccccccccccccccccccccccSSS",
+       "SSScccccccccccccccccccccccccSS",
+       "SSSSccccccccccccccccccccccSSSS",
+       "SSSSSccccccccccccccccccccSSSSS",
+       "SSSSSSSccccccccccccccccSSSSSSS",
+       "SSSSSSSSSSSS7SSSSSSSSSSSSSSSSS",
+       "SSSSSSSSSSSSSSSSSSSSSSSSSSSSSS",
+       "SSSSSSSSSSSSSSSSSSSSSSSSSSSSSS",
+       "SSSSSSSSSSSSSSSSSSSSSSSSSSSSSS"],
+  intro:[['Pilot','Hold on! We are setting down on a giant cloud to refuel.'],['Narrator','Something yellow is diving out of the sky. Sky bananas! Peel one and it loses its propeller and flops onto the cloud.'],['Tip','The Banana Blimp drops bombs. Get out of the red circles.']],
+  outro:[['Pilot','The sky is clear. Next stop, the Caribbean!']]},
+ {name:'The Caribbean',floor:'s',wall:'palms',exit:'ship',exitText:'Sail to the island',clearText:'The Banana Boss is eaten! Board the ship.',goal:'Bananas',arrive:[['heli','Flying south to the Caribbean']],
+  map:["##############################",
+       "#....P..............P........#",
+       "#..@.........................#",
+       "#.........R.........R........#",
+       "#.....P..................P...#",
+       "#............................#",
+       "#.....1......8.......1.......#",
+       "#............................#",
+       "#..R......................R..#",
+       "#.........P........P.........#",
+       "#............................#",
+       "#............................#",
+       "WWWWWWWWWWWWWWEWWWWWWWWWWWWWWW",
+       "WWWWWWWWWWWWWWWWWWWWWWWWWWWWWW",
+       "WWWWWWWWWWWWWWWWWWWWWWWWWWWWWW",
+       "WWWWWWWWWWWWWWWWWWWWWWWWWWWWWW",
+       "WWWWWWWWWWWWWWWWWWWWWWWWWWWWWW"],
+  intro:[['Narrator','On a Caribbean beach, on a throne of coconuts, sits the Banana Boss.'],
+         ['Captain Plantain','You ate my villagers, my whales, and my sky bananas. But you will never eat ME. I am really, really hard to eat.'],
+         ['Tip','The Banana Boss throws coconuts, calls for backup, and grows its peel back fast. Its flesh is so tough your jaw gets tired. Back off and let your jaw rest when the meter is full.']],
+  outro:[['Captain Plantain','(the very last bite whispers) The Final Banana waits on Banana Island. Its peel... only a diamond can cut it...'],['Narrator','A diamond? Sailors say the Snake King guards one. Take the ship to the island, then a helicopter to Snake Island.']]},
+ {name:'Snake Island',floor:'j',wall:'jungle',exit:'ship',exitText:'Sail to the merchant',clearText:'Snake Island is clear! Take the diamond to the ship.',goal:'Snakes',arrive:[['ship','Sailing to the island'],['heli','Flying by helicopter to Snake Island']],
+  map:["########################################",
+       "#..@....T.......#.......T.......9......#",
+       "#.......T...9...#...B...........T......#",
+       "#..B............#.......9..............#",
+       "#.......TT.............TT......R.......#",
+       "#...R...TT....B........TT...B......9...#",
+       "#..........9.................T.........#",
+       "#####..##########..##########...########",
+       "#......................................#",
+       "#....T.......R...............R....T....#",
+       "#......................................#",
+       "#..B.............K..................B..#",
+       "#......................................#",
+       "#....T.....R..............R.......T....#",
+       "#......................................#",
+       "WWWWWWWWWWWWWWWWWWWEWWWWWWWWWWWWWWWWWWWW",
+       "WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW",
+       "WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW"],
+  intro:[['Narrator','Snake Island. The grass hisses. No bananas here, only snakes guarding their king.'],['Tip','Snakes have no peel, so just use your sword. Their bites can poison you.']],
+  outro:[['Narrator','With the Snake King gone, the island goes quiet. The diamond is safe in your pocket.'],['Narrator','A merchant lives on the next island. Maybe they can make something out of it.']]},
+ {name:'Merchant Isle',floor:'s',wall:'palms',exit:'ship',exitText:'Sail to Banana Island',goal:'shop',shop:true,arrive:[['ship','Sailing to the merchant on the next island']],
+  map:["##############################",
+       "#....P.................P.....#",
+       "#............................#",
+       "#...........MMMMM............#",
+       "#............................#",
+       "#..P......................P..#",
+       "#.............@..............#",
+       "#............................#",
+       "#....R...............R.......#",
+       "#............................#",
+       "#.....P..............P.......#",
+       "#............................#",
+       "WWWWWWWWWWWWWWWWWWWWWEWWWWWWWW",
+       "WWWWWWWWWWWWWWWWWWWWWWWWWWWWWW",
+       "WWWWWWWWWWWWWWWWWWWWWWWWWWWWWW",
+       "WWWWWWWWWWWWWWWWWWWWWWWWWWWWWW",
+       "WWWWWWWWWWWWWWWWWWWWWWWWWWWWWW"],
+  intro:[['Merchant','Welcome, traveller! Is that... a real diamond?'],['Merchant','Come over to my stall. I can forge it into a diamond sword. It cuts any peel in the world.']],
+  outro:[['Merchant','Good luck on Banana Island. Bring a big appetite!']]},
+ {name:'Banana Island',floor:'s',wall:'palms',exit:'ship',exitText:'Sail to Mexico',clearText:'The Final Banana is eaten! But what is that bottle?',goal:'Bananas',arrive:[['ship','Sailing to Banana Island']],
+  map:["WWWWWWWWWWWWWWWWWWWWWWWWWWWWWW",
+       "WWWWW...................WWWWWW",
+       "WWW.......P.......P.......WWWW",
+       "WW..........................WW",
+       "WW..............F...........WW",
+       "W............................W",
+       "W....P....................P..W",
+       "W............................W",
+       "W............................W",
+       "W..............@.............W",
+       "WW..........................WW",
+       "WW....P..............P......WW",
+       "WWW........................WWW",
+       "WWWWW....................WWWWW",
+       "WWWWWWWW..............WWWWWWWW",
+       "WWWWWWWWWWWWWWEWWWWWWWWWWWWWWW",
+       "WWWWWWWWWWWWWWWWWWWWWWWWWWWWWW"],
+  intro:[['Narrator','Banana Island. The Final Banana is as tall as a lighthouse.'],['The Final Banana','So, you came all the way from Europe. No sword in the world can peel me.'],['Narrator','Your diamond sword starts to glow. Watch for its shockwaves, and dash right through them.']],
+  outro:[['Narrator','You take the very last bite. The bananas of the Caribbean are gone!'],
+         ['Narrator','A bottle washes up on the beach. The note inside says: "The bananas were only the beginning. Watermelons in Mexico. Apples in Canada. Tangerines in China. And something cold and purple waiting at the bottom of the world."'],
+         ['Narrator','Your adventure is not over. Board the ship for Mexico.']]},
+ {name:'The Watermelons of Mexico',floor:'d',wall:'adobe',exit:'heli',exitText:'Fly to Canada',clearText:'Mexico is melon-free! Head for the helicopter.',goal:'Watermelons',arrive:[['ship','Sailing west to Mexico']],
+  map:["########################################",
+       "#..@......AAA.......Q.........AAA......#",
+       "#.........AAA..w.........v....AAA..Q...#",
+       "#..Q.......................w...........#",
+       "#.....,,,,,,,,,,,,,,,,,,,,,,,,,,,,,....#",
+       "#.....,....Q.....AAAA.......Q.....,....#",
+       "#..w..,..........AAAA.............,..v.#",
+       "#.....,....v.....AAAA......w......,....#",
+       "#.....,...........................,....#",
+       "#.....,,,,,,,,,,,,,,,,,,,,,,,,,,,,,....#",
+       "#..AAA............................AAA..#",
+       "#..AAA..Q..........Z..........Q...AAA..#",
+       "#...........w...........v..............#",
+       "#....Q..........................Q......#",
+       "#.................E....................#",
+       "########################################"],
+  intro:[['Narrator','Mexico. The desert town is quiet. Too quiet. Then the ground starts to rumble and roll.'],
+         ['Watermelon Bandito','The banana hero! The watermelons will never let you pass!'],
+         ['Tip','Watermelons have a thick rind instead of a peel. Seed Spitters shoot from far away, so close in fast. El Melón Gigante waits at the bottom of town.']],
+  outro:[['El Melón Gigante','(the last slice whispers) The apples... in Canada... will avenge us...'],['Narrator','A helicopter is waiting at the edge of town. Next stop: Canada.']]},
+ {name:'Canada’s Favorite Apples',floor:'g',wall:'maple',exit:'plane',exitText:'Fly to China',clearText:'The apple orchard is clear! The plane is ready.',goal:'Apples',arrive:[['heli','Flying north to Canada']],
+  map:["YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY",
+       "Y..@.....Y.......HHH.........Y.....a...Y",
+       "Y........Y...a...HHH....b..........Y...Y",
+       "Y..Y.............................Y.....Y",
+       "Y.......MMMMM.......Y.......a..........Y",
+       "Y.....................WWWWWW...........Y",
+       "Y..a.....Y.....b.....WWWWWWWW....Y..b..Y",
+       "Y.....Y..............WWWWWWWW..........Y",
+       "Y.....................WWWWWW.....a.....Y",
+       "Y..HHH.....a....Y...............Y......Y",
+       "Y..HHH...........................HHH...Y",
+       "Y............Y.........G.........HHH...Y",
+       "Y....b...................Y.............Y",
+       "Y.........Y.......................Y....Y",
+       "Y..................................E...Y",
+       "YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY"],
+  intro:[['Narrator','Canada. Red maple leaves are falling, and so are apples. Lots of very angry apples.'],
+         ['Lumberjack','Big Mac, the Apple King, took over the whole forest! The trading post up north sells supplies, including grip boots for icy places.'],
+         ['Tip','Bosses get furious when they are half eaten. They glow red, move faster, and attack more often.']],
+  outro:[['Big Mac','You peeled the King... The tangerines will never forgive this...'],['Lumberjack','The plane is fueled up to take you across the ocean to China. Good luck, eh!']]},
+ {name:'The Tangerines of China',floor:'r',wall:'china',exit:'plane',exitText:'Fly to India',clearText:'The courtyard is clear! Back to the plane.',goal:'Tangerines',arrive:[['plane','Flying across the Pacific to China']],
+  map:["####################################",
+       "#..@....L.......HHHH.......L.......#",
+       "#.......U.......HHHH...t...U.......#",
+       "#..t....U..............l...U...t...#",
+       "#.......U....L.....L.......U.......#",
+       "#..............WWWW................#",
+       "#....l........WWWWWW.......t.......#",
+       "#.............WWWWWW...............#",
+       "#..L...........WWWW.........L......#",
+       "#.......t..........................#",
+       "#...........L.....D.....L......l...#",
+       "#..UUU.............................#",
+       "#....................t.............#",
+       "#..L.......HHHH..........HHHH...L..#",
+       "#..........HHHH......E...HHHH......#",
+       "####################################"],
+  intro:[['Narrator','China. Red lanterns light up a courtyard of bamboo and stone. The tangerines are waiting.'],
+         ['Narrator','A roar shakes the roof tiles. The Tangerine Dragon is coiled up at the bottom of the courtyard.'],
+         ['Tip','The dragon is made of tangerines, but only its head can be peeled and eaten. Do not touch its long body!']],
+  outro:[['Narrator','The Tangerine Dragon is eaten, one segment at a time. The lanterns go dark.'],['Narrator','A freezing wind blows from the south. Every fruit you fought was working for one ruler: the Frozen Plum of Antarctica.'],['Narrator','But the Frozen Plum has four generals left: the kiwis of India, the grapes of France, the coconuts of Hawaii and the pineapples of Australia. First stop, India.']]},
+ {name:'The Kiwis of India',floor:'r',wall:'palace',exit:'plane',exitText:'Fly to France',clearText:'The palace gardens are clear! Back to the plane.',goal:'Kiwis',arrive:[['plane','Flying from China to India']],
+  map:["##################################",
+       "#..@......C.......C.......C......#",
+       "#...e.........h.............e....#",
+       "#..B......BB.........BB......B...#",
+       "#.......e.......................#",
+       "#..C.........WWWWWWWW.......C....#",
+       "#......h.....WWWWWWWW......h.....#",
+       "#............WWWWWWWW............#",
+       "#..C.........WWWWWWWW.......C....#",
+       "#.....e..........&..........e....#",
+       "#..B......BB.........BB......B...#",
+       "#...........h..........e.........#",
+       "#..C.......C.....E.....C......C..#",
+       "##################################"],
+  intro:[['Narrator','India. A palace garden with a long reflecting pool. Something fuzzy is darting between the columns.'],['The Maharaja Kiwi','Welcome to my palace, banana hero. My kiwis are the fastest fruit in the world!'],['Tip','Kiwi Runners are very fast. Let them come to you, peel them, then eat them before they run off.']],
+  outro:[['The Maharaja Kiwi','(the last fuzzy bite) The grapes of France... will not be so polite...'],['Narrator','The plane is fueled up. Next stop: France.']]},
+ {name:'The Grapes of France',floor:'g',wall:'hedge',exit:'plane',exitText:'Fly to Hawaii',clearText:'The vineyard is clear! Back to the plane.',goal:'Grapes',arrive:[['plane','Flying from India to France']],
+  map:["####################################",
+       "#..@.......HHH..........HHH........#",
+       "#..........HHH...k......HHH....q...#",
+       "#..BBBBBBBB.....BBBBBBBBB....k.....#",
+       "#..................................#",
+       "#..BBBBBBBB..k..BBBBBBBBB..BBBBBB..#",
+       "#.....q............................#",
+       "#..BBBBBBBB.....BBBBBBBBB..BBBBBB..#",
+       "#...........k..........q...........#",
+       "#..BBBBBBBB.....BBBBBBBBB..BBBBBB..#",
+       "#..................V...............#",
+       "#..k...........................k...#",
+       "#.....HHHH..............HHHH.......#",
+       "#.....HHHH..........E...HHHH.......#",
+       "####################################"],
+  intro:[['Narrator','France. Rows of grapevines stretch across the hills, and every grape has a tiny angry face.'],['Le Grand Raisin','Ho ho! You will never squash the grapes of France!'],['Tip','Grape Soldiers are small and fast, and they come in bunches. Grape Cannons fire from far away.']],
+  outro:[['Le Grand Raisin','(the last grape whispers) The coconuts of Hawaii... they are much harder than us...'],['Narrator','The plane is ready. Next stop: Hawaii.']]},
+ {name:'The Coconuts of Hawaii',floor:'s',wall:'palms',exit:'ship',exitText:'Sail to Australia',clearText:'Hawaii is clear! Board the ship.',goal:'Coconuts',arrive:[['plane','Flying across the ocean to Hawaii']],
+  map:["WWWWWWWWWWWWWWWWWWWWWWWWWWWWWW",
+       "WW..P.......RRR.......P.....WW",
+       "W..@.......RRRRR.......o.....W",
+       "W.....x.....RRR..............W",
+       "W..P..............P.....x....W",
+       "W..........o.................W",
+       "W....R.........J.........R...W",
+       "W.....................o......W",
+       "W..o.....P..........P........W",
+       "W...........x................W",
+       "WW..........................WW",
+       "WWW.......P........P.......WWW",
+       "WWWWWWWWWWWWWEWWWWWWWWWWWWWWWW",
+       "WWWWWWWWWWWWWWWWWWWWWWWWWWWWWW",
+       "WWWWWWWWWWWWWWWWWWWWWWWWWWWWWW",
+       "WWWWWWWWWWWWWWWWWWWWWWWWWWWWWW",
+       "WWWWWWWWWWWWWWWWWWWWWWWWWWWWWW"],
+  intro:[['Narrator','Hawaii. Warm sand, blue water, and a lot of coconuts wearing flower necklaces.'],['Big Kahuna Coconut','Aloha, little hero. My shell is the hardest thing in the Pacific.'],['Tip','Coconuts have a hard shell instead of a peel. Crack it with your sword, then eat the coconut inside.']],
+  outro:[['Big Kahuna Coconut','(cracked open) Mahalo... for a good fight... The pineapples in Australia are waiting...'],['Narrator','A ship is waiting at the dock to take you to Australia.']]},
+ {name:'The Pineapples of Australia',floor:'d',wall:'adobe',exit:'plane',exitText:'Fly to Antarctica',clearText:'The outback is clear! The plane is ready.',goal:'Pineapples',arrive:[['ship','Sailing across the Pacific to Australia']],
+  map:["########################################",
+       "#..@.......R.........T.......f.........#",
+       "#.........RRR...f..........z.....T.....#",
+       "#..T.......R...........RR..............#",
+       "#.......z.............RRRR......f......#",
+       "#..............T.......RR..........R...#",
+       "#....f.................................#",
+       "#..........RR.......N........z.........#",
+       "#.........RRRR.........................#",
+       "#..T.......RR.....f..........T....f....#",
+       "#.......................RRR............#",
+       "#....z.......T..........RRR.....z......#",
+       "#..................................E...#",
+       "########################################"],
+  intro:[['Narrator','The Australian outback. Red dirt, gum trees, and pineapples with spiky green hair.'],['Pineapple Rex','Oi! Nobody peels the Rex!'],['Tip','Spiky Pineapples shoot sharp spikes. Pineapple Rex charges hard, so keep your dash ready.']],
+  outro:[['Pineapple Rex','You... beat all three generals... The Frozen Plum knows you are coming...'],['Narrator','There is only one place left to go: the bottom of the world.']]},
+ {name:'The Frozen Plum of Antarctica',floor:'n',wall:'palms',final:true,goal:'final',goalText:'Crack and eat the Frozen Plum',arrive:[['plane','Flying to the bottom of the world'],['ship','Breaking through the ice on an icebreaker']],
+  map:["WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW",
+       "WW............................WW",
+       "W..@....II..........y....II....W",
+       "W.....iiiiiiiiiiiiiiiiiiii..u..W",
+       "W..u..iiiiiiiiiiiiiiiiiiii.....W",
+       "W.....iiiiIiiiiiiiiiiiIiii.....W",
+       "W..y..iiiiiiiiiiiiiiiiiiii..y..W",
+       "W.....iiiiiiiiiiOiiiiiiiii.....W",
+       "W.....iiiiiiiiiiiiiiiiiiii..u..W",
+       "W..u..iiiiIiiiiiiiiiiiIiii.....W",
+       "W.....iiiiiiiiiiiiiiiiiiii.....W",
+       "W.....iiiiiiiiiiiiiiiiiiii..y..W",
+       "W..II..........u.........II....W",
+       "WW............................WW",
+       "WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW",
+       "WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW",
+       "WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW"],
+  intro:[['Narrator','Antarctica. The ice stretches forever. In the middle of it sits the Frozen Plum, sealed in a shell of ice.'],
+         ['The Frozen Plum','I froze myself for a thousand years, waiting for a hero worth fighting. Let us see if your diamond sword can crack me.'],
+         ['Tip','The ice is slippery but snow is not. Watch for falling icicles and freezing patches that slow you down.']],
+  outro:[['Narrator','The ice shell shatters, and you take the very last bite of the Frozen Plum. It tastes like a plum popsicle.'],
+         ['Narrator','From Europe to Antarctica, every evil fruit has been eaten. Back home, the old baker bakes you the biggest fruit cake the world has ever seen.']]}
+];
+const CONTROLS_DESK='Move with WASD or the arrow keys. J or Space swings your sword, K eats, Shift dashes through attacks, and Q eats a coconut snack to heal.';
+const CONTROLS_TOUCH='Move with the joystick. Sword peels, Eat bites, Dash zips through attacks, and Snack heals you.';
+
+/* ================= State ================= */
+const NEW=()=>({level:0,lvl:1,xp:0,hp:40,maxHp:40,atk:6,coins:0,snacks:2,sword:false,diamond:false,boots:false,done:false});
+let S=NEW(),L=null,P=null,PL=[];
+const COLORS=['#2f6fb0','#c0392b','#2f8f4f','#8e44ad'];
+const NET={room:null,game:null,role:'solo',code:'',name:'',ep:0,sendT:0,barT:0,hostSeen:0,gotHost:false,joinT:0,myPeer:null,lastSnap:null,lastSnapObj:null,cnt:{s:0,e:0,q:0},others:new Map(),ents:new Map(),seenFloat:0};
+try{NET.name=(localStorage.getItem('botc-name')||'').slice(0,14)}catch(e){}
+const KEY='bananas-caribbean-topdown';
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
+function loadSave(){try{const d=JSON.parse(localStorage.getItem(KEY));return d&&typeof d.level==='number'?d:null}catch(e){return null}}
+const G={fid:0,menuKind:'',waitMsg:'',mode:'title',t:0,shake:0,keys:{},pressed:new Set(),joy:{x:0,y:0},cam:{x:0,y:0},dlg:null,trav:null,floats:[],parts:[],banner:null,hintT:0,dlgShownT:0,playT:0};
+const power=()=>S.atk+(S.sword?12:0);
+const roll=v=>Math.max(1,Math.round(v*rnd(.85,1.15)));
+
+/* ================= Drawing primitives ================= */
+function circ(c,x,y,r){c.beginPath();c.arc(x,y,Math.max(.1,r),0,Math.PI*2);c.fill()}
+function ell(c,x,y,rx,ry,rot=0){c.beginPath();c.ellipse(x,y,Math.max(.1,rx),Math.max(.1,ry),rot,0,Math.PI*2);c.fill()}
+function rr(c,x,y,w,h,r){c.beginPath();c.moveTo(x+r,y);c.arcTo(x+w,y,x+w,y+h,r);c.arcTo(x+w,y+h,x,y+h,r);c.arcTo(x,y+h,x,y,r);c.arcTo(x,y,x+w,y,r);c.closePath()}
+function txt(s,x,y,size,color,font='display',align='center',stroke=true){ctx.font=font==='display'?`${size}px "Pirata One", serif`:`800 ${size}px "Alegreya Sans", sans-serif`;ctx.textAlign=align;ctx.lineJoin='round';if(stroke){ctx.lineWidth=Math.max(3,size/6);ctx.strokeStyle='#1b1209';ctx.strokeText(s,x,y)}ctx.fillStyle=color;ctx.fillText(s,x,y)}
+
+/* ---- Hero (3/4 view) ---- */
+function drawHero(x,y,s,walk,flip,showSword,shirt='#2f6fb0'){const c=ctx;c.save();c.translate(x,y);c.scale(flip?-s:s,s);c.lineCap='round';
+  const sw=Math.sin(walk)*12;
+  c.strokeStyle='#2b2f4a';c.lineWidth=10;c.beginPath();c.moveTo(-8,-42);c.lineTo(-8+sw,-4);c.moveTo(8,-42);c.lineTo(8-sw,-4);c.stroke();
+  c.fillStyle='#3a2414';ell(c,-4+sw,-1,9,5);ell(c,12-sw,-1,9,5);
+  c.fillStyle=shirt;rr(c,-20,-92,40,56,12);c.fill();c.fillStyle='#f6c624';c.fillRect(-20,-50,40,6);
+  c.strokeStyle='#f0c08c';c.lineWidth=9;c.beginPath();c.moveTo(-14,-80);c.lineTo(-26,-54);c.stroke();
+  c.beginPath();c.moveTo(16,-78);c.lineTo(30,-60);c.stroke();
+  if(showSword){c.save();c.translate(32,-58);c.rotate(-1.2);const d=S.sword;c.fillStyle='#6b4a2a';c.fillRect(-12,-3,14,6);c.fillStyle=d?'#2a7f9e':'#8b5a2b';c.fillRect(0,-9,5,18);
+    c.fillStyle=d?'#7fe8f4':'#c9c9c9';c.beginPath();c.moveTo(5,-4);c.lineTo(d?66:56,-3);c.lineTo(d?76:64,0);c.lineTo(d?66:56,3);c.lineTo(5,4);c.fill();c.restore()}
+  c.fillStyle='#f0c08c';circ(c,0,-110,19);c.fillStyle='#2b1b0e';circ(c,8,-112,2.6);
+  c.fillStyle='#e8c15e';ell(c,0,-124,32,7);rr(c,-15,-143,30,20,6);c.fill();c.fillStyle='#c0392b';c.fillRect(-15,-128,30,4);
+  c.restore()}
+
+/* ---- Banana family ---- */
+function bananaPath(c,s){c.beginPath();c.moveTo(-s*.9,-s*.35);c.quadraticCurveTo(0,s*1.2,s*.9,-s*.35);c.quadraticCurveTo(0,s*.2,-s*.9,-s*.35);c.closePath()}
+function drawBananaBody(c,s,pf,peelCol,stem=true){
+  c.fillStyle='#fbf0c6';bananaPath(c,s);c.fill();
+  if(pf>0){c.save();bananaPath(c,s);c.clip();const cut=-s+2*s*(1-pf);c.fillStyle=peelCol;c.fillRect(cut,-s,2*s+20,2*s+20);
+    c.fillStyle='rgba(120,80,10,.35)';for(const [x,y] of [[.5,.1],[.62,0],[-.1,.38],[.3,.3],[-.45,.18],[.15,.05]])if(x*s>cut)circ(c,x*s,y*s,s*.03);c.restore();
+    if(pf<1){c.fillStyle=peelCol;for(let i=0;i<3;i++){const by=s*(.02+i*.12);c.beginPath();c.moveTo(cut,by);c.quadraticCurveTo(cut-s*.14,by+s*.22,cut-s*.07-i*s*.04,by+s*.48);c.lineTo(cut+s*.05,by+s*.06);c.closePath();c.fill()}}}
+  c.lineWidth=Math.max(2,s*.04);c.strokeStyle='#7a5a12';bananaPath(c,s);c.stroke();
+  if(stem){c.fillStyle='#5b4218';c.save();c.translate(-s*.9,-s*.35);c.rotate(-.5);c.fillRect(-s*.14,-s*.05,s*.18,s*.1);c.restore()}}
+function drawFace(c,s,shy){
+  c.fillStyle='#fff';ell(c,-s*.17,s*.1,s*.085,s*.095);ell(c,s*.17,s*.1,s*.085,s*.095);
+  c.fillStyle='#1b1209';
+  if(shy){circ(c,-s*.17,s*.14,s*.04);circ(c,s*.17,s*.14,s*.04);c.fillStyle='rgba(240,110,110,.6)';ell(c,-s*.33,s*.24,s*.07,s*.04);ell(c,s*.33,s*.24,s*.07,s*.04);c.fillStyle='#7a3020';ell(c,0,s*.3,s*.05,s*.06);return}
+  circ(c,-s*.15,s*.12,s*.04);circ(c,s*.19,s*.12,s*.04);
+  c.strokeStyle='#1b1209';c.lineWidth=Math.max(1.5,s*.045);c.lineCap='round';
+  c.beginPath();c.moveTo(-s*.28,-s*.02);c.lineTo(-s*.08,s*.04);c.moveTo(s*.28,-s*.02);c.lineTo(s*.08,s*.04);c.stroke();
+  c.beginPath();c.arc(0,s*.34,s*.1,Math.PI*1.15,Math.PI*1.85);c.stroke()}
+function drawLook(c,s,look,t){
+  if(look==='helmet'){c.fillStyle='#c0392b';ell(c,0,-s*.38,s*.07,s*.17);c.fillStyle='#9aa4ad';c.beginPath();c.arc(0,-s*.06,s*.25,Math.PI,0);c.fill();c.fillStyle='#7d868f';c.fillRect(-s*.28,-s*.09,s*.56,s*.06)}
+  if(look==='pirate'){c.fillStyle='#1d1a1a';c.beginPath();c.moveTo(-s*.44,-s*.08);c.quadraticCurveTo(0,-s*.24,s*.44,-s*.08);c.quadraticCurveTo(s*.22,-s*.52,0,-s*.42);c.quadraticCurveTo(-s*.22,-s*.52,-s*.44,-s*.08);c.fill();
+    c.fillStyle='#f4e4bf';circ(c,0,-s*.27,s*.05);c.fillStyle='#d4a017';c.fillRect(-s*.36,-s*.14,s*.72,s*.03)}
+  if(look==='propeller'){c.fillStyle='#4b9fd6';c.beginPath();c.arc(0,-s*.07,s*.13,Math.PI,0);c.fill();c.strokeStyle='#444';c.lineWidth=Math.max(1.5,s*.04);c.beginPath();c.moveTo(0,-s*.15);c.lineTo(0,-s*.34);c.stroke();
+    c.fillStyle='#e0573f';ell(c,0,-s*.36,s*.45*Math.abs(Math.cos(t*18)),s*.05);c.fillStyle='#333';circ(c,0,-s*.36,s*.04)}
+  if(look==='leaf'){c.fillStyle='#4f9a3a';c.save();c.translate(0,-s*.1);c.rotate(-.4);ell(c,0,-s*.08,s*.07,s*.15);c.restore()}
+  if(look==='crown'){c.fillStyle='#ffd447';c.beginPath();c.moveTo(-s*.25,-s*.06);c.lineTo(-s*.25,-s*.3);c.lineTo(-s*.13,-s*.18);c.lineTo(0,-s*.36);c.lineTo(s*.13,-s*.18);c.lineTo(s*.25,-s*.3);c.lineTo(s*.25,-s*.06);c.closePath();c.fill();c.fillStyle='#e0573f';circ(c,0,-s*.14,s*.035)}
+  if(look==='lumberjack'){c.fillStyle='#c0392b';c.beginPath();c.arc(0,-s*.06,s*.27,Math.PI,0);c.fill();c.strokeStyle='#1b1209';c.lineWidth=Math.max(1.5,s*.04);for(const x of [-.14,0,.14]){c.beginPath();c.moveTo(x*s,-s*.31);c.lineTo(x*s,-s*.07);c.stroke()}
+    c.fillStyle='#1b1209';c.fillRect(-s*.32,-s*.09,s*.64,s*.05);c.fillStyle='#c0392b';ell(c,-s*.3,s*.0,s*.06,s*.11);ell(c,s*.3,0,s*.06,s*.11)}
+  if(look==='sombrero'){c.fillStyle='#d9a441';ell(c,0,-s*.06,s*.62,s*.11);c.beginPath();c.moveTo(-s*.2,-s*.08);c.quadraticCurveTo(0,-s*.58,s*.2,-s*.08);c.fill();c.fillStyle='#e0573f';c.fillRect(-s*.19,-s*.17,s*.38,s*.05);c.fillStyle='#4f9a3a';c.fillRect(-s*.19,-s*.12,s*.38,s*.03)}
+  if(look==='lantern'){c.strokeStyle='#5a3a1f';c.lineWidth=Math.max(1.5,s*.03);c.beginPath();c.moveTo(0,-s*.06);c.lineTo(0,-s*.2);c.stroke();c.fillStyle='#d62d2d';ell(c,0,-s*.36,s*.2,s*.17);c.fillStyle='#ffd447';c.fillRect(-s*.14,-s*.55,s*.28,s*.04);c.fillRect(-s*.14,-s*.21,s*.28,s*.04);c.fillStyle=`rgba(255,220,120,${.35+.2*Math.sin(t*4)})`;circ(c,0,-s*.36,s*.1)}
+  if(look==='dragon'){c.fillStyle='#c0392b';for(let k=0;k<5;k++){const x=(k-2)*s*.1;c.beginPath();c.moveTo(x-s*.05,-s*.05);c.lineTo(x,-s*.22-(k%2)*s*.06);c.lineTo(x+s*.05,-s*.05);c.fill()}
+    c.fillStyle='#ffd447';for(const sd of [-1,1]){c.beginPath();c.moveTo(sd*s*.12,-s*.05);c.quadraticCurveTo(sd*s*.38,-s*.28,sd*s*.32,-s*.5);c.lineTo(sd*s*.22,-s*.1);c.closePath();c.fill()}}
+  if(look==='beanie'){c.fillStyle='#3b6fd1';c.beginPath();c.arc(0,-s*.04,s*.26,Math.PI,0);c.fill();c.fillStyle='#f4f8fb';c.fillRect(-s*.27,-s*.08,s*.54,s*.07);circ(c,0,-s*.33,s*.07)}
+  if(look==='turban'){c.fillStyle='#e8a02c';ell(c,0,-s*.14,s*.34,s*.17);c.strokeStyle='#c0392b';c.lineWidth=Math.max(1.5,s*.04);c.beginPath();c.moveTo(-s*.3,-s*.08);c.quadraticCurveTo(0,-s*.3,s*.3,-s*.08);c.stroke();c.fillStyle='#5fd4e8';circ(c,0,-s*.2,s*.05);c.fillStyle='#ffffff';ell(c,s*.02,-s*.36,s*.03,s*.09,.3)}
+  if(look==='beret'){c.fillStyle='#1d1a2a';ell(c,s*.05,-s*.1,s*.32,s*.1,-.15);c.fillStyle='#c0392b';c.fillRect(s*.02,-s*.27,s*.05,s*.1)}
+  if(look==='lei'){const cols=['#ff6fa5','#ffd447','#ff8a2a','#ffffff'];for(let k=0;k<7;k++){const a=Math.PI+k/6*Math.PI;c.fillStyle=cols[k%4];circ(c,Math.cos(a)*s*.3,-s*.05+Math.sin(a)*s*.12,s*.07)}}
+  if(look==='pinecrown'){c.fillStyle='#3f8f3f';for(let k=-3;k<=3;k++){c.beginPath();c.moveTo(k*s*.07-s*.05,-s*.04);c.lineTo(k*s*.11,-s*(.38-Math.abs(k)*.07));c.lineTo(k*s*.07+s*.05,-s*.04);c.fill()}}
+  if(look==='icecrown'){c.fillStyle='rgba(205,242,255,.95)';for(let k=-2;k<=2;k++){c.beginPath();c.moveTo(k*s*.12-s*.06,-s*.05);c.lineTo(k*s*.12,-s*(.3+(k%2?0:.14)));c.lineTo(k*s*.12+s*.06,-s*.05);c.fill()}c.fillStyle='#5fd4e8';circ(c,0,-s*.12,s*.04)}}
+function fruitPath(c,f,s){c.beginPath();if(f.shape==='melon')c.ellipse(0,0,s*.72,s*.5,0,0,Math.PI*2);else if(f.shape==='tall')c.ellipse(0,0,s*.5,s*.65,0,0,Math.PI*2);else c.arc(0,0,s*.55,0,Math.PI*2)}
+function drawRoundFruit(c,f,s,pf,shy,look,t){
+  c.fillStyle=f.flesh;fruitPath(c,f,s);c.fill();
+  if(f.id==='tangerine'){c.strokeStyle='rgba(255,255,255,.5)';c.lineWidth=Math.max(1,s*.02);for(let k=0;k<8;k++){const a=k/8*Math.PI*2;c.beginPath();c.moveTo(0,0);c.lineTo(Math.cos(a)*s*.5,Math.sin(a)*s*.5);c.stroke()}}
+  if(f.id==='melon'){c.fillStyle='#1b1209';for(const [x,y] of [[-.4,-.1],[-.2,.15],[0,-.2],[.2,.12],[.4,-.05],[-.05,.3],[.3,-.28],[-.3,-.3]])ell(c,x*s,y*s,s*.025,s*.045)}
+  if(f.id==='apple'){c.fillStyle='rgba(190,160,80,.35)';ell(c,0,s*.08,s*.07,s*.17)}
+  if(f.id==='kiwi'){c.fillStyle='#f3f0c8';circ(c,0,0,s*.16);c.fillStyle='#1b1209';for(let k=0;k<14;k++){const a=k/14*Math.PI*2;ell(c,Math.cos(a)*s*.27,Math.sin(a)*s*.27,s*.025,s*.04,a)}}
+  if(f.id==='coconut'){c.fillStyle='rgba(120,90,60,.25)';c.beginPath();c.arc(0,0,s*.42,0,7);c.fill()}
+  if(f.id==='pineapple'){c.fillStyle='rgba(200,150,20,.35)';for(let y=-3;y<=3;y++)ell(c,0,y*s*.16,s*.04,s*.04)}
+  if(f.id==='plum'){c.fillStyle='rgba(255,255,255,.22)';ell(c,-s*.22,-s*.25,s*.13,s*.07,-.4)}
+  if(pf>0){c.save();fruitPath(c,f,s);c.clip();const hw=(f.shape==='melon'?.72:f.shape==='tall'?.5:.55)*s,cut=-hw+2*hw*(1-pf);c.beginPath();c.rect(cut,-s,2*s,2*s);c.clip();
+    c.fillStyle=f.skin;c.fillRect(cut,-s,2*s,2*s);
+    if(f.id==='apple'){c.fillStyle='rgba(255,255,255,.4)';ell(c,-s*.24,-s*.24,s*.1,s*.06,-.6)}
+    if(f.id==='tangerine'){c.fillStyle='rgba(160,70,0,.25)';for(let k=0;k<14;k++)circ(c,(hr(k,1)-.5)*s,(hr(k,2)-.5)*s,s*.02)}
+    if(f.id==='melon'){c.strokeStyle='#1f5a22';c.lineWidth=s*.07;for(let k=-3;k<=3;k++){const x=k*s*.2;c.beginPath();c.moveTo(x,-s*.55);c.quadraticCurveTo(x+s*.1,0,x,s*.55);c.stroke()}}
+    if(f.id==='coconut'){c.strokeStyle='rgba(40,20,5,.5)';c.lineWidth=Math.max(1,s*.02);for(let k=0;k<26;k++){const x=(hr(k,3)-.5)*s*1.1,y=(hr(k,4)-.5)*s*1.1;c.beginPath();c.moveTo(x,y);c.lineTo(x+s*.06,y+s*.04);c.stroke()}}
+    if(f.id==='pineapple'){c.strokeStyle='rgba(120,80,10,.6)';c.lineWidth=Math.max(1,s*.025);for(let k=-6;k<=6;k++){c.beginPath();c.moveTo(k*s*.16-s*.6,-s*.7);c.lineTo(k*s*.16+s*.6,s*.7);c.moveTo(k*s*.16+s*.6,-s*.7);c.lineTo(k*s*.16-s*.6,s*.7);c.stroke()}}
+    if(f.id==='kiwi'){c.fillStyle='rgba(60,40,15,.35)';for(let k=0;k<40;k++)c.fillRect((hr(k,7)-.5)*s*1.1,(hr(k,8)-.5)*s*1.1,Math.max(1,s*.015),Math.max(1,s*.04))}
+    if(f.id==='grape'){c.fillStyle='rgba(255,255,255,.35)';ell(c,-s*.22,-s*.24,s*.12,s*.07,-.5)}
+    if(f.id==='plum'){c.strokeStyle='rgba(255,255,255,.75)';c.lineWidth=Math.max(1,s*.025);c.beginPath();c.moveTo(-s*.3,-s*.3);c.lineTo(-s*.1,-s*.1);c.lineTo(-s*.2,s*.15);c.moveTo(s*.2,-s*.35);c.lineTo(s*.32,-s*.05);c.stroke();c.fillStyle='rgba(255,255,255,.55)';ell(c,-s*.25,-s*.3,s*.12,s*.05,-.5)}
+    c.restore()}
+  c.lineWidth=Math.max(2,s*.04);c.strokeStyle=f.line;fruitPath(c,f,s);c.stroke();
+  const top=f.shape==='melon'?-s*.5:f.shape==='tall'?-s*.65:-s*.55;
+  if(f.stem&&look!=='icecrown'&&look!=='beanie'){c.fillStyle='#5b4218';c.fillRect(-s*.03,top-s*.12,s*.06,s*.15);c.fillStyle='#4f9a3a';ell(c,s*.12,top-s*.07,s*.12,s*.05,-.5)}
+  c.save();c.translate(0,-s*.15);drawFace(c,s*.85,shy);c.restore();
+  if(look==='dragon'){c.strokeStyle='#ffd447';c.lineWidth=Math.max(1.5,s*.025);for(const sd of [-1,1]){c.beginPath();c.moveTo(sd*s*.3,s*.05);c.quadraticCurveTo(sd*s*.6,s*.0,sd*s*.75,s*.18+Math.sin(t*3)*s*.05);c.stroke()}}
+  if(look){c.save();c.translate(0,top+s*.07);drawLook(c,s,look,t);c.restore()}}
+function planeTop(x,y,s){ctx.save();ctx.translate(x,y);ctx.scale(s,s);
+  ctx.fillStyle='rgba(0,0,0,.18)';ell(ctx,12,24,70,18);ctx.fillStyle='#cfd8e0';
+  for(const sd of [-1,1]){ctx.beginPath();ctx.moveTo(-10,sd*8);ctx.lineTo(8,sd*70);ctx.lineTo(24,sd*70);ctx.lineTo(18,sd*8);ctx.closePath();ctx.fill();ctx.beginPath();ctx.moveTo(-62,sd*3);ctx.lineTo(-56,sd*24);ctx.lineTo(-46,sd*24);ctx.lineTo(-48,sd*3);ctx.closePath();ctx.fill()}
+  ctx.fillStyle='#f4f8fb';ell(ctx,0,0,72,11);ctx.fillStyle='#e0573f';ctx.fillRect(-60,-2,110,4);ctx.fillStyle='#4b9fd6';ell(ctx,58,0,8,6);
+  ctx.restore()}
+function drawWhaleSprite(c,s,pf,t,shy){
+  c.fillStyle=pf>0?'#e9b51c':'#efe2b0';
+  c.save();c.translate(s*.86,-s*.36);c.rotate(-.6+Math.sin(t*3)*.15);c.beginPath();c.moveTo(0,0);c.quadraticCurveTo(s*.1,-s*.3,s*.32,-s*.28);c.quadraticCurveTo(s*.12,-s*.08,s*.3,s*.12);c.quadraticCurveTo(s*.1,s*.1,0,0);c.fill();c.restore();
+  drawBananaBody(c,s,pf,'#f2c12e',false);
+  c.fillStyle='#fff';circ(c,-s*.56,0,s*.07);c.fillStyle='#1b1209';circ(c,-s*.58,s*.01,s*.035);
+  if(shy){c.fillStyle='rgba(240,110,110,.6)';ell(c,-s*.5,s*.14,s*.07,s*.04)}
+  else{c.strokeStyle='#1b1209';c.lineWidth=Math.max(1.5,s*.035);c.lineCap='round';c.beginPath();c.moveTo(-s*.68,-s*.1);c.lineTo(-s*.46,-s*.06);c.stroke()}
+  c.strokeStyle='#1b1209';c.lineWidth=Math.max(1.5,s*.03);c.beginPath();c.moveTo(-s*.76,s*.1);c.quadraticCurveTo(-s*.6,s*.16,-s*.44,s*.2);c.stroke()}
+
+/* ---- Vehicles (top-down) ---- */
+function shipTop(x,y,s){ctx.save();ctx.translate(x,y);ctx.scale(s,s);
+  ctx.fillStyle='rgba(255,255,255,.35)';ctx.beginPath();ctx.moveTo(-80,-18);ctx.lineTo(-130,-34);ctx.lineTo(-130,-26);ctx.lineTo(-80,-8);ctx.moveTo(-80,18);ctx.lineTo(-130,34);ctx.lineTo(-130,26);ctx.lineTo(-80,8);ctx.fill();
+  ctx.fillStyle='#5b3518';ctx.beginPath();ctx.moveTo(-78,-26);ctx.lineTo(40,-26);ctx.quadraticCurveTo(88,0,40,26);ctx.lineTo(-78,26);ctx.quadraticCurveTo(-88,0,-78,-26);ctx.fill();
+  ctx.fillStyle='#a8743f';ctx.beginPath();ctx.moveTo(-72,-20);ctx.lineTo(38,-20);ctx.quadraticCurveTo(76,0,38,20);ctx.lineTo(-72,20);ctx.quadraticCurveTo(-80,0,-72,-20);ctx.fill();
+  ctx.strokeStyle='rgba(60,30,10,.35)';ctx.lineWidth=1.5;for(const yy of [-10,0,10]){ctx.beginPath();ctx.moveTo(-72,yy);ctx.lineTo(48,yy);ctx.stroke()}
+  ctx.fillStyle='#f6ecd2';ell(ctx,-8,0,9,34);ell(ctx,-46,0,7,24);
+  ctx.fillStyle='#5a3a1f';circ(ctx,-8,0,4);circ(ctx,-46,0,3);
+  ctx.fillStyle='#e0573f';ctx.beginPath();ctx.moveTo(-76,0);ctx.lineTo(-98,-6+Math.sin(G.t*6)*3);ctx.lineTo(-98,6+Math.sin(G.t*6)*3);ctx.fill();
+  ctx.restore()}
+function heliTop(x,y,s,spin){ctx.save();ctx.translate(x,y);ctx.scale(s,s);
+  ctx.fillStyle='rgba(0,0,0,.2)';ell(ctx,12,22,40,20);
+  ctx.fillStyle='#b43a26';ctx.fillRect(-78,-5,50,10);ctx.fillStyle='#9e3220';ctx.fillRect(-84,-14,10,28);
+  ctx.fillStyle='#d94b31';ell(ctx,0,0,38,22);ctx.fillStyle='#bfe6f5';ctx.beginPath();ctx.ellipse(18,0,16,16,0,-Math.PI/2,Math.PI/2);ctx.fill();
+  ctx.strokeStyle='#333';ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(-26,-26);ctx.lineTo(24,-26);ctx.moveTo(-26,26);ctx.lineTo(24,26);ctx.stroke();
+  const a=G.t*(spin?28:2);ctx.fillStyle=spin?'rgba(30,30,30,.15)':'rgba(0,0,0,0)';circ(ctx,0,0,62);
+  ctx.strokeStyle='#2b2b2b';ctx.lineWidth=5;ctx.lineCap='round';ctx.beginPath();ctx.moveTo(Math.cos(a)*62,Math.sin(a)*62);ctx.lineTo(-Math.cos(a)*62,-Math.sin(a)*62);ctx.moveTo(Math.cos(a+1.57)*62,Math.sin(a+1.57)*62);ctx.lineTo(-Math.cos(a+1.57)*62,-Math.sin(a+1.57)*62);ctx.stroke();
+  ctx.fillStyle='#333';circ(ctx,0,0,6);ctx.restore()}
+function palmTop(g,x,y,s){g.fillStyle='rgba(0,0,0,.2)';ell(g,x+5,y+6,20*s,12*s);g.fillStyle='#3f8f3f';for(let i=0;i<6;i++){g.save();g.translate(x,y);g.rotate(i/6*Math.PI*2+.3);ell(g,11*s,0,13*s,5*s);g.restore()}g.fillStyle='#2f7333';for(let i=0;i<6;i++){g.save();g.translate(x,y);g.rotate(i/6*Math.PI*2+.8);ell(g,8*s,0,9*s,3*s);g.restore()}g.fillStyle='#6b4423';circ(g,x,y,4*s)}
+
+/* ================= Level loading & tiles ================= */
+function tileAt(x,y){if(!L||x<0||y<0||x>=L.mw||y>=L.mh)return null;return L.grid[y][x]}
+function solidPx(px,py){const ch=tileAt(Math.floor(px/T),Math.floor(py/T));return ch===null||SOLID.has(ch)}
+function blocked(x,y,r){return solidPx(x-r,y-r)||solidPx(x+r,y-r)||solidPx(x-r,y+r)||solidPx(x+r,y+r)}
+function moveBody(o,dx,dy,mode){if(mode==='free'){o.x=clamp(o.x+dx,16,L.mw*T-16);o.y=clamp(o.y+dy,16,L.mh*T-16);return}
+  if(!blocked(o.x+dx,o.y,o.cr))o.x+=dx;if(!blocked(o.x,o.y+dy,o.cr))o.y+=dy}
+function isFloorAt(x,y){const ch=tileAt(Math.floor(x/T),Math.floor(y/T));return ch!==null&&!SOLID.has(ch)}
+
+function buildLevel(i,withEnemies){
+  const def=LEVELS[i],rows=def.map,mh=rows.length,mw=Math.max(...rows.map(r=>r.length));
+  L={def,i,mw,mh,grid:[],enemies:[],proj:[],bombs:[],waves:[],patches:[],pickups:[],rail:[],exit:null,start:{x:0,y:0},shop:null,cleared:false,nearShop:false,endT:0};
+  const spawns=[];
+  for(let y=0;y<mh;y++){const row=[];for(let x=0;x<mw;x++){let ch=rows[y][x]??'#';const left=rows[y][x-1];
+      if(ch==='.')ch=def.floor;
+      else if(ch==='@'){L.start={x:x*T+16,y:y*T+16};ch=def.floor}
+      else if(ch==='E'){L.exit={x:x*T+16,y:y*T+16};const nb=[rows[y-1]?.[x],rows[y+1]?.[x],rows[y][x-1],rows[y][x+1]];ch=nb.includes('W')&&def.exit!=='plank'?'p':def.floor}
+      else if(SPAWN[ch]){spawns.push([SPAWN[ch],x*T+16,y*T+16]);ch=(left==='W'||left==='S'||FLOOR[left])?left:def.floor}
+      row.push(ch)}L.grid.push(row)}
+  for(let y=0;y<mh;y++)for(let x=0;x<mw;x++)if(L.grid[y][x]==='W'){for(const [dx,dy] of [[1,0],[-1,0],[0,1],[0,-1]])if(tileAt(x+dx,y+dy)==='p'){L.rail.push({x:x*T+16,y:y*T+16});break}}
+  if(def.shop){let xs=[],ys=0;for(let y=0;y<mh;y++)for(let x=0;x<mw;x++)if(L.grid[y][x]==='M'){xs.push(x);ys=y}L.shop={x:(Math.min(...xs)+Math.max(...xs)+1)/2*T,y:ys*T};}
+  if(withEnemies)for(const [k,x,y] of spawns)spawn(k,x,y,false);
+  prerender();
+  G.floats=[];G.parts=[];G.banner=null;G.playT=0;G.keys={};
+  where.textContent=`Chapter ${i+1} of ${LEVELS.length} · ${def.name}`}
+function makePlayer(x,y,slot){return{isPlayer:true,x,y,vx:0,vy:0,r:11,cr:10,face:0,cd:0,swingT:0,swingAng:0,inv:0,dashT:0,dashCd:0,dashDir:0,kx:0,ky:0,jaw:0,jawLock:false,lastBite:-9,biteCd:0,poison:0,poisonTick:0,walk:0,moving:false,hp:S.maxHp,down:false,reviveT:0,slot,name:'',local:false,peer:null,s:0,e:0,q:0}}
+function spotNear(k){const o=[[0,0],[30,0],[-30,0],[0,30]][k%4];const x=L.start.x+o[0],y=L.start.y+o[1];return blocked(x,y,10)?[L.start.x,L.start.y]:[x,y]}
+const introLines=def=>def.intro.map(([w,t])=>[w,t==='CONTROLS'?(TOUCH?CONTROLS_TOUCH:CONTROLS_DESK):t]);
+function loadLevel(i,retry){buildLevel(i,true);
+  const others=PL.filter(p=>!p.local);P=makePlayer(L.start.x,L.start.y,0);P.local=true;P.name=NET.name;PL=[P,...others];
+  PL.forEach((p,k)=>{if(k){[p.x,p.y]=spotNear(k)}p.hp=S.maxHp;p.down=false;p.reviveT=0;p.inv=0;p.poison=0;p.jaw=0;p.jawLock=false});
+  S.level=i;S.done=false;L.snapshot=JSON.stringify(S);save();NET.ep++;
+  if(retry){G.mode='play'}else dialog(introLines(L.def),()=>{},'i')}
+function guestLoadLevel(i){buildLevel(i,false);NET.ents.clear();[P.x,P.y]=spotNear(P.slot||1);P.vx=P.vy=0;P.kx=P.ky=0}
+
+function prerender(){const c=document.createElement('canvas');c.width=L.mw*T*DPR;c.height=L.mh*T*DPR;const g=c.getContext('2d');g.setTransform(DPR,0,0,DPR,0,0);
+  for(let y=0;y<L.mh;y++)for(let x=0;x<L.mw;x++)drawTile(g,x,y);L.canvas=c}
+function floorDetail(g,f,x,y,px,py){
+  if(f==='g'){g.fillStyle='rgba(40,90,30,.35)';for(let i=0;i<3;i++)g.fillRect(px+hr(x,y,i)*28,py+hr(x,y,i+7)*26,2,5);if(hr(x,y,9)>.94){g.fillStyle='#f4e04d';circ(g,px+16,py+16,2.5)}}
+  if(f==='d'){g.fillStyle='rgba(150,100,40,.3)';for(let i=0;i<3;i++)circ(g,px+hr(x,y,i)*30,py+hr(x,y,i+5)*30,1.5);if(hr(x,y,8)>.95){g.fillStyle='#9a8a7a';ell(g,px+14,py+18,4,3)}}
+  if(f==='i'){g.strokeStyle='rgba(255,255,255,.7)';g.lineWidth=1;if(hr(x,y,2)>.6){g.beginPath();g.moveTo(px+hr(x,y,3)*20,py+4);g.lineTo(px+12+hr(x,y,4)*10,py+18);g.lineTo(px+6,py+28);g.stroke()}g.fillStyle='rgba(255,255,255,.25)';g.fillRect(px+4,py+4,10,3)}
+  if(f==='n'){g.fillStyle='rgba(180,210,230,.5)';for(let i=0;i<2;i++)circ(g,px+hr(x,y,i)*30,py+hr(x,y,i+5)*30,2)}
+  if(f===','){g.fillStyle='rgba(120,90,40,.28)';for(let i=0;i<3;i++)circ(g,px+hr(x,y,i)*30,py+hr(x,y,i+5)*30,1.6)}
+  if(f==='s'){g.fillStyle='rgba(170,130,60,.28)';for(let i=0;i<4;i++)circ(g,px+hr(x,y,i)*30,py+hr(x,y,i+5)*30,1.3);if(hr(x,y,11)>.97){g.fillStyle='#f2a7a0';ell(g,px+12,py+20,4,3)}}
+  if(f==='p'){g.fillStyle='rgba(60,30,10,.35)';g.fillRect(px,py+15,T,2);g.fillRect(px,py+31,T,1);g.fillRect(px+(y%2?8:24),py,2,15);g.fillRect(px+(y%2?24:8),py+16,2,15)}
+  if(f==='r'){g.strokeStyle='rgba(120,90,50,.35)';g.lineWidth=1.5;g.strokeRect(px+.75,py+.75,T-1.5,T-1.5)}
+  if(f==='c'){g.fillStyle='rgba(200,225,240,.7)';circ(g,px+hr(x,y)*32,py+hr(x,y,3)*32,7);const nb=(dx,dy)=>tileAt(x+dx,y+dy)==='S';g.fillStyle='rgba(170,205,228,.6)';if(nb(0,1))g.fillRect(px,py+T-5,T,5);if(nb(0,-1))g.fillRect(px,py,T,3)}
+  if(f==='j'){g.fillStyle='rgba(20,50,20,.35)';for(let i=0;i<3;i++)g.fillRect(px+hr(x,y,i)*28,py+hr(x,y,i+4)*26,3,5)}}
+function drawTile(g,x,y){const ch=tileAt(x,y),px=x*T,py=y*T,def=L.def;const floor=FLOOR[ch]?ch:def.floor;
+  g.fillStyle=FLOOR[floor];g.fillRect(px,py,T,T);floorDetail(g,floor,x,y,px,py);
+  switch(ch){
+    case 'W':{g.fillStyle='#2a86ab';g.fillRect(px,py,T,T);if(hr(x,y)>.6){g.fillStyle='rgba(255,255,255,.1)';g.fillRect(px+4,py+10,14,2)}
+      g.fillStyle='#bfe8f3';const nb=(dx,dy)=>{const t=tileAt(x+dx,y+dy);return t!==null&&t!=='W'};
+      if(nb(0,-1))g.fillRect(px,py,T,4);if(nb(0,1))g.fillRect(px,py+T-4,T,4);if(nb(-1,0))g.fillRect(px,py,4,T);if(nb(1,0))g.fillRect(px+T-4,py,4,T);break}
+    case 'S':{g.fillStyle='#9ad3f2';g.fillRect(px,py,T,T);if(hr(x,y)>.72){g.fillStyle='rgba(255,255,255,.55)';ell(g,px+16,py+16,13,5)}break}
+    case '#':{if(def.wall==='stone'){g.fillStyle='#a9824f';g.fillRect(px,py,T,T);g.strokeStyle='rgba(70,45,20,.45)';g.lineWidth=1.5;g.beginPath();g.moveTo(px,py+.5);g.lineTo(px+T,py+.5);g.moveTo(px,py+16.5);g.lineTo(px+T,py+16.5);const a=y%2?8:24,b=y%2?24:8;g.moveTo(px+a,py);g.lineTo(px+a,py+16);g.moveTo(px+b,py+16);g.lineTo(px+b,py+32);g.stroke()}
+      else if(def.wall==='adobe'){g.fillStyle='#c98d55';g.fillRect(px,py,T,T);g.strokeStyle='rgba(110,60,20,.4)';g.lineWidth=1.5;g.beginPath();g.moveTo(px,py+10.5);g.lineTo(px+T,py+10.5);g.moveTo(px,py+21.5);g.lineTo(px+T,py+21.5);g.stroke()}
+      else if(def.wall==='palace'){g.fillStyle='#d98c6a';g.fillRect(px,py,T,T);g.fillStyle='#f2c6a8';g.fillRect(px,py,T,3);g.strokeStyle='rgba(120,50,30,.35)';g.lineWidth=1.5;g.beginPath();g.arc(px+16,py+32,10,Math.PI,0);g.stroke()}
+      else if(def.wall==='china'){g.fillStyle='#a8322a';g.fillRect(px,py,T,T);g.fillStyle='#ffd447';g.fillRect(px,py,T,4);g.fillStyle='rgba(0,0,0,.15)';g.fillRect(px+(x%2?0:16),py+8,16,24)}
+      else{const col=def.wall==='hedge'?['#2f6b35','#3f8a45']:def.wall==='jungle'?['#183d24','#24563a']:['#2b6e3a','#3c8b4a'];g.fillStyle=col[0];g.fillRect(px,py,T,T);g.fillStyle=col[1];circ(g,px+8+hr(x,y)*6,py+10,9);circ(g,px+22,py+20+hr(x,y,2)*4,10)}break}
+    case 'T':g.fillStyle='rgba(0,0,0,.22)';ell(g,px+19,py+22,14,9);g.fillStyle='#2f7a35';circ(g,px+16,py+14,14);g.fillStyle='#45984a';circ(g,px+12,py+10,8);break;
+    case 'H':{g.fillStyle='#b5482e';g.fillRect(px,py,T,T);g.strokeStyle='rgba(80,20,10,.35)';g.lineWidth=1;for(let k=6;k<T;k+=8){g.beginPath();g.moveTo(px,py+k);g.lineTo(px+T,py+k);g.stroke()}
+      if(tileAt(x,y+1)!=='H'){g.fillStyle='#f1e2c2';g.fillRect(px,py+T-9,T,9);if(hr(x,y)>.5){g.fillStyle='#5a3a22';g.fillRect(px+11,py+T-9,10,9)}}
+      if(tileAt(x,y-1)!=='H'){g.fillStyle='#8f3520';g.fillRect(px,py,T,3)}break}
+    case 'C':g.fillStyle='rgba(0,0,0,.2)';circ(g,px+19,py+19,13);g.fillStyle='#efe2c2';circ(g,px+16,py+16,13);g.strokeStyle='#b39a6e';g.lineWidth=2;g.beginPath();g.arc(px+16,py+16,8,0,7);g.stroke();break;
+    case 'P':palmTop(g,px+16,py+16,1);break;
+    case 'R':g.fillStyle='rgba(0,0,0,.2)';ell(g,px+18,py+20,13,9);g.fillStyle='#8e9599';ell(g,px+16,py+16,13,11);g.fillStyle='#b3babd';ell(g,px+12,py+12,6,4);break;
+    case 'B':g.fillStyle='#3b8a3f';circ(g,px+10,py+18,9);circ(g,px+22,py+18,9);circ(g,px+16,py+11,9);g.fillStyle='#d94b4b';circ(g,px+12,py+14,2);circ(g,px+21,py+19,2);break;
+    case 'X':g.fillStyle='#7a4a24';circ(g,px+16,py+16,12);g.strokeStyle='#4a2a12';g.lineWidth=2;g.beginPath();g.arc(px+16,py+16,8,0,7);g.stroke();g.beginPath();g.arc(px+16,py+16,12,0,7);g.stroke();break;
+    case 'm':g.fillStyle='rgba(0,0,0,.25)';circ(g,px+19,py+19,10);g.fillStyle='#5a3a1f';circ(g,px+16,py+16,9);g.fillStyle='rgba(246,236,210,.9)';g.fillRect(px+2,py+13,28,6);break;
+    case 'Y':g.fillStyle='rgba(0,0,0,.22)';ell(g,px+19,py+22,14,9);g.fillStyle='#b8391f';circ(g,px+16,py+14,15);g.fillStyle='#e0702a';circ(g,px+11,py+10,8);g.fillStyle='#f2a33a';circ(g,px+20,py+8,4);break;
+    case 'A':{g.fillStyle='#d9a066';g.fillRect(px,py,T,T);g.fillStyle='rgba(120,70,30,.25)';g.fillRect(px,py,T,2);if(tileAt(x,y+1)!=='A'){g.fillStyle='#b9814a';g.fillRect(px,py+T-10,T,10);if(hr(x,y)>.5){g.fillStyle='#5a3a22';g.fillRect(px+11,py+T-10,10,10)}}if(tileAt(x,y-1)!=='A'){g.fillStyle='#e8b880';g.fillRect(px,py,T,4)}break}
+    case 'Q':g.fillStyle='rgba(0,0,0,.2)';ell(g,px+18,py+28,10,4);g.fillStyle='#4f8f3a';rr(g,px+11,py+3,10,27,5);g.fill();rr(g,px+3,py+10,8,6,3);g.fill();rr(g,px+3,py+4,6,10,3);g.fill();rr(g,px+21,py+14,8,6,3);g.fill();rr(g,px+23,py+7,6,11,3);g.fill();g.fillStyle='#f2e6b0';circ(g,px+16,py+9,1);circ(g,px+15,py+18,1);break;
+    case 'U':for(const bx of [6,15,24]){g.fillStyle='#5fa548';g.fillRect(px+bx,py,5,T);g.fillStyle='#3f7a30';g.fillRect(px+bx,py+(bx%2?10:20),5,2)}g.fillStyle='#7cc35c';ell(g,px+12,py+8,6,2,-.5);break;
+    case 'L':g.fillStyle='rgba(0,0,0,.2)';ell(g,px+18,py+24,8,4);g.fillStyle='#3a2414';g.fillRect(px+14,py+12,4,18);g.fillStyle='#d62d2d';ell(g,px+16,py+11,9,8);g.fillStyle='#ffd447';g.fillRect(px+9,py+3,14,2);g.fillRect(px+9,py+18,14,2);g.fillStyle='rgba(255,220,120,.5)';circ(g,px+16,py+11,4);break;
+    case 'I':g.fillStyle='rgba(0,0,0,.12)';rr(g,px+3,py+5,28,27,5);g.fill();g.fillStyle='#bfe6f5';rr(g,px+1,py+1,29,28,5);g.fill();g.strokeStyle='#8cc7e0';g.lineWidth=2;g.stroke();g.fillStyle='rgba(255,255,255,.75)';g.fillRect(px+6,py+5,12,3);g.fillRect(px+6,py+10,4,8);break;
+    case 'M':for(let k=0;k<4;k++){g.fillStyle=k%2?'#f4e4bf':'#e0573f';g.fillRect(px+k*8,py,8,T-6)}g.fillStyle='#8b5a2b';g.fillRect(px,py+T-8,T,8);break;
+  }}
+
+/* ================= Entities ================= */
+let EID=0;
+function spawn(key,x,y,minion){const d=ENEMY[key];const e={id:++EID,key,def:d,x,y,r:15*d.size,cr:Math.min(14,15*d.size*.8),hp:d.hp,maxHp:d.hp,peel:d.peel||0,maxPeel:d.peel||0,t:Math.random()*5,cd:rnd(.8,2),shootCd:2,summonCd:7,waveCd:3,alpha:1,dead:false,wt:0,wa:0,pause:false,flip:false,hitFlash:0,peeledT:0,windT:0,dashT:0,dashDir:0,minion,state:'swim',upT:0,tx:x,ty:y,ang:Math.random()*6,aggro:minion,landed:false,moving:false,trail:[],atkCd:2.5,atkI:0,enraged:false,slam:null,air:0};
+  if(['whale','flyer','blimp'].includes(d.ai))e.aggro=true;if(d.ai==='whale')pickWhaleTarget(e);L.enemies.push(e);return e}
+function pickWhaleTarget(e){const r=L.rail;if(!r.length){e.tx=e.x;e.ty=e.y;return}const sorted=r.map(p=>[p,Math.hypot(p.x-P_x(),p.y-P_y())]).sort((a,b)=>a[1]-b[1]).slice(0,6);const p=sorted[Math.floor(Math.random()*sorted.length)][0];e.tx=p.x;e.ty=p.y}
+const P_x=()=>P?P.x:L.start.x,P_y=()=>P?P.y:L.start.y;
+function shoot(x,y,a,sp,kind,dmg,poison){L.proj.push({x,y,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp,r:kind==='coconut'?8:7,kind,dmg,poison:poison||0,life:3.2})}
+function addFloat(x,y,text,color){G.floats.push({id:++G.fid,x,y,text,color,t0:G.t})}
+function nearestPlayer(x,y){let best=null,bd=1e9;for(const p of PL){if(p.down)continue;const d=Math.hypot(p.x-x,p.y-y);if(d<bd){bd=d;best=p}}return best}
+function addParts(x,y,color,n,sp=140){if(RM)n=Math.ceil(n/3);for(let i=0;i<n;i++){const a=Math.random()*6.28,v=rnd(40,sp);G.parts.push({x,y,vx:Math.cos(a)*v,vy:Math.sin(a)*v,life:rnd(.35,.7),max:.7,color,r:rnd(2,4)})}}
+function banner(text,dur=2.6){G.banner={text,until:G.t+dur}}
+function hint(text){if(P&&G.t-G.hintT>1.1){G.hintT=G.t;addFloat(P.x,P.y-62,text,'#fff4c9')}}
+
+/* ================= Player actions ================= */
+function hittable(e){return!e.dead&&(e.def.ai!=='whale'||e.state==='up')}
+function isPeeled(e){return e.maxPeel>0&&e.peel<=0}
+function swing(pl){const P=pl;if(P.cd>0||P.down)return;P.cd=.32;P.swingT=.2;
+  let best=null,bd=110;for(const e of L.enemies){if(!hittable(e))continue;const d=Math.hypot(e.x-P.x,e.y-P.y)-e.r;if(d<bd){bd=d;best=e}}
+  if(best)P.face=Math.atan2(best.y-P.y,best.x-P.x);P.swingAng=P.face;
+  for(const e of L.enemies){if(!hittable(e))continue;const dd=Math.hypot(e.x-P.x,e.y-P.y);if(dd>e.r+50)continue;const a=Math.atan2(e.y-P.y,e.x-P.x);if(dd>e.r+14&&Math.abs(angDiff(a,P.swingAng))>1.25)continue;hitEnemy(e,P)}}
+function hitEnemy(e,P){const d=e.def,a=Math.atan2(e.y-P.y,e.x-P.x);e.hitFlash=.12;
+  if(e.maxPeel>0&&e.peel>0){
+    if(d.needDiamond&&!S.sword){addFloat(e.x,e.y-e.r-12,'CLANG!','#ffffff');addParts(e.x,e.y,'#ffffff',5);return}
+    const dmg=roll(power()*(S.sword?2:1));e.peel=Math.max(0,e.peel-dmg);addFloat(e.x,e.y-e.r-12,`-${dmg} ${d.skin||'peel'}`,'#f6c624');addParts(e.x,e.y,d.fruit?FRUIT[d.fruit].skin:'#f6c624',7);
+    if(e.peel===0){e.peeledT=0;e.windT=0;e.dashT=0;addFloat(e.x,e.y-e.r-38,SKIN_OFF[d.skin||'peel']+(TOUCH?' Eat it!':' Eat it (K)'),'#fff4c9');if(d.ai==='whale')e.upT=Math.max(e.upT,2)}
+    if(!d.boss)knock(e,a,22)}
+  else if(e.maxPeel>0){if(G.t-(e.hintT||0)>1){e.hintT=G.t;addFloat(e.x,e.y-e.r-12,'Eat it!','#fff4c9')}}
+  else{const dmg=roll(power());e.hp-=dmg;addFloat(e.x,e.y-e.r-12,`-${dmg}`,'#ffffff');addParts(e.x,e.y,d.color,6);if(!d.boss)knock(e,a,26);if(e.hp<=0)kill(e)}}
+function knock(e,a,f){if(e.def.ai==='whale')return;moveBody(e,Math.cos(a)*f,Math.sin(a)*f,(e.def.ai==='flyer'||e.def.ai==='blimp')&&!e.landed?'free':'walk')}
+function eat(pl){const P=pl;if(P.biteCd>0||P.down)return;if(P.jawLock){if(P.local)hint('Jaw too tired! Wait a moment.');return}
+  let best=null,bd=1e9;for(const e of L.enemies){if(!hittable(e)||!isPeeled(e))continue;const dd=Math.hypot(e.x-P.x,e.y-P.y)-e.r;if(dd<34&&dd<bd){bd=dd;best=e}}
+  if(!best){P.biteCd=.2;if(P.local)hint(L.enemies.some(e=>hittable(e)&&isPeeled(e))?'Get closer to eat':'Peel an enemy first');return}
+  const d=best.def,dmg=roll(power()*1.6*(d.tough||1));best.hp-=dmg;best.hitFlash=.1;
+  P.jaw=Math.min(100,P.jaw+22+(d.tough?12:0));P.lastBite=G.t;P.biteCd=.28;P.face=Math.atan2(best.y-P.y,best.x-P.x);
+  addFloat(best.x,best.y-best.r-12,`CHOMP -${dmg}`,'#fff4c9');addParts(best.x,best.y,d.fruit?FRUIT[d.fruit].flesh:'#fbf0c6',8);
+  if(d.tough&&Math.random()<.3)addFloat(best.x,best.y-best.r-40,'So chewy!','#ef8a2c');
+  if(P.jaw>=100){P.jawLock=true;addFloat(P.x,P.y-64,'Jaw tired!','#ef8a2c')}
+  if(best.hp<=0)kill(best)}
+function dash(pl){const P=pl;if(P.dashCd>0||P.down)return;P.dashT=.17;P.dashCd=.7;P.dashDir=P.face;addParts(P.x,P.y+6,'rgba(255,255,255,.8)',6,80)}
+function snack(pl){const P=pl;if(P.down)return;if(S.snacks<=0){if(P.local)hint('No snacks left');return}if(P.hp>=S.maxHp){if(P.local)hint('Already at full health');return}S.snacks--;const h=Math.round(S.maxHp*.5);P.hp=Math.min(S.maxHp,P.hp+h);addFloat(P.x,P.y-60,`+${h}`,'#9be37a');addParts(P.x,P.y,'#9be37a',8)}
+function hurtPlayer(pl,dmg,fx,fy,poison){if(!pl||pl.down||pl.inv>0||pl.dashT>0||G.mode!=='play')return;pl.hp=Math.max(0,pl.hp-dmg);pl.inv=.8;
+  if(pl.local){const a=Math.atan2(pl.y-fy,pl.x-fx);pl.kx=Math.cos(a)*260;pl.ky=Math.sin(a)*260;G.shake=Math.max(G.shake,.2)}
+  addFloat(pl.x,pl.y-50,`-${dmg}`,'#ff7b6b');
+  if(poison&&Math.random()<poison){pl.poison=4;pl.poisonTick=1;addFloat(pl.x,pl.y-74,'Poisoned!','#b9e27a')}
+  if(pl.hp<=0){pl.down=true;pl.reviveT=0;pl.poison=0;addFloat(pl.x,pl.y-80,PL.length>1?'Knocked out! Help!':'Knocked out!','#ff7b6b');if(PL.every(p=>p.down))die()}}
+function gainXP(n){S.xp+=n;while(S.xp>=S.lvl*20){S.xp-=S.lvl*20;S.lvl++;S.maxHp+=10;S.atk+=3;PL.forEach(p=>{if(!p.down)p.hp=S.maxHp});addFloat(P.x,P.y-80,'LEVEL UP!','#f6c624');banner(`Level ${S.lvl}! More health and strength.`)}}
+function kill(e){if(e.dead)return;e.dead=true;e.hp=0;const d=e.def;
+  addParts(e.x,e.y,d.ai==='snake'?d.color:d.fruit?FRUIT[d.fruit].flesh:'#fff4c9',18,200);addFloat(e.x,e.y-e.r-24,d.ai==='snake'?'Defeated!':'Eaten!','#9be37a');
+  gainXP(Math.round(d.xp*(e.minion?.5:1)));
+  const coins=Math.round(d.coins*(e.minion?.3:1));const n=Math.min(6,Math.ceil(coins/5));for(let i=0;i<n;i++)L.pickups.push({kind:'coin',val:Math.ceil(coins/n),x:e.x,y:e.y,vx:rnd(-120,120),vy:rnd(-120,120)});
+  const sn=d.snack||(!e.minion&&Math.random()<.15?1:0);for(let i=0;i<sn;i++)L.pickups.push({kind:'snack',x:e.x,y:e.y,vx:rnd(-90,90),vy:rnd(-90,90)});
+  if(d.drop==='diamond'){S.diamond=true;L.pickups.push({kind:'diamond',x:e.x,y:e.y,vx:0,vy:0})}
+  if(d.boss){G.shake=.45;for(const m of L.enemies)if(m.minion&&!m.dead){m.dead=true;addParts(m.x,m.y,'#ffffff',8)}}}
+function summon(e,key){for(let k=0;k<2;k++){let x=e.x,y=e.y;
+    if(ENEMY[key].ai==='flyer'){const a=Math.random()*6.28;x=clamp(e.x+Math.cos(a)*220,24,L.mw*T-24);y=clamp(e.y+Math.sin(a)*220,24,L.mh*T-24)}
+    else for(let tries=0;tries<10;tries++){const a=Math.random()*6.28;x=e.x+Math.cos(a)*(e.r+34);y=e.y+Math.sin(a)*(e.r+34);if(!blocked(x,y,14))break}
+    spawn(key,x,y,true);addParts(x,y,'#ffffff',8)}
+  addFloat(e.x,e.y-e.r-44,{snake:'Guards, get them!',sky:'Sky bananas, attack!',melon:'¡Amigos, ayuda!',apple:'Apples, roll out!',lantern:'Lanterns, burn bright!',plum:'Plums, freeze them!'}[key]||'Minions, help me!','#ffffff')}
+function bossAttack(e,kind,ang,P){const d=e.def,mad=e.enraged;
+  if(kind==='spread'){const n=mad?5:3;for(let k=0;k<n;k++)shoot(e.x,e.y,ang+(k-(n-1)/2)*.2,215,d.shot,d.shotDmg,d.shot==='venom'?.3:0)}
+  if(kind==='ring'){const n=mad?14:10;for(let k=0;k<n;k++)shoot(e.x,e.y,k/n*Math.PI*2+e.t,165,d.shot,d.shotDmg,d.shot==='venom'?.3:0)}
+  if(kind==='wave'){L.waves.push({x:e.x,y:e.y,rad:e.r,max:360,dmg:d.dmg,hit:false});G.shake=Math.max(G.shake,.3)}
+  if(kind==='rain'){const n=mad?6:4;L.bombs.push({x:P.x,y:P.y,t:1.1,max:1.1,r:36,dmg:d.shotDmg+3,kind:d.rain});for(let k=1;k<n;k++){const t=rnd(.9,1.7);L.bombs.push({x:clamp(P.x+rnd(-150,150),20,L.mw*T-20),y:clamp(P.y+rnd(-120,120),20,L.mh*T-20),t,max:t,r:36,dmg:d.shotDmg+3,kind:d.rain})}}
+  if(kind==='freeze'){for(let k=0;k<(mad?3:2);k++)L.patches.push({x:P.x+rnd(-110,110),y:P.y+rnd(-110,110),r:60,t:7})}
+  if(kind==='summon'){if(L.enemies.filter(m=>m.minion&&!m.dead).length<(mad?3:2))summon(e,d.summon)}
+  if(kind==='charge'){if(isPeeled(e)&&d.ai!=='dragon')return bossAttack(e,'spread',ang,P);e.windT=d.ai==='snake'?.3:.5}
+  if(kind==='slam'){if(d.ai!=='walker')return bossAttack(e,'ring',ang,P);const tx=blocked(P.x,P.y,e.cr)?e.x:P.x,ty=blocked(P.x,P.y,e.cr)?e.y:P.y;e.slam={t:0,dur:1.05,fx:e.x,fy:e.y,tx,ty};e.windT=0;e.dashT=0}}
+
+/* ================= Update ================= */
+function tickPlayer(pl,dt){pl.cd-=dt;pl.inv-=dt;pl.dashCd-=dt;pl.biteCd-=dt;pl.swingT-=dt;
+  if(G.t-pl.lastBite>.6&&pl.jaw>0)pl.jaw=Math.max(0,pl.jaw-30*dt);if(pl.jawLock&&pl.jaw<45)pl.jawLock=false;
+  if(pl.poison>0&&!pl.down){pl.poison-=dt;pl.poisonTick-=dt;if(pl.poisonTick<=0){pl.poisonTick=1;pl.hp=Math.max(1,pl.hp-2);addFloat(pl.x,pl.y-50,'-2','#b9e27a')}}}
+function updPlayer(dt){const guest=NET.role==='guest';
+  if(guest){P.cd-=dt;P.dashCd-=dt;P.biteCd-=dt;P.swingT-=dt}
+  if(P.down){P.moving=false;P.dashT=0;return}
+  let mx=(G.keys.right?1:0)-(G.keys.left?1:0)+G.joy.x,my=(G.keys.down?1:0)-(G.keys.up?1:0)+G.joy.y;const m=Math.hypot(mx,my);if(m>1){mx/=m;my/=m}
+  P.moving=m>.15;if(P.moving)P.face=Math.atan2(my,mx);
+  const slow=L.patches.some(p=>Math.hypot(P.x-p.x,P.y-p.y)<p.r)?.45:1,onIce=tileAt(Math.floor(P.x/T),Math.floor(P.y/T))==='i'&&!S.boots;
+  const tvx=mx*155*slow,tvy=my*155*slow;if(onIce){const k=Math.min(1,dt*2.2);P.vx+=(tvx-P.vx)*k;P.vy+=(tvy-P.vy)*k}else{P.vx=tvx;P.vy=tvy}
+  if(P.dashT>0){P.dashT-=dt;moveBody(P,Math.cos(P.dashDir)*440*dt,Math.sin(P.dashDir)*440*dt)}else{const ox=P.x,oy=P.y;moveBody(P,P.vx*dt,P.vy*dt);if(P.x===ox)P.vx=0;if(P.y===oy)P.vy=0}
+  if(Math.abs(P.kx)+Math.abs(P.ky)>4){moveBody(P,P.kx*dt,P.ky*dt);const k=Math.pow(.002,dt);P.kx*=k;P.ky*=k}else{P.kx=P.ky=0}
+  if(P.moving)P.walk+=dt*12;
+  if(G.pressed.has('attack'))guest?guestAct('s'):swing(P);if(G.pressed.has('eat'))guest?guestAct('e'):eat(P);if(G.pressed.has('dash'))dash(P);if(G.pressed.has('snack'))guest?guestAct('q'):snack(P)}
+function updEnemy(e,dt){const d=e.def;e.t+=dt;e.hitFlash-=dt;
+  if(e.dead){e.alpha-=dt*2.2;return}
+  const P=nearestPlayer(e.x,e.y);if(!P)return;
+  const dx=P.x-e.x,dy=P.y-e.y,dist=Math.hypot(dx,dy)||1,ang=Math.atan2(dy,dx),peeled=isPeeled(e);
+  if(peeled){e.peeledT+=dt;if(e.peeledT>(d.regrow||6)){e.peel=Math.round(e.maxPeel*(d.regrowFrac||.5));e.peeledT=0;addFloat(e.x,e.y-e.r-20,SKIN_BACK[d.skin||'peel'],'#f6c624')}}
+  e.cd-=dt;e.moving=false;
+  if(d.boss&&!e.minion&&!e.enraged&&e.hp<e.maxHp*.5){e.enraged=true;G.shake=.45;banner(`${d.name.split(',')[0]} is furious!`);addParts(e.x,e.y,'#ff5a4a',24,260)}
+  const spd=e.enraged?1.15:1;
+  if(e.slam){const sl=e.slam;sl.t+=dt;const p=Math.min(1,sl.t/sl.dur);e.x=lerp(sl.fx,sl.tx,p);e.y=lerp(sl.fy,sl.ty,p);e.air=Math.sin(p*Math.PI)*150;
+    if(p>=1){e.slam=null;e.air=0;G.shake=.5;L.waves.push({x:e.x,y:e.y,rad:e.r,max:230,dmg:d.dmg,hit:false});addParts(e.x,e.y,'#d8c08a',26,260);for(const pl of PL)if(!pl.down&&Math.hypot(pl.x-e.x,pl.y-e.y)<e.r+40)hurtPlayer(pl,d.dmg,e.x,e.y)}
+    return}
+  const mv=(a,sp,mode)=>{sp*=spd;const vx=Math.cos(a)*sp*dt,vy=Math.sin(a)*sp*dt;if(Math.abs(vx)>.05)e.flip=vx<0;moveBody(e,vx,vy,mode);e.moving=true};
+  switch(d.ai){
+    case 'walker':{
+      if(!e.aggro&&dist<d.sight)e.aggro=true;
+      if(peeled&&!d.boss){mv(ang+Math.PI+Math.sin(e.t*2)*.6,d.speed*.45,'walk');break}
+      if(e.windT>0){e.windT-=dt;e.flip=dx<0;if(e.windT<=0){e.dashT=.38;e.dashDir=ang}break}
+      if(e.dashT>0){e.dashT-=dt;mv(e.dashDir,d.speed*3.4,'walk');break}
+      if(e.aggro){if(d.dash&&e.cd<=0&&dist<220&&!peeled){e.windT=.45;e.cd=d.dash;break}mv(ang,d.speed*(peeled?.6:1),'walk')}
+      else{e.wt-=dt;if(e.wt<=0){e.wa=Math.random()*6.28;e.wt=rnd(1,2.5);e.pause=Math.random()<.4}if(!e.pause)mv(e.wa,d.speed*.4,'walk')}
+      break}
+    case 'flyer':case 'blimp':{
+      if(peeled){if(!e.landed){if(isFloorAt(e.x,e.y)&&!blocked(e.x,e.y,e.cr))e.landed=true;else mv(Math.atan2(L.start.y-e.y,L.start.x-e.x),110,'free')}else mv(ang+Math.PI+Math.sin(e.t*2)*.6,30,'walk');break}
+      if(e.landed){e.landed=false}
+      if(e.windT>0){e.windT-=dt;e.flip=dx<0;if(e.windT<=0){e.dashT=.5;e.dashDir=ang}break}
+      if(e.dashT>0){e.dashT-=dt;mv(e.dashDir,340,'free');break}
+      e.ang+=dt*.8;const R=d.ai==='blimp'?170:130,gx=P.x+Math.cos(e.ang)*R,gy=P.y+Math.sin(e.ang)*R,gd=Math.hypot(gx-e.x,gy-e.y);
+      if(gd>6)mv(Math.atan2(gy-e.y,gx-e.x),Math.min(d.speed,gd*3),'free');
+      if(d.ai==='flyer'&&e.cd<=0&&dist<280){e.windT=.4;e.cd=rnd(2.2,3.2)}
+      if(d.ai==='blimp'&&e.cd<=0){e.cd=1.7;L.bombs.push({x:P.x+rnd(-24,24),y:P.y+rnd(-24,24),t:1.1,max:1.1,r:46,dmg:8,kind:'banana'})}
+      break}
+    case 'whale':{
+      if(e.state==='swim'){const dd=Math.hypot(e.tx-e.x,e.ty-e.y);if(dd<6){e.state='up';e.upT=d.boss?4.2:3.4;e.cd=.8;addParts(e.x,e.y,'#bfe8f3',12);if(d.boss)bossAttack(e,'ring',ang,P)}else mv(Math.atan2(e.ty-e.y,e.tx-e.x),d.speed,'free')}
+      else{e.flip=P.x<e.x;if(peeled)e.upT=Math.max(e.upT,.5);else e.upT-=dt;
+        if(e.cd<=0&&!peeled){e.cd=e.enraged?.8:1.2;if(d.boss)for(const o of [-.25,0,.25])shoot(e.x,e.y,ang+o,215,'spout',d.shotDmg);else shoot(e.x,e.y,ang,215,'spout',d.dmg)}
+        if(e.upT<=0){e.state='swim';addParts(e.x,e.y,'#bfe8f3',10);pickWhaleTarget(e)}}
+      break}
+    case 'snake':{
+      if(!e.aggro&&dist<d.sight)e.aggro=true;
+      if(e.windT>0){e.windT-=dt;e.ang=ang;if(e.windT<=0){e.dashT=.28;e.dashDir=ang}break}
+      if(e.dashT>0){e.dashT-=dt;mv(e.dashDir,d.speed*2.8,'walk');e.ang=e.dashDir;break}
+      if(e.aggro){const a=ang+Math.sin(e.t*6)*.7;mv(a,d.speed,'walk');e.ang=a;if(e.cd<=0&&dist<110){e.windT=.22;e.cd=rnd(1.4,2.2)}}
+      else{e.wt-=dt;if(e.wt<=0){e.wa=Math.random()*6.28;e.wt=rnd(1,2.5)}mv(e.wa,d.speed*.35,'walk');e.ang=e.wa}
+      break}
+    case 'shooter':{
+      if(!e.aggro&&dist<d.sight)e.aggro=true;
+      if(peeled){mv(ang+Math.PI+Math.sin(e.t*2)*.6,d.speed*.45,'walk');break}
+      if(!e.aggro){e.wt-=dt;if(e.wt<=0){e.wa=Math.random()*6.28;e.wt=rnd(1,2.5)}mv(e.wa,d.speed*.4,'walk');break}
+      mv(dist>230?ang:dist<170?ang+Math.PI:ang+Math.PI/2*Math.sign(Math.sin(e.t*.7)||1),d.speed,'walk');e.flip=dx<0;
+      if(e.cd<=0){e.cd=rnd(1.5,2.3);shoot(e.x,e.y,ang,235,d.shot,d.shotDmg)}
+      break}
+    case 'dragon':{
+      e.trail.unshift([e.x,e.y]);if(e.trail.length>130)e.trail.length=130;
+      if(!e.aggro){if(dist<d.sight)e.aggro=true;else{e.ang+=dt*.6;mv(e.ang,50,'free');break}}
+      if(e.windT>0){e.windT-=dt;e.flip=dx<0;if(e.windT<=0){e.dashT=.7;e.dashDir=ang}break}
+      if(e.dashT>0){e.dashT-=dt;mv(e.dashDir,380,'free');break}
+      e.ang+=dt*(peeled?.35:.9);const R=peeled?70:190,gx=P.x+Math.cos(e.ang)*R,gy=P.y+Math.sin(e.ang)*R*.7,gd=Math.hypot(gx-e.x,gy-e.y);
+      if(gd>6)mv(Math.atan2(gy-e.y,gx-e.x),Math.min(d.speed*(peeled?.4:1),gd*3),'free');
+      const segR=24*d.size*.42;for(let i=1;i<=9;i++){const pt=e.trail[i*12];if(pt)for(const pl of PL)if(!pl.down&&Math.hypot(pl.x-pt[0],pl.y-pt[1])<segR+pl.r-4)hurtPlayer(pl,Math.round(d.dmg*.7),pt[0],pt[1])}
+      break}
+  }
+  if(e.aggro&&!e.minion&&d.attacks&&!e.slam){e.atkCd-=dt;if(e.atkCd<=0){bossAttack(e,d.attacks[e.atkI++%d.attacks.length],ang,P);e.atkCd=d.rate*(e.enraged?.8:1)}}
+  const canHurt=d.ai!=='whale'&&!(peeled&&!d.boss);
+  if(canHurt)for(const pl of PL)if(!pl.down&&Math.hypot(pl.x-e.x,pl.y-e.y)<e.r+pl.r-2)hurtPlayer(pl,d.dmg,e.x,e.y,d.poison)}
+
+function update(dt){
+  G.playT+=dt;for(const pl of PL)tickPlayer(pl,dt);updPlayer(dt);if(G.mode!=='play')return;
+  for(const pl of PL){if(!pl.down)continue;const helper=PL.some(o=>o!==pl&&!o.down&&Math.hypot(o.x-pl.x,o.y-pl.y)<48);pl.reviveT=helper?pl.reviveT+dt:Math.max(0,pl.reviveT-dt*.5);
+    if(pl.reviveT>=1.6){pl.down=false;pl.hp=Math.round(S.maxHp*.4);pl.inv=1.5;pl.reviveT=0;addFloat(pl.x,pl.y-60,'Revived!','#9be37a');addParts(pl.x,pl.y,'#9be37a',14)}}
+  for(const e of L.enemies)updEnemy(e,dt);
+  if(G.mode!=='play')return;
+  L.enemies=L.enemies.filter(e=>!(e.dead&&e.alpha<=0));
+  const alive=()=>PL.filter(p=>!p.down);
+  for(const p of L.proj){p.x+=p.vx*dt;p.y+=p.vy*dt;p.life-=dt;for(const pl of alive())if(p.life>0&&pl.inv<=0&&pl.dashT<=0&&Math.hypot(p.x-pl.x,p.y-pl.y)<p.r+pl.r){hurtPlayer(pl,p.dmg,p.x-p.vx,p.y-p.vy,p.poison);p.life=0}}
+  L.proj=L.proj.filter(p=>p.life>0);
+  for(const b of L.bombs){b.t-=dt;if(b.t<=0){addParts(b.x,b.y,'#f6c624',16,220);G.shake=Math.max(G.shake,.15);for(const pl of alive())if(Math.hypot(pl.x-b.x,pl.y-b.y)<b.r)hurtPlayer(pl,b.dmg||8,b.x,b.y)}}
+  for(const p of L.patches)p.t-=dt;L.patches=L.patches.filter(p=>p.t>0);
+  L.bombs=L.bombs.filter(b=>b.t>0);
+  for(const w of L.waves){w.rad+=230*dt;if(!w.hits)w.hits=[];for(const pl of alive()){const d=Math.hypot(pl.x-w.x,pl.y-w.y);if(!w.hits.includes(pl)&&Math.abs(d-w.rad)<14&&pl.dashT<=0&&pl.inv<=0){w.hits.push(pl);hurtPlayer(pl,w.dmg,w.x,w.y)}}}
+  L.waves=L.waves.filter(w=>w.rad<w.max);
+  if(G.mode!=='play')return;
+  for(const p of L.pickups){const pl=nearestPlayer(p.x,p.y);if(!pl)break;const d=Math.hypot(pl.x-p.x,pl.y-p.y);
+    if(d<80){const a=Math.atan2(pl.y-p.y,pl.x-p.x);p.vx=Math.cos(a)*320;p.vy=Math.sin(a)*320}
+    p.x+=p.vx*dt;p.y+=p.vy*dt;p.vx*=Math.pow(.02,dt);p.vy*=Math.pow(.02,dt);
+    if(d<18){p.got=true;if(p.kind==='coin')S.coins+=p.val;if(p.kind==='snack'){S.snacks++;addFloat(pl.x,pl.y-60,'+1 snack','#9be37a')}if(p.kind==='diamond'){addFloat(pl.x,pl.y-70,'A diamond!','#7fe8f4');banner('You found the Snake King\u2019s diamond!')}}}
+  L.pickups=L.pickups.filter(p=>!p.got);
+  const cleared=L.def.shop?S.sword:L.enemies.every(e=>e.dead);
+  if(cleared&&!L.cleared){L.cleared=true;if(L.def.clearText)banner(L.def.clearText,3.5)}
+  if(L.cleared&&L.exit&&alive().some(pl=>Math.hypot(pl.x-L.exit.x,pl.y-L.exit.y)<28))leaveLevel();
+  if(L.def.final&&L.cleared&&!L.endT)L.endT=G.t+1.6;
+  if(L.endT&&G.t>L.endT){L.endT=Infinity;finishGame()}
+  if(L.shop&&!P.down){const d=Math.hypot(P.x-L.shop.x,P.y-(L.shop.y+T*1.5));if(d<40&&!L.nearShop){L.nearShop=true;openShop()}if(d>70)L.nearShop=false}}
+
+/* ================= Render ================= */
+function drawEnemy(e){const d=e.def;if(d.ai==='snake')return drawSnake(e);if(d.ai==='dragon')drawDragonBody(e);
+  const s=24*d.size,pf=e.maxPeel?e.peel/e.maxPeel:0,peeled=isPeeled(e);
+  const fly=((d.ai==='flyer'||d.ai==='blimp')&&!e.landed?26+Math.sin(e.t*3)*5:d.ai==='dragon'?24+Math.sin(e.t*3)*4:0)+(e.air||0);
+  const hop=e.moving&&!fly&&d.ai!=='whale'?Math.abs(Math.sin(e.t*9))*4:0,wob=e.windT>0?Math.sin(G.t*60)*2.5:0;
+  if(d.ai!=='whale'){ctx.fillStyle='rgba(0,0,0,.22)';ell(ctx,e.x,e.y+s*.35,s*.85*(fly?.7:1),s*.22)}
+  else{ctx.strokeStyle='rgba(255,255,255,.55)';ctx.lineWidth=2;ctx.beginPath();ctx.ellipse(e.x,e.y+s*.3,s*1.1+Math.sin(G.t*4)*3,s*.36,0,0,7);ctx.stroke()}
+  if(e.slam){const sl=e.slam;ctx.fillStyle=`rgba(224,87,63,${.15+.3*sl.t/sl.dur})`;circ(ctx,sl.tx,sl.ty,e.r+40);ctx.strokeStyle='#e0573f';ctx.lineWidth=3;ctx.beginPath();ctx.arc(sl.tx,sl.ty,e.r+40,0,7);ctx.stroke()}
+  oc.clearRect(0,0,320,320);oc.save();oc.translate(160,160);if(e.flip)oc.scale(-1,1);
+  if(d.ai==='whale')drawWhaleSprite(oc,s,pf,G.t,peeled);
+  else if(d.fruit)drawRoundFruit(oc,FRUIT[d.fruit],s,pf,peeled,d.look,G.t);
+  else{if(d.look==='crown'){oc.fillStyle=`rgba(255,230,120,${.2+.08*Math.sin(G.t*2)})`;circ(oc,0,s*.1,s*1.05)}
+    drawBananaBody(oc,s,pf,'#f6c624');if(d.look==='mask'&&!peeled){oc.fillStyle='#1b1209';rr(oc,-s*.31,s*.03,s*.62,s*.15,s*.05);oc.fill()}
+    drawFace(oc,s,peeled);if(d.look==='pirate'&&!peeled){oc.fillStyle='#111';circ(oc,s*.17,s*.11,s*.09)}
+    if(!(peeled&&d.look==='propeller'))drawLook(oc,s,d.look,G.t)}
+  const lost=1-e.hp/e.maxHp,n=Math.min(7,Math.floor(lost*8)),bw=d.fruit?(FRUIT[d.fruit].shape==='melon'?.72:.55)*s:.9*s,round=!!d.fruit;
+  if(n>0){oc.globalCompositeOperation='destination-out';for(let i=0;i<n;i++){const bx=round?bw*(1.08-i*.3):s*(.95-i*.25),by=round?s*(-.05+(i%2)*.1):s*(.05+(i%2)*.08);for(const [dx,dy,r] of [[0,0,.2],[-.05,-.16,.1],[-.05,.22,.1]])circ(oc,bx+dx*s,by+dy*s,r*s)}oc.globalCompositeOperation='source-over'}
+  if(e.enraged){oc.globalCompositeOperation='source-atop';oc.fillStyle=`rgba(255,40,30,${.2+.1*Math.sin(G.t*8)})`;oc.fillRect(-160,-160,320,320);oc.globalCompositeOperation='source-over'}
+  oc.restore();
+  const yy=e.y-s*.15-hop-fly;ctx.globalAlpha=Math.max(0,e.alpha);ctx.drawImage(off,0,0,320,320,e.x-160+wob,yy-160,320,320);
+  if(e.hitFlash>0){ctx.globalCompositeOperation='lighter';ctx.globalAlpha=.55;ctx.drawImage(off,0,0,320,320,e.x-160+wob,yy-160,320,320);ctx.globalCompositeOperation='source-over'}
+  ctx.globalAlpha=1;if(e.dead)return;
+  if(e.windT>0)txt('!',e.x,yy-s*.7,34,'#ff5a4a');
+  if(peeled){const f=1-e.peeledT/(d.regrow||6);ctx.strokeStyle='rgba(0,0,0,.35)';ctx.lineWidth=5;ctx.beginPath();ctx.arc(e.x,yy-s*.75,8,0,7);ctx.stroke();ctx.strokeStyle='#f6c624';ctx.lineWidth=3;ctx.beginPath();ctx.arc(e.x,yy-s*.75,8,-Math.PI/2,-Math.PI/2+f*6.283);ctx.stroke()}
+  if(!d.boss&&(e.peel<e.maxPeel||e.hp<e.maxHp))miniBars(e.x,yy-s*.55-(peeled?18:0),e)}
+function drawDragonBody(e){const d=e.def,s=24*d.size,segR=s*.42;ctx.globalAlpha=Math.max(0,e.alpha);
+  for(let i=9;i>=1;i--){const p=e.trail[Math.min(e.trail.length-1,i*12)];if(!p)continue;const r=segR*(1-i*.045),h=24+Math.sin(e.t*3-i*.5)*4;
+    ctx.fillStyle='rgba(0,0,0,.18)';ell(ctx,p[0],p[1]+r*.5,r,r*.35);
+    ctx.fillStyle='#4f9a3a';ctx.beginPath();ctx.moveTo(p[0]-r*.3,p[1]-h-r*.75);ctx.lineTo(p[0],p[1]-h-r*1.35);ctx.lineTo(p[0]+r*.3,p[1]-h-r*.75);ctx.fill();
+    ctx.fillStyle=e.enraged?'#f2601c':'#f28c1c';circ(ctx,p[0],p[1]-h,r);ctx.strokeStyle='#a3520c';ctx.lineWidth=2;ctx.beginPath();ctx.arc(p[0],p[1]-h,r,0,7);ctx.stroke();
+    ctx.fillStyle='rgba(255,255,255,.3)';ell(ctx,p[0]-r*.3,p[1]-h-r*.35,r*.3,r*.15);
+    if(i===9){ctx.fillStyle='#c0392b';for(const o of [-.5,0,.5])ell(ctx,p[0]+Math.cos(o+Math.PI)*r*1.1,p[1]-h+Math.sin(o)*r*.6,r*.45,r*.18,o)}}
+  ctx.globalAlpha=1}
+function miniBars(x,y,e){const w=34;ctx.fillStyle='rgba(0,0,0,.5)';ctx.fillRect(x-w/2-1,y-1,w+2,e.maxPeel?9:5);if(e.maxPeel){ctx.fillStyle='#f6c624';ctx.fillRect(x-w/2,y,w*e.peel/e.maxPeel,3)}ctx.fillStyle=e.maxPeel?'#fbf0c6':'#e0573f';ctx.fillRect(x-w/2,y+(e.maxPeel?4:0),w*e.hp/e.maxHp,3)}
+function drawSnake(e){const d=e.def,s=13*d.size,a=e.ang,len=s*6;ctx.globalAlpha=Math.max(0,e.alpha);ctx.lineCap='round';ctx.lineJoin='round';
+  const pts=[];for(let i=0;i<=22;i++){const u=i/22,along=-u*len,lat=Math.sin(u*Math.PI*2.4-e.t*10)*s*.7*Math.min(1,u*2.5);pts.push([e.x+Math.cos(a)*along-Math.sin(a)*lat,e.y+Math.sin(a)*along+Math.cos(a)*lat])}
+  const poly=(oy)=>{ctx.beginPath();pts.forEach(([x,y],i)=>i?ctx.lineTo(x,y+oy):ctx.moveTo(x,y+oy));ctx.stroke()};
+  ctx.strokeStyle='rgba(0,0,0,.2)';ctx.lineWidth=s*1.1;poly(5);ctx.strokeStyle=d.color;poly(0);ctx.strokeStyle=d.stripe;ctx.lineWidth=s*.35;ctx.setLineDash([s*.5,s*.7]);poly(0);ctx.setLineDash([]);
+  ctx.fillStyle=e.hitFlash>0?'#ffffff':d.color;ell(ctx,e.x,e.y,s*.95,s*.75,a);
+  const fx=Math.cos(a),fy=Math.sin(a);ctx.fillStyle='#ffe066';for(const sd of [-1,1]){const ex=e.x+fx*s*.35-fy*s*.4*sd,ey=e.y+fy*s*.35+fx*s*.4*sd;circ(ctx,ex,ey,s*.2)}
+  ctx.fillStyle='#111';for(const sd of [-1,1]){const ex=e.x+fx*s*.4-fy*s*.4*sd,ey=e.y+fy*s*.4+fx*s*.4*sd;ell(ctx,ex,ey,s*.05,s*.14,a)}
+  if(Math.sin(e.t*5)>0){ctx.strokeStyle='#e0573f';ctx.lineWidth=2;const tx=e.x+fx*s*.9,ty=e.y+fy*s*.9,ux=e.x+fx*s*1.6,uy=e.y+fy*s*1.6;ctx.beginPath();ctx.moveTo(tx,ty);ctx.lineTo(ux,uy);ctx.lineTo(ux+Math.cos(a-.5)*5,uy+Math.sin(a-.5)*5);ctx.moveTo(ux,uy);ctx.lineTo(ux+Math.cos(a+.5)*5,uy+Math.sin(a+.5)*5);ctx.stroke()}
+  if(d.crown){const x=e.x,y=e.y-s*.6;ctx.fillStyle='#ffd447';ctx.beginPath();ctx.moveTo(x-s*.5,y);ctx.lineTo(x-s*.5,y-s*.55);ctx.lineTo(x-s*.25,y-s*.3);ctx.lineTo(x,y-s*.65);ctx.lineTo(x+s*.25,y-s*.3);ctx.lineTo(x+s*.5,y-s*.55);ctx.lineTo(x+s*.5,y);ctx.closePath();ctx.fill();ctx.fillStyle='#5fd4e8';circ(ctx,x,y-s*.2,s*.1)}
+  ctx.globalAlpha=1;if(e.dead)return;
+  if(e.windT>0)txt('!',e.x,e.y-s*1.4,30,'#ff5a4a');
+  if(!d.boss&&e.hp<e.maxHp)miniBars(e.x,e.y-s*1.6,e)}
+function drawPlayer(pl){const P=pl,shirt=COLORS[(pl.slot||0)%COLORS.length],multi=PL.length>1;
+  if(P.down){ctx.fillStyle='rgba(0,0,0,.25)';ell(ctx,P.x,P.y+6,22,6);ctx.save();ctx.globalAlpha=.85;ctx.translate(P.x-20,P.y+4);ctx.rotate(-Math.PI/2);drawHero(0,0,.36,0,false,false,shirt);ctx.restore();
+    const f=Math.min(1,(P.reviveT||0)/1.6);ctx.strokeStyle='rgba(0,0,0,.4)';ctx.lineWidth=5;ctx.beginPath();ctx.arc(P.x,P.y-30,11,0,7);ctx.stroke();
+    if(f>0){ctx.strokeStyle='#9be37a';ctx.lineWidth=4;ctx.beginPath();ctx.arc(P.x,P.y-30,11,-Math.PI/2,-Math.PI/2+f*6.283);ctx.stroke()}
+    if(multi)txt(P.local?'You':(P.name||'Friend')+' needs help!',P.x,P.y-50,15,'#ff9f7a','body');return}
+  if(P.inv>0&&Math.floor(G.t*20)%2)return;const flip=Math.cos(P.face)<-.1;
+  ctx.fillStyle='rgba(0,0,0,.25)';ell(ctx,P.x,P.y+9,13,5);
+  if(P.dashT>0){ctx.globalAlpha=.3;drawHero(P.x-Math.cos(P.dashDir||P.face)*18,P.y+10-Math.sin(P.dashDir||P.face)*18,.38,P.walk,flip,false,shirt);ctx.globalAlpha=1}
+  drawHero(P.x,P.y+10,.38,P.moving?P.walk:0,flip,P.swingT<=0,shirt);
+  if(P.swingT>0){const p=1-P.swingT/.2,a0=P.swingAng-1.2,a=a0+2.4*p,cy=P.y-12;
+    ctx.strokeStyle=S.sword?'rgba(127,232,244,.55)':'rgba(255,255,255,.6)';ctx.lineWidth=12;ctx.lineCap='butt';ctx.beginPath();ctx.arc(P.x,cy,40,a0,a);ctx.stroke();
+    ctx.strokeStyle=S.sword?'#7fe8f4':'#e6e6e6';ctx.lineWidth=5;ctx.lineCap='round';ctx.beginPath();ctx.moveTo(P.x+Math.cos(a)*12,cy+Math.sin(a)*12);ctx.lineTo(P.x+Math.cos(a)*(S.sword?52:46),cy+Math.sin(a)*(S.sword?52:46));ctx.stroke()}
+  if(multi)txt(P.local?'You':(P.name||'Friend'),P.x,P.y-56,15,P.local?'#f6c624':'#fff4c9','body')}
+function drawExit(){const ex=L.exit;if(!ex)return;const k=L.def.exit;
+  if(k==='ship')shipTop(ex.x,ex.y+50,.85);
+  if(k==='heli')heliTop(ex.x,ex.y,.8,L.cleared);
+  if(k==='plane')planeTop(ex.x,ex.y,.8);
+  if(k==='sign'){ctx.fillStyle='#5a3a1f';ctx.fillRect(ex.x-3,ex.y-26,6,30);ctx.fillStyle='#a8743f';rr(ctx,ex.x-38,ex.y-40,64,20,4);ctx.fill();ctx.font='800 12px "Alegreya Sans", sans-serif';ctx.fillStyle='#2b1b0e';ctx.textAlign='center';ctx.fillText('ROME →',ex.x-6,ex.y-26)}
+  if(k==='plank'){ctx.fillStyle='#7a4a24';ctx.fillRect(ex.x-10,ex.y-12,20,30);ctx.fillStyle='#d6bd86';for(let i=0;i<4;i++)ctx.fillRect(ex.x-10,ex.y-10+i*8,20,3)}
+  if(L.cleared){const p=.5+.5*Math.sin(G.t*5);ctx.strokeStyle=`rgba(246,198,36,${.4+.6*p})`;ctx.lineWidth=4;ctx.beginPath();ctx.arc(ex.x,ex.y,20+p*6,0,7);ctx.stroke();
+    txt('▼',ex.x,ex.y-34-p*6,24,'#f6c624');txt(L.def.exitText,ex.x,ex.y-62,22,'#fff4c9')}}
+function drawMerchant(){if(!L.shop)return;const x=L.shop.x,y=L.shop.y-6;
+  ctx.fillStyle='rgba(0,0,0,.2)';ell(ctx,x,y+4,22,8);ctx.fillStyle='#6b3f8f';ell(ctx,x,y-6,20,16);ctx.fillStyle='#f0c08c';circ(ctx,x,y-24,12);ctx.fillStyle='#f4e4bf';ell(ctx,x,y-32,14,8);ctx.fillStyle='#e0573f';circ(ctx,x,y-38,3);
+  ctx.fillStyle='#2b1b0e';circ(ctx,x-4,y-25,1.8);circ(ctx,x+4,y-25,1.8);
+  if(S.diamond&&!S.sword){ctx.fillStyle=`rgba(127,232,244,${.7+.3*Math.sin(G.t*4)})`;ctx.beginPath();ctx.moveTo(x+30,y+18);ctx.lineTo(x+38,y+10);ctx.lineTo(x+46,y+18);ctx.lineTo(x+38,y+30);ctx.closePath();ctx.fill()}
+  if(!L.nearShop){const p=Math.sin(G.t*4)*3;txt('Walk up to trade',x,y-56+p,20,'#fff4c9')}}
+function drawPickups(){for(const p of L.pickups){const b=Math.sin(G.t*6+p.x)*2;
+  if(p.kind==='coin'){ctx.fillStyle='#b8860b';circ(ctx,p.x,p.y+b,7);ctx.fillStyle='#ffd447';circ(ctx,p.x,p.y+b,5.5)}
+  if(p.kind==='snack'){ctx.fillStyle='#6b4423';circ(ctx,p.x,p.y+b,8);ctx.fillStyle='#3a2414';circ(ctx,p.x-2,p.y-2+b,1.5);circ(ctx,p.x+2,p.y-2+b,1.5)}
+  if(p.kind==='diamond'){ctx.fillStyle='#7fe8f4';ctx.beginPath();ctx.moveTo(p.x-10,p.y-4+b);ctx.lineTo(p.x,p.y-14+b);ctx.lineTo(p.x+10,p.y-4+b);ctx.lineTo(p.x,p.y+12+b);ctx.closePath();ctx.fill();ctx.fillStyle='rgba(255,255,255,.7)';circ(ctx,p.x-3,p.y-6+b,2)}}}
+function drawHazards(){
+  for(const p of L.patches){ctx.globalAlpha=Math.min(1,p.t);ctx.fillStyle='rgba(190,235,255,.55)';circ(ctx,p.x,p.y,p.r);ctx.strokeStyle='rgba(255,255,255,.8)';ctx.lineWidth=2;ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,7);ctx.stroke();ctx.globalAlpha=1}
+  const RAIN={kiwi:'#8a6a3a',grape:'#6b2fa0',pineapple:'#d9a521',banana:'#f6c624',coconut:'#6b4423',apple:'#d93a2b',melon:'#3f8f3f',fire:'#ff8a2a',icicle:'#bfe8ff'};
+  for(const b of L.bombs){const mx=b.max||1.1,f=1-b.t/mx;ctx.fillStyle=`rgba(224,87,63,${.15+.25*f})`;circ(ctx,b.x,b.y,b.r);ctx.strokeStyle='#e0573f';ctx.lineWidth=2;ctx.beginPath();ctx.arc(b.x,b.y,b.r,0,7);ctx.stroke();
+    const fy=b.y-(1-f)*160;ctx.fillStyle=RAIN[b.kind]||'#f6c624';if(b.kind==='icicle'){ctx.beginPath();ctx.moveTo(b.x-6,fy-14);ctx.lineTo(b.x+6,fy-14);ctx.lineTo(b.x,fy+8);ctx.fill()}else circ(ctx,b.x,fy,b.kind==='melon'?10:7)}
+  for(const w of L.waves){ctx.strokeStyle='rgba(255,230,120,.85)';ctx.lineWidth=8;ctx.beginPath();ctx.arc(w.x,w.y,w.rad,0,7);ctx.stroke();ctx.strokeStyle='rgba(255,255,255,.6)';ctx.lineWidth=2;ctx.beginPath();ctx.arc(w.x,w.y,w.rad-6,0,7);ctx.stroke()}
+  for(const p of L.proj){const col={coconut:'#6b4423',spout:'#bfe8f3',venom:'#8fd14f',chunk:'#f6c624',seed:'#2b1b0e',fire:'#ff8a2a',snow:'#ffffff',ice:'#bfe8ff',grape:'#6b2fa0',spike:'#d9a521'}[p.kind]||'#fff';if(p.kind==='fire'){ctx.fillStyle='rgba(255,180,60,.35)';circ(ctx,p.x,p.y,p.r*1.8)}ctx.fillStyle='rgba(0,0,0,.2)';circ(ctx,p.x+3,p.y+6,p.r);ctx.fillStyle=col;circ(ctx,p.x,p.y,p.r);if(p.kind==='spout'){ctx.fillStyle='rgba(255,255,255,.7)';circ(ctx,p.x-2,p.y-2,2.5)}}}
+function drawWaterAnim(x0,y0,x1,y1){ctx.strokeStyle='rgba(255,255,255,.22)';ctx.lineWidth=2;
+  for(let y=y0;y<=y1;y++)for(let x=x0;x<=x1;x++){if(tileAt(x,y)!=='W'||hr(x,y,4)<.55)continue;const px=x*T+8+Math.sin(G.t*1.6+x+y)*4,py=y*T+14+hr(x,y,6)*8;ctx.beginPath();ctx.moveTo(px,py);ctx.quadraticCurveTo(px+6,py-3,px+12,py);ctx.stroke()}}
+function drawWorld(){const mwp=L.mw*T,mhp=L.mh*T,Z=G.zoom||1,VW=W/Z,VH=H/Z;
+  G.cam.x=mwp<=VW?(mwp-VW)/2:clamp(P.x-VW/2,0,mwp-VW);G.cam.y=mhp<=VH?(mhp-VH)/2:clamp(P.y-VH/2,0,mhp-VH);
+  const sh=RM?0:G.shake*26,sx=(Math.random()-.5)*sh,sy=(Math.random()-.5)*sh;
+  ctx.fillStyle=L.def.floor==='c'?'#9ad3f2':'#2a86ab';ctx.fillRect(0,0,W,H);
+  ctx.save();ctx.scale(Z,Z);ctx.translate(Math.round(-G.cam.x+sx),Math.round(-G.cam.y+sy));
+  ctx.drawImage(L.canvas,0,0,mwp,mhp);
+  drawWaterAnim(Math.floor(G.cam.x/T),Math.floor(G.cam.y/T),Math.ceil((G.cam.x+VW)/T),Math.ceil((G.cam.y+VH)/T));
+  drawExit();drawMerchant();drawPickups();
+  for(const e of L.enemies)if(e.def.ai==='whale'&&e.state==='swim'&&!e.dead){const s=24*e.def.size;ctx.fillStyle='rgba(8,40,60,.4)';ell(ctx,e.x,e.y,s,s*.4,Math.atan2(e.ty-e.y,e.tx-e.x));ctx.strokeStyle='rgba(255,255,255,.25)';ctx.lineWidth=2;ctx.beginPath();ctx.ellipse(e.x,e.y,s*1.2,s*.55,0,0,7);ctx.stroke()}
+  const list=L.enemies.filter(e=>!(e.def.ai==='whale'&&e.state==='swim'&&!e.dead));list.push(...PL);list.sort((a,b)=>a.y-b.y);
+  for(const o of list)o.isPlayer?drawPlayer(o):drawEnemy(o);
+  drawHazards();
+  for(const p of G.parts){ctx.globalAlpha=Math.max(0,p.life/p.max);ctx.fillStyle=p.color;circ(ctx,p.x,p.y,p.r)}ctx.globalAlpha=1;
+  for(const f of G.floats){const p=(G.t-f.t0)/1.1;ctx.globalAlpha=Math.max(0,1-p);txt(f.text,f.x,f.y-p*40,f.text.length>12?20:26,f.color)}ctx.globalAlpha=1;
+  ctx.restore();
+  if(L.def.final){ctx.fillStyle='rgba(255,255,255,.75)';for(let i=0;i<60;i++){const x=((i*97+G.t*(18+i%5*6))%W+W)%W,y=((i*53+G.t*(40+i%7*8))%H+H)%H;circ(ctx,x,y,1+(i%3)*.7)}}
+  drawHUD()}
+function bar(x,y,w,h,f,col){ctx.fillStyle='rgba(0,0,0,.45)';rr(ctx,x,y,w,h,h/2);ctx.fill();if(f>0){ctx.fillStyle=col;rr(ctx,x,y,Math.max(h,w*clamp(f,0,1)),h,h/2);ctx.fill()}}
+function drawHUD(){const k=G.ui||1;ctx.save();ctx.scale(k,k);drawHUDInner(W/k,H/k);ctx.restore()}
+function drawHUDInner(W,H){
+  ctx.fillStyle='rgba(8,24,34,.74)';rr(ctx,10,10,246,62,10);ctx.fill();
+  txt(`Lv ${S.lvl}`,20,40,26,'#f6c624','display','left',false);
+  ctx.font='800 11px "Alegreya Sans", sans-serif';ctx.fillStyle='#93b4c5';ctx.textAlign='left';ctx.fillText('JAW',20,60);
+  bar(78,20,166,13,P.hp/S.maxHp,P.hp/S.maxHp<.3?'#e0573f':'#4f9a3a');ctx.fillStyle='#fff';ctx.font='800 10px "Alegreya Sans", sans-serif';ctx.textAlign='center';ctx.fillText(`${Math.ceil(P.hp)} / ${S.maxHp}`,161,30.5);
+  bar(78,40,166,9,P.jaw/100,P.jawLock?'#e0573f':'#ef8a2c');bar(78,55,166,5,S.xp/(S.lvl*20),'#f6c624');
+  ctx.fillStyle='rgba(8,24,34,.74)';rr(ctx,W-214,10,204,40,10);ctx.fill();
+  ctx.fillStyle='#ffd447';circ(ctx,W-194,30,8);txt(String(S.coins),W-180,37,20,'#fff4c9','body','left',false);
+  ctx.fillStyle='#6b4423';circ(ctx,W-120,30,8);txt(String(S.snacks),W-106,37,20,'#fff4c9','body','left',false);
+  if(S.sword||S.diamond){ctx.fillStyle='#7fe8f4';ctx.beginPath();ctx.moveTo(W-62,28);ctx.lineTo(W-55,20);ctx.lineTo(W-48,28);ctx.lineTo(W-55,40);ctx.closePath();ctx.fill();txt(S.sword?'sword':'gem',W-42,37,14,'#7fe8f4','body','left',false)}
+  if(P.poison>0)txt('Poisoned',W-112,68,16,'#b9e27a','body','center');
+  const team=PL.filter(p=>!p.local);team.forEach((o,k)=>{const y=80+k*26;ctx.fillStyle='rgba(8,24,34,.74)';rr(ctx,10,y,246,22,8);ctx.fill();ctx.fillStyle=COLORS[(o.slot||0)%COLORS.length];circ(ctx,22,y+11,6);
+    ctx.font='800 13px "Alegreya Sans", sans-serif';ctx.textAlign='left';ctx.fillStyle='#fff4c9';ctx.fillText((o.name||'Friend').slice(0,12),34,y+16);bar(130,y+6,116,10,o.down?0:o.hp/S.maxHp,o.down?'#e0573f':'#4f9a3a');if(o.down)txt('KO',188,y+16,12,'#ff9f7a','body','center',false)});
+  if(P.down&&PL.length>1&&G.mode==='play'){ctx.fillStyle='rgba(8,24,34,.78)';rr(ctx,W/2-260,H-120,520,40,10);ctx.fill();txt('You are knocked out! A friend can revive you by standing next to you.',W/2,H-94,16,'#ff9f7a','body','center',false)}
+  let goal='';const alive=L.enemies.filter(e=>!e.dead&&!e.minion).length;
+  if(L.def.goal==='shop')goal=S.sword?'Board the ship to Banana Island':'Visit the merchant’s stall';
+  else if(L.def.goal==='final')goal=L.cleared?'You did it!':L.def.goalText;
+  else goal=L.cleared?L.def.exitText+'!':`${L.def.goal} left: ${alive}`;
+  ctx.font='800 16px "Alegreya Sans", sans-serif';const gw=ctx.measureText(goal).width+28;ctx.fillStyle='rgba(8,24,34,.74)';rr(ctx,W/2-gw/2,10,gw,30,15);ctx.fill();ctx.fillStyle='#fff4c9';ctx.textAlign='center';ctx.fillText(goal,W/2,31);
+  const boss=L.enemies.find(e=>e.def.boss&&!e.dead&&!e.minion);
+  if(boss){const bw=440,bx=W/2-bw/2,by=H-50;ctx.fillStyle='rgba(8,24,34,.78)';rr(ctx,bx-12,by-30,bw+24,boss.maxPeel?62:50,10);ctx.fill();
+    txt(boss.def.name+(boss.enraged?' — FURIOUS':''),W/2,by-10,22,boss.enraged?'#ff7b6b':'#f6c624','display','center',false);
+    if(boss.maxPeel){bar(bx,by-2,bw,9,boss.peel/boss.maxPeel,'#f6c624');bar(bx,by+11,bw,9,boss.hp/boss.maxHp,'#fbf0c6')}else bar(bx,by-2,bw,12,boss.hp/boss.maxHp,'#e0573f')}
+  if(G.banner&&G.t<G.banner.until){const a=Math.min(1,(G.banner.until-G.t)*2);ctx.globalAlpha=a;ctx.fillStyle='rgba(8,24,34,.7)';rr(ctx,W/2-330,H*.26-34,660,52,12);ctx.fill();txt(G.banner.text,W/2,H*.26,30,'#f6c624');ctx.globalAlpha=1}
+  if(L.i===0&&G.playT<14&&!TOUCH&&G.mode==='play'){ctx.globalAlpha=Math.min(1,(14-G.playT)/2);ctx.fillStyle='rgba(8,24,34,.74)';rr(ctx,10,H-44,560,34,10);ctx.fill();ctx.font='800 14px "Alegreya Sans", sans-serif';ctx.fillStyle='#fff4c9';ctx.textAlign='left';ctx.fillText('WASD move · J / Space sword · K eat · Shift dash · Q snack',22,H-22);ctx.globalAlpha=1}}
+
+function ocean(scroll){ctx.fillStyle='#2a86ab';ctx.fillRect(0,0,W,H);ctx.strokeStyle='rgba(255,255,255,.18)';ctx.lineWidth=2;
+  for(let row=0;row<16;row++){const y=row*36+18;for(let k=-1;k<18;k++){const x=((k*64+row*29-scroll)%(W+64)+W+64)%(W+64)-32;ctx.beginPath();ctx.moveTo(x,y);ctx.quadraticCurveTo(x+8,y-4,x+16,y);ctx.stroke()}}}
+function cloud2(x,y,s){ctx.fillStyle='rgba(255,255,255,.85)';ell(ctx,x,y,60*s,22*s);ell(ctx,x-30*s,y+5*s,34*s,18*s);ell(ctx,x+34*s,y+6*s,38*s,17*s);ell(ctx,x+4*s,y-12*s,32*s,20*s)}
+function island(x,y,r){ctx.fillStyle='#bfe8f3';circ(ctx,x,y,r+8);ctx.fillStyle='#ecd59a';circ(ctx,x,y,r);ctx.fillStyle='#5fa548';circ(ctx,x-r*.15,y-r*.1,r*.6);palmTop(ctx,x+r*.3,y+r*.2,1.2)}
+function drawTravel(){const tr=G.trav;if(!tr)return;const [kind,text]=tr.legs[tr.i],p=Math.min(1,(G.t-tr.start)/2.8);
+  if(kind==='walk'){ctx.fillStyle='#78b257';ctx.fillRect(0,0,W,H);ctx.fillStyle='#d6bd86';ctx.fillRect(0,250,W,70);
+    for(let k=0;k<14;k++){const x=((k*110-G.t*60)%(W+110)+W+110)%(W+110)-55;ctx.fillStyle='rgba(0,0,0,.2)';ell(ctx,x+4,(k%2?190:390)+6,24,14);ctx.fillStyle='#2f7a35';circ(ctx,x,k%2?190:390,24);ctx.fillStyle='#45984a';circ(ctx,x-6,(k%2?190:390)-6,12)}
+    drawHero(lerp(-40,W+40,p),300,.9,G.t*12,false,true)}
+  else{ocean(G.t*(kind==='heli'?160:50));const sc=G.t*(kind==='heli'?140:40);for(const [ix,iy,r] of [[200,110,40],[760,430,56],[520,80,28],[90,440,34]])island(((ix-sc)%(W+200)+W+200)%(W+200)-100,iy,r);
+    if(kind==='ship')shipTop(lerp(-140,W+140,p),H/2+Math.sin(G.t*2)*6,1.4);
+    else if(kind==='plane'){for(let k=0;k<8;k++){const x=((k*170-G.t*260)%(W+240)+W+240)%(W+240)-120;cloud2(x,60+(k*67)%420,1+(k%3)*.4)}const x=lerp(-160,W+160,p),y=H/2+Math.sin(G.t*2)*10;ctx.fillStyle='rgba(0,0,0,.15)';ell(ctx,x+60,y+90,70,16);planeTop(x,y,1.5)}
+    else{const x=lerp(-140,W+140,p),y=H/2-20+Math.sin(G.t*3)*8;ctx.fillStyle='rgba(0,0,0,.18)';ell(ctx,x+40,y+70,50,24);heliTop(x,y,1.3,true)}}
+  ctx.fillStyle='rgba(8,24,34,.7)';ctx.fillRect(0,0,W,64);txt(text,W/2,44,36,'#f6c624');
+  ctx.font='800 14px "Alegreya Sans", sans-serif';ctx.fillStyle='rgba(255,244,201,.75)';ctx.textAlign='right';ctx.fillText(TOUCH?'Tap to skip':'Space to skip',W-16,H-16);
+  if(p>=1&&NET.role!=='guest')nextLeg()}
+function drawTitleScene(){ocean(G.t*20);island(170,140,60);island(800,400,70);island(640,110,34);
+  const a=G.t*.25;shipTop(W/2+Math.cos(a)*300,H/2+Math.sin(a)*150,1.1);
+  ctx.fillStyle='rgba(8,24,34,.35)';ctx.fillRect(0,0,W,H)}
+
+function render(){ctx.setTransform(DPR,0,0,DPR,0,0);ctx.clearRect(0,0,W,H);const cw=cv.clientWidth||W;G.ui=clamp(560/cw,1,1.9);G.zoom=clamp(720/cw,1,1.5);
+  if(G.mode==='travel')return drawTravel();
+  if(G.mode==='title'||!L)drawTitleScene();else drawWorld();
+  if(G.mode==='wait'){ctx.fillStyle='rgba(8,24,34,.55)';ctx.fillRect(0,0,W,H);ctx.fillStyle='rgba(8,24,34,.85)';rr(ctx,W/2-300,H/2-36,600,64,12);ctx.fill();txt(G.waitMsg||'Waiting for the host\u2026',W/2,H/2+6,22,'#fff4c9','body','center',false)}}
+
+/* ================= Flow: dialog, travel, menus ================= */
+function dialog(lines,done,src){G.mode='dialog';G.dlg={lines,i:0,done,src:src||'o'};G.keys={};showLine()}
+function showLine(){const d=G.dlg,[who,text]=d.lines[d.i];$('#dlgWho').textContent=who;$('#dlgText').textContent=text;$('#dlgNext').textContent=(d.i<d.lines.length-1?'Next':'Start')+(TOUCH?' · tap':' · Space');dlg.hidden=false;G.dlgShownT=performance.now()}
+function advance(){if(NET.role==='guest')return;if(G.mode==='travel'){nextLeg();return}if(G.mode!=='dialog'||!G.dlg)return;if(performance.now()-G.dlgShownT<180)return;
+  const d=G.dlg;d.i++;if(d.i>=d.lines.length){dlg.hidden=true;G.dlg=null;G.mode='play';d.done&&d.done()}else showLine()}
+function travel(legs,done){if(!legs||!legs.length)return done();G.mode='travel';G.trav={legs,i:0,start:G.t,done}}
+function nextLeg(){const tr=G.trav;if(!tr)return;tr.i++;tr.start=G.t;if(tr.i>=tr.legs.length){G.trav=null;G.mode='play';tr.done()}}
+function leaveLevel(){dialog(L.def.outro,()=>{S.level++;save();const nx=LEVELS[S.level];travel(nx.arrive,()=>loadLevel(S.level))},'o')}
+function finishGame(){dialog(L.def.outro,()=>{S.done=true;save();showEnd()},'o')}
+function showMenu(html,cls=''){menu.innerHTML=`<div class="card ${cls}">${html}</div>`;menu.hidden=false;G.keys={};G.joy={x:0,y:0};const b=menu.querySelector('button.primary:not(:disabled)')||menu.querySelector('button:not(:disabled)');if(b)b.focus({preventScroll:true})}
+function hideMenu(){menu.hidden=true;menu.innerHTML=''}
+function title(note){G.mode='title';G.menuKind='';L=null;PL=[];P=null;dlg.hidden=true;where.textContent='';const sv=loadSave();const can=sv&&!sv.done;
+  showMenu(`<p class="eyebrow">A top-down banana adventure</p><h1>The Bananas of the Caribbean</h1>
+  <p>Every banana in Europe has come alive and run off to the Caribbean. Fight your way from a little village to Rome, sail past the banana whales, battle the sky bananas, beat the Banana Boss and the Snake King, and peel the Final Banana with a diamond sword. Then the real trouble starts: watermelons in Mexico, Canada’s favorite apples, the tangerines of China, the kiwis of India, the grapes of France, the coconuts of Hawaii, the pineapples of Australia, and the Frozen Plum of Antarctica.</p>
+  ${note?`<p class="note" id="mNote"></p>`:''}
+  <div class="row"><button class="btn primary" id="mNew">New adventure</button>${can?`<button class="btn" id="mCont">Continue<small>Chapter ${sv.level+1}, level ${sv.lvl}</small></button>`:''}<button class="btn" id="mFriends">Play with friends<small>Online co-op, up to 4 players</small></button></div>`);
+  if(note)$('#mNote').textContent=note;$('#mFriends').onclick=()=>mpMenu();
+  $('#mNew').onclick=()=>{hideMenu();S=NEW();loadLevel(0)};if(can)$('#mCont').onclick=()=>{hideMenu();S=Object.assign(NEW(),sv);loadLevel(S.level)}}
+function die(){G.mode='menu';G.menuKind='wipe';const name=(L.enemies.find(e=>e.def.boss&&!e.dead)||{}).def?.name;
+  showMenu(`<p class="eyebrow">Knocked out</p><h2>${name?name+' wins this round':'The bananas got you'}</h2><p>${PL.length>1?'Your whole team':'You'} wake${PL.length>1?'s':''} up at the start of ${L.def.name} with full health. Remember: peel, then eat, and dash away from attacks.</p><div class="row"><button class="btn primary" id="mRetry">Try again</button></div>`);
+  $('#mRetry').onclick=()=>{hideMenu();G.menuKind='';S=JSON.parse(L.snapshot);if(S.snacks<1)S.snacks=1;loadLevel(S.level,true)}}
+function showEnd(){G.mode='menu';G.menuKind='end';showMenu(`<p class="eyebrow">The end</p><h2>Every evil fruit is eaten</h2><p>You ate the bananas of the Caribbean, the watermelons of Mexico, Canada’s favorite apples, the Tangerine Dragon of China, the kiwis of India, the grapes of France, the coconuts of Hawaii, the pineapples of Australia, and finally cracked the Frozen Plum of Antarctica. You finished at level ${S.lvl} with ${S.coins} coins.</p><div class="row"><button class="btn primary" id="mAgain">Play again</button></div>`);
+  $('#mAgain').onclick=()=>{hideMenu();G.menuKind='';S=NEW();loadLevel(0)}}
+const SHOP=[{id:'snack',name:'Coconut snack',desc:'Heals half your health.',cost:15},{id:'stone',name:'Whetstone',desc:'+3 strength for peeling and biting.',cost:40},{id:'belly',name:'Iron stomach',desc:'+12 max health.',cost:40},{id:'boots',name:'Grip boots',desc:'No more slipping on ice.',cost:60}];
+let shopMsg='';
+function openShop(){G.mode='menu';G.menuKind='shop';
+  showMenu(`<p class="eyebrow">${L.def.goal==='shop'?'Merchant’s stall':'Trading post'}</p><h2>What will it be?</h2><p class="stats">${S.coins} coins · ${S.snacks} snacks · strength ${S.atk}${S.sword?' (+12 sword)':''} · max health ${S.maxHp}</p>
+  ${S.sword?'<p><b>Diamond sword forged.</b> It adds 12 strength and peels twice as fast. Even the Final Banana can’t stop it.</p>':`<button class="btn primary" id="mForge" ${S.diamond?'':'disabled'}>Forge the diamond sword<small>Uses the Snake King’s diamond. The merchant does it for free.</small></button>`}
+  <div class="shop">${SHOP.map(it=>{const own=it.id==='boots'&&S.boots;return`<button class="btn" data-buy="${it.id}" ${S.coins<it.cost||own?'disabled':''}>${it.name}<span class="cost">${own?'owned':it.cost+' coins'}</span><small>${it.desc}</small></button>`}).join('')}</div>
+  <p class="note">${shopMsg||(L.def.goal==='shop'?'“Stock up before Banana Island, friend.”':'“Heading somewhere cold? Grip boots keep you on your feet.”')}</p>
+  <div class="row"><button class="btn ${S.sword?'primary':''}" id="mLeave">Back to the adventure</button>${S.sword&&L.def.goal==='shop'?'<span class="stats">The ship is waiting at the dock.</span>':''}</div>`);
+  const f=$('#mForge');if(f){f.onclick=()=>{S.sword=true;S.diamond=false;shopMsg='The merchant hammers the diamond into a glittering sword. It hums in your hand.';save();openShop()};f.focus({preventScroll:true})}
+  menu.querySelectorAll('[data-buy]').forEach(b=>b.onclick=()=>{const it=SHOP.find(x=>x.id===b.dataset.buy);if(S.coins<it.cost)return;S.coins-=it.cost;
+    if(it.id==='snack'){S.snacks++;shopMsg='One coconut snack, wrapped in a leaf.'}if(it.id==='stone'){S.atk+=3;shopMsg='Your blade and your teeth feel sharper.'}if(it.id==='belly'){S.maxHp+=12;PL.forEach(p=>{if(!p.down)p.hp=S.maxHp});shopMsg='Your stomach feels like iron.'}if(it.id==='boots'){S.boots=true;shopMsg='Grip boots! Ice will not trip you up anymore.'}
+    save();openShop();const nb=menu.querySelector(`[data-buy="${it.id}"]`);if(nb&&!nb.disabled)nb.focus({preventScroll:true})});
+  $('#mLeave').onclick=()=>{hideMenu();shopMsg='';G.mode='play';G.menuKind='';if(S.sword&&L.def.goal==='shop')banner('Board the ship at the dock!')}}
+
+/* ================= Input ================= */
+const KEYMAP={ArrowUp:'up',KeyW:'up',ArrowDown:'down',KeyS:'down',ArrowLeft:'left',KeyA:'left',ArrowRight:'right',KeyD:'right',KeyJ:'attack',Space:'attack',KeyK:'eat',KeyE:'eat',ShiftLeft:'dash',ShiftRight:'dash',KeyL:'dash',KeyQ:'snack',Enter:'ok'};
+addEventListener('keydown',e=>{if(!menu.hidden||e.metaKey||e.ctrlKey||e.altKey)return;const a=KEYMAP[e.code];if(!a)return;
+  if(G.mode==='dialog'||G.mode==='travel'){if(['attack','ok','eat'].includes(a)){e.preventDefault();if(!e.repeat)advance()}else if(['up','down','left','right'].includes(a))e.preventDefault();return}
+  if(G.mode==='play'){e.preventDefault();if(!G.keys[a]&&!e.repeat)G.pressed.add(a);G.keys[a]=true}});
+addEventListener('keyup',e=>{const a=KEYMAP[e.code];if(a)G.keys[a]=false});
+addEventListener('blur',()=>{G.keys={};G.joy={x:0,y:0}});
+dlg.addEventListener('click',advance);
+cv.addEventListener('pointerdown',()=>{if(G.mode==='dialog'||G.mode==='travel')advance()});
+function enableTouch(){if($('#touch').hidden===false)return;TOUCH=true;$('#touch').hidden=false;$('#keys').hidden=true;$('#rotate').hidden=false}
+const fsBtn=$('#fsBtn');if(document.fullscreenEnabled&&document.documentElement.requestFullscreen){fsBtn.hidden=false;fsBtn.onclick=()=>{if(document.fullscreenElement)document.exitFullscreen().catch(()=>{});else document.documentElement.requestFullscreen({navigationUI:'hide'}).then(()=>{try{screen.orientation.lock('landscape').catch(()=>{})}catch(e){}}).catch(()=>{})};document.addEventListener('fullscreenchange',()=>{fsBtn.textContent=document.fullscreenElement?'Exit full screen':'Full screen'})}
+if(TOUCH)enableTouch();addEventListener('touchstart',enableTouch,{once:true,passive:true});
+const joy=$('#joy'),knob=$('#knob');let joyId=null;
+function joyMove(e){const r=joy.getBoundingClientRect(),cx=r.left+r.width/2,cy=r.top+r.height/2,R=r.width/2-14;let dx=(e.clientX-cx)/R,dy=(e.clientY-cy)/R;const m=Math.hypot(dx,dy);if(m>1){dx/=m;dy/=m}G.joy={x:Math.abs(dx)<.15?0:dx,y:Math.abs(dy)<.15?0:dy};knob.style.transform=`translate(${dx*R}px,${dy*R}px)`}
+joy.addEventListener('pointerdown',e=>{e.preventDefault();joyId=e.pointerId;joy.setPointerCapture(e.pointerId);joyMove(e)});
+joy.addEventListener('pointermove',e=>{if(e.pointerId===joyId)joyMove(e)});
+const joyEnd=e=>{if(e.pointerId!==joyId)return;joyId=null;G.joy={x:0,y:0};knob.style.transform=''};joy.addEventListener('pointerup',joyEnd);joy.addEventListener('pointercancel',joyEnd);
+document.querySelectorAll('[data-k]').forEach(b=>b.addEventListener('pointerdown',e=>{e.preventDefault();if(G.mode==='dialog'||G.mode==='travel'){advance();return}if(G.mode==='play')G.pressed.add(b.dataset.k)}));
+
+
+/* ================= Online co-op =================
+   One player hosts and runs the whole game. The host's room presence carries a compact snapshot
+   of the world; guests move their own hero, send their position and button presses in their
+   presence, and draw the host's snapshot. Presence needs no special send rights. */
+const KEYS=Object.keys(ENEMY),PK=['coin','snack','diamond'],PJ=['coconut','spout','venom','chunk','seed','fire','snow','ice','grape','spike'],RK=['banana','coconut','apple','melon','fire','icicle','grape','pineapple','kiwi'];
+const FC=['#ffffff','#f6c624','#fff4c9','#ff7b6b','#9be37a','#b9e27a','#ef8a2c','#7fe8f4','#ff9f7a','#ff5a4a'];
+const r1=Math.round,num=(v,d)=>typeof v==='number'&&isFinite(v)?v:d;
+function buildSnap(){
+  const m=G.mode==='play'?'p':G.mode==='dialog'?'d':G.mode==='travel'?'t':'s';
+  const sn={ep:NET.ep,lv:S.level,m,mk:G.menuKind||'',S:[S.lvl,S.xp,S.atk,S.coins,S.snacks,S.sword?1:0,S.boots?1:0,S.maxHp,S.diamond?1:0],cl:L.cleared?1:0,
+    pl:PL.slice(0,4).map(p=>[p.peer||'host',r1(p.x),r1(p.y),Math.ceil(p.hp),p.inv>0?1:0,p.down?1:0,Math.round(p.face*100)/100,p.swingT>0?1:0,r1(p.jaw),p.jawLock?1:0,p.slot,(p.name||'').slice(0,14),p.moving?1:0,p.poison>0?1:0,r1((p.reviveT||0)*10),p.dashT>0?1:0]),
+    en:L.enemies.slice(0,24).map(e=>[e.id,KEYS.indexOf(e.key),r1(e.x),r1(e.y),r1(e.hp),r1(e.peel),(e.dead?1:0)|(e.flip?2:0)|(e.moving?4:0)|(e.windT>0?8:0)|(e.enraged?16:0)|(e.landed?32:0)|(e.state==='up'?64:0)|(e.minion?128:0),r1((e.ang||0)*10),r1((e.peeledT||0)*10),r1(e.air||0),e.slam?[r1(e.slam.tx),r1(e.slam.ty),r1(e.slam.t/e.slam.dur*10)]:0,r1(e.tx||0),r1(e.ty||0)]),
+    pr:L.proj.slice(0,36).map(q=>[r1(q.x),r1(q.y),PJ.indexOf(q.kind),r1(q.vx),r1(q.vy)]),
+    bo:L.bombs.slice(0,14).map(b=>[r1(b.x),r1(b.y),r1(b.t*10),r1((b.max||1.1)*10),b.r,RK.indexOf(b.kind)]),
+    wa:L.waves.slice(0,6).map(w=>[r1(w.x),r1(w.y),r1(w.rad)]),
+    pa:L.patches.slice(0,8).map(q=>[r1(q.x),r1(q.y),q.r]),
+    pk:L.pickups.slice(0,16).map(q=>[r1(q.x),r1(q.y),PK.indexOf(q.kind)]),
+    fl:G.floats.filter(f=>f.id&&G.t-f.t0<.6).slice(-6).map(f=>[f.id,r1(f.x),r1(f.y),String(f.text).slice(0,26),Math.max(0,FC.indexOf(f.color))]),
+    bn:G.banner&&G.t<G.banner.until?[G.banner.text,r1((G.banner.until-G.t)*10)]:0,
+    dl:G.mode==='dialog'&&G.dlg?[G.dlg.src,G.dlg.i]:0,
+    tr:G.mode==='travel'&&G.trav?[G.trav.i,r1((G.t-G.trav.start)*10)]:0};
+  let j=JSON.stringify(sn);
+  if(j.length>3700){sn.pr=sn.pr.slice(0,12);sn.pk=sn.pk.slice(0,6);sn.fl=sn.fl.slice(-2);sn.en=sn.en.slice(0,16);j=JSON.stringify(sn)}
+  if(j.length>3800){sn.pr=[];sn.pk=[];sn.fl=[];sn.bo=sn.bo.slice(0,6)}
+  return sn}
+function syncGuests(){const seen=new Set();
+  for(const pr of NET.game.peers()){const q=pr.presence||{};if(pr.sameTab||q.role!=='g')continue;
+    let pl=PL.find(p=>p.peer===pr.peer);
+    if(!pl){if(PL.length>=4)continue;const used=PL.map(p=>p.slot);let slot=1;while(used.includes(slot))slot++;
+      pl=makePlayer(L.start.x,L.start.y,slot);[pl.x,pl.y]=spotNear(slot);pl.peer=pr.peer;pl.s=q.s|0;pl.e=q.e|0;pl.q=q.q|0;PL.push(pl);
+      pl.name=String(q.nm||'Friend').slice(0,14);banner(`${pl.name} joined the game!`)}
+    seen.add(pr.peer);pl.name=String(q.nm||'Friend').slice(0,14);
+    if(!pl.down&&q.ep===NET.ep){pl.x=clamp(num(q.x,pl.x),8,L.mw*T-8);pl.y=clamp(num(q.y,pl.y),8,L.mh*T-8)}
+    pl.face=num(q.f,pl.face);pl.walk=num(q.w,pl.walk);pl.moving=!!q.mv;pl.dashT=q.dash?.1:0;
+    if(G.mode==='play'&&!pl.down&&q.ep===NET.ep){if((q.s|0)>pl.s){pl.cd=0;swing(pl)}if((q.e|0)>pl.e){pl.biteCd=0;eat(pl)}if((q.q|0)>pl.q)snack(pl)}
+    pl.s=q.s|0;pl.e=q.e|0;pl.q=q.q|0}
+  const gone=PL.filter(p=>!p.local&&!seen.has(p.peer));
+  if(gone.length){gone.forEach(p=>banner(`${p.name||'A friend'} left the game.`));PL=PL.filter(p=>p.local||seen.has(p.peer));if(G.mode==='play'&&PL.every(p=>p.down))die()}}
+function guestAct(k){
+  if(k==='s'){if(P.cd>0)return;P.cd=.32;P.swingT=.2;let best=null,bd=110;for(const e of L.enemies){if(!hittable(e))continue;const d=Math.hypot(e.x-P.x,e.y-P.y)-e.r;if(d<bd){bd=d;best=e}}if(best)P.face=Math.atan2(best.y-P.y,best.x-P.x);P.swingAng=P.face}
+  if(k==='e'){if(P.biteCd>0)return;P.biteCd=.28;if(P.jawLock){hint('Jaw too tired! Wait a moment.');return}}
+  if(k==='q'&&(S.snacks<=0||P.hp>=S.maxHp)){hint(S.snacks<=0?'No snacks left':'Already at full health');return}
+  NET.cnt[k]++}
+function guestLine([who,text]){$('#dlgWho').textContent=who;$('#dlgText').textContent=text;$('#dlgNext').textContent='Waiting for the host…';dlg.hidden=false}
+function applySnap(sn){NET.lastSnap=sn;
+  if(!L||sn.ep!==NET.ep||L.i!==sn.lv){NET.ep=sn.ep;guestLoadLevel(sn.lv)}
+  const a=sn.S||[];Object.assign(S,{level:sn.lv,lvl:a[0],xp:a[1],atk:a[2],coins:a[3],snacks:a[4],sword:!!a[5],boots:!!a[6],maxHp:a[7],diamond:!!a[8]});
+  L.cleared=!!sn.cl;const seen=new Set();let mine=null;
+  for(const q of sn.pl||[]){if(q[0]===NET.myPeer){mine=q;continue}const id=String(q[0]);seen.add(id);let o=NET.others.get(id);
+    if(!o){o=makePlayer(q[1],q[2],q[10]);NET.others.set(id,o)}
+    o.nx=q[1];o.ny=q[2];o.hp=q[3];o.inv=q[4]?.5:0;o.down=!!q[5];o.face=q[6];if(q[7]&&o.swingT<=0){o.swingT=.2;o.swingAng=o.face}o.jaw=q[8];o.slot=q[10];o.name=String(q[11]||'Friend');o.moving=!!q[12];o.reviveT=q[14]/10;o.dashT=q[15]?.1:0}
+  for(const k of [...NET.others.keys()])if(!seen.has(k))NET.others.delete(k);
+  if(mine){NET.inGame=true;P.hp=mine[3];P.inv=mine[4]?.5:0;P.down=!!mine[5];P.jaw=mine[8];P.jawLock=!!mine[9];P.slot=mine[10];P.poison=mine[13]?1:0;P.reviveT=mine[14]/10}
+  PL=[P,...NET.others.values()];
+  const ids=new Set();
+  for(const q of sn.en||[]){const [id,ki,x,y,hp,peel,fl,ang,pt,air,sl,tx,ty]=q;const key=KEYS[ki];if(!key)continue;ids.add(id);let e=NET.ents.get(id);
+    if(!e){const d=ENEMY[key];e={id,key,def:d,x,y,r:15*d.size,cr:14,hp,maxHp:d.hp,peel,maxPeel:d.peel||0,t:Math.random()*5,alpha:1,dead:false,flip:false,hitFlash:0,peeledT:0,windT:0,trail:[],ang:0,air:0,state:'swim',tx:x,ty:y,minion:false,moving:false,enraged:false,landed:false,slam:null};NET.ents.set(id,e)}
+    if(hp<e.hp||peel<e.peel)e.hitFlash=.12;
+    Object.assign(e,{nx:x,ny:y,hp,peel,dead:!!(fl&1),flip:!!(fl&2),moving:!!(fl&4),windT:fl&8?.1:0,enraged:!!(fl&16),landed:!!(fl&32),state:fl&64?'up':'swim',minion:!!(fl&128),ang:ang/10,peeledT:pt/10,air,slam:sl?{tx:sl[0],ty:sl[1],t:sl[2],dur:10}:null,tx,ty,gone:false})}
+  for(const e of NET.ents.values())if(!ids.has(e.id)){e.dead=true;e.gone=true}
+  L.enemies=[...NET.ents.values()];
+  L.proj=(sn.pr||[]).map(q=>({x:q[0],y:q[1],kind:PJ[q[2]],vx:q[3],vy:q[4],r:q[2]===0?8:7}));
+  L.bombs=(sn.bo||[]).map(q=>({x:q[0],y:q[1],t:q[2]/10,max:q[3]/10,r:q[4],kind:RK[q[5]]}));
+  L.waves=(sn.wa||[]).map(q=>({x:q[0],y:q[1],rad:q[2]}));
+  L.patches=(sn.pa||[]).map(q=>({x:q[0],y:q[1],r:q[2],t:2}));
+  L.pickups=(sn.pk||[]).map(q=>({x:q[0],y:q[1],kind:PK[q[2]]}));
+  for(const f of sn.fl||[])if(f[0]>NET.seenFloat){NET.seenFloat=f[0];G.floats.push({x:f[1],y:f[2],text:String(f[3]),color:FC[f[4]]||'#ffffff',t0:G.t})}
+  if(sn.bn&&(!G.banner||G.banner.text!==sn.bn[0]||G.t>G.banner.until))G.banner={text:String(sn.bn[0]).slice(0,80),until:G.t+sn.bn[1]/10};
+  if(sn.m==='p'){G.mode='play';dlg.hidden=true}
+  else if(sn.m==='d'&&sn.dl){G.mode='dialog';const lines=sn.dl[0]==='i'?introLines(LEVELS[sn.lv]):LEVELS[sn.lv].outro;if(lines[sn.dl[1]])guestLine(lines[sn.dl[1]])}
+  else if(sn.m==='t'&&sn.tr){G.mode='travel';dlg.hidden=true;const legs=LEVELS[sn.lv].arrive||[];if(legs[sn.tr[0]])G.trav={legs,i:sn.tr[0],start:G.t-sn.tr[1]/10};else G.mode='wait'}
+  else{dlg.hidden=true;if(sn.mk==='end'){if(G.mode!=='menu'){G.mode='menu';showMenu(`<p class="eyebrow">The end</p><h2>Every evil fruit is eaten</h2><p>Your team ate its way from Europe to Antarctica and cracked the Frozen Plum. Your host can start a new adventure.</p><div class="row"><button class="btn primary" id="gEnd">Back to the title</button></div>`);$('#gEnd').onclick=()=>leaveGame()}}
+    else{if(G.mode==='menu')hideMenu();G.mode='wait';G.waitMsg=sn.mk==='shop'?'The host is shopping…':sn.mk==='wipe'?'Everyone was knocked out. Waiting for the host to try again…':'Waiting for the host…'}}}
+function guestUpdate(dt){if(!L)return;
+  if(G.mode==='play'){G.playT+=dt;updPlayer(dt)}
+  const k=Math.min(1,dt*12);
+  for(const e of NET.ents.values()){e.t+=dt;e.hitFlash-=dt;if(e.nx!=null){e.x+=(e.nx-e.x)*k;e.y+=(e.ny-e.y)*k}if(e.def.ai==='dragon'){e.trail.unshift([e.x,e.y]);if(e.trail.length>130)e.trail.length=130}if(e.dead)e.alpha-=dt*2.2;if(e.gone&&e.alpha<=0)NET.ents.delete(e.id)}
+  L.enemies=[...NET.ents.values()];
+  for(const o of NET.others.values()){if(o.nx!=null){o.x+=(o.nx-o.x)*k;o.y+=(o.ny-o.y)*k}o.swingT-=dt;if(o.moving)o.walk+=dt*12}
+  for(const q of L.proj){q.x+=q.vx*dt;q.y+=q.vy*dt}
+  for(const b of L.bombs)b.t=Math.max(0,b.t-dt);
+  for(const w of L.waves)w.rad+=230*dt}
+function netTick(){if(!NET.game)return;const now=performance.now();
+  try{
+  if(NET.role==='host'){if(L&&G.mode!=='title')syncGuests();
+    if(L&&now-NET.sendT>(NET.room&&NET.room.kind==='sb'?90:66)){NET.sendT=now;NET.game.presence({role:'h',nm:NET.name,snap:buildSnap()}).catch(()=>{})}}
+  else if(NET.role==='guest'){const peers=NET.game.peers(),me=peers.find(p=>p.sameTab);if(me)NET.myPeer=me.peer;
+    const host=peers.find(p=>!p.sameTab&&p.presence&&p.presence.role==='h'&&p.presence.snap);
+    if(host){NET.hostSeen=now;NET.gotHost=true;if(host.presence.snap!==NET.lastSnapObj){NET.lastSnapObj=host.presence.snap;applySnap(host.presence.snap)}}
+    else if(now-NET.hostSeen>(NET.gotHost?6000:12000))return leaveGame(NET.gotHost?'The host left the game.':'No game was found with that code. Check the code with your friend.');
+    if(NET.gotHost&&!NET.inGame&&now-NET.joinT>8000)return leaveGame('That game is full. Up to 4 players can play together.');
+    if(now-NET.sendT>(NET.room&&NET.room.kind==='sb'?100:50)&&P){NET.sendT=now;NET.game.presence({role:'g',nm:NET.name,ep:L?NET.ep:-1,x:r1(P.x),y:r1(P.y),f:Math.round(P.face*100)/100,w:Math.round(P.walk*10)/10,mv:P.moving?1:0,dash:P.dashT>0?1:0,s:NET.cnt.s,e:NET.cnt.e,q:NET.cnt.q}).catch(()=>{})}}
+  }catch(e){console.warn('co-op',e)}
+  if(now-NET.barT>500){NET.barT=now;updNetbar()}}
+function updNetbar(){const bar=$('#netbar');if(!NET.game){bar.hidden=true;return}bar.hidden=false;
+  const names=PL.map(p=>p.local?'you':(p.name||'Friend'));
+  $('#netInfo').textContent=`${NET.role==='host'?'Hosting':'Playing in'} game ${NET.code} · ${PL.length} player${PL.length>1?'s':''}: ${names.join(', ')}`;
+  $('#netLeave').textContent=NET.role==='host'?'Stop hosting':'Leave game'}
+function randCode(){const A='ABCDEFGHJKLMNPQRSTUVWXYZ';let c='';for(let i=0;i<4;i++)c+=A[Math.floor(Math.random()*A.length)];return c}
+function readName(){const el=$('#mpName');let n=el?el.value.trim().slice(0,14):NET.name;if(!n)n='Player';NET.name=n;try{localStorage.setItem('botc-name',n)}catch(e){}return n}
+function mpMenu(){const sv=loadSave(),can=sv&&!sv.done;
+  showMenu(`<p class="eyebrow">Play with friends</p><h2>Online co-op</h2>
+  <p>Up to 4 players. One person hosts and runs the game; friends join with the 4-letter code. ${NET.room&&NET.room.kind==='sb'?'Send your friends the link to this page. You can see open games below.':'Everyone needs to be signed in to Claude, and the game must be shared with your friends from the Share menu.'}</p>
+  <label class="fld" for="mpName">Your name<input id="mpName" maxlength="14" autocomplete="off" spellcheck="false"></label>
+  <div class="row"><button class="btn primary" id="mpHostNew">Host a new game</button>${can?`<button class="btn" id="mpHostSave">Host from my save<small>Chapter ${sv.level+1}, level ${sv.lvl}</small></button>`:''}</div>
+  <h3 class="sub">Join a friend</h3><div id="mpList" class="mplist"></div>
+  <div class="row"><label class="sr" for="mpCode">Game code</label><input id="mpCode" class="code" maxlength="4" placeholder="CODE" autocomplete="off" spellcheck="false"><button class="btn" id="mpJoin">Join</button></div>
+  <p class="note" id="mpMsg"></p><div class="row"><button class="btn" id="mpBack">Back</button></div>`);
+  $('#mpName').value=NET.name;const msg=$('#mpMsg');
+  if(!NET.room){msg.textContent='Online play is not available right now. Check your internet connection and reload the page.';['mpHostNew','mpHostSave','mpJoin'].forEach(id=>{const b=$('#'+id);if(b)b.disabled=true})}
+  $('#mpBack').onclick=()=>title();
+  $('#mpHostNew').onclick=()=>hostGame(false);if(can)$('#mpHostSave').onclick=()=>hostGame(true);
+  $('#mpJoin').onclick=()=>joinGame($('#mpCode').value);$('#mpCode').addEventListener('keydown',e=>{if(e.key==='Enter')joinGame($('#mpCode').value)});
+  renderLobby()}
+function renderLobby(){const box=$('#mpList');if(!box||!NET.room)return;
+  const hosts=NET.room.peers().filter(p=>!p.sameTab&&p.presence&&typeof p.presence.hosting==='string'&&/^[A-Z]{4}$/.test(p.presence.hosting));
+  box.textContent='';
+  if(!hosts.length){const n=document.createElement('p');n.className='note';n.textContent='No open games right now. Ask a friend to host, or type their code below.';box.append(n);return}
+  for(const h of hosts.slice(0,8)){const b=document.createElement('button');b.className='btn';b.textContent=`Join ${String(h.presence.nm||'a friend').slice(0,14)}’s game`;const sm=document.createElement('small');sm.textContent=`Code ${h.presence.hosting}`;b.append(sm);b.onclick=()=>joinGame(h.presence.hosting);box.append(b)}}
+async function hostGame(fromSave){readName();const msg=$('#mpMsg');msg.textContent='Opening a game room…';const code=randCode();
+  try{NET.game=await NET.room.join('botc-'+code.toLowerCase())}catch(e){msg.textContent='Could not open a game room right now. Try again in a moment.';return}
+  NET.role='host';NET.code=code;NET.ep=0;NET.room.presence({hosting:code,nm:NET.name}).catch(()=>{});
+  hideMenu();S=fromSave?Object.assign(NEW(),loadSave()):NEW();PL=[];loadLevel(S.level);banner(`Your game code is ${code}. Friends can join now!`,6);updNetbar()}
+async function joinGame(raw){readName();const msg=$('#mpMsg');const code=String(raw||'').toUpperCase().replace(/[^A-Z]/g,'');
+  if(code.length!==4){if(msg)msg.textContent='Game codes are 4 letters.';return}
+  if(msg)msg.textContent='Joining…';
+  try{NET.game=await NET.room.join('botc-'+code.toLowerCase())}catch(e){if(msg)msg.textContent='Could not join right now. Try again in a moment.';return}
+  Object.assign(NET,{role:'guest',code,ep:-1,cnt:{s:0,e:0,q:0},hostSeen:performance.now(),joinT:performance.now(),gotHost:false,inGame:false,lastSnap:null,lastSnapObj:null,seenFloat:0});NET.others.clear();NET.ents.clear();
+  S=NEW();L=null;P=makePlayer(0,0,1);P.local=true;P.name=NET.name;PL=[P];
+  hideMenu();G.mode='wait';G.waitMsg=`Joining game ${code}…`;updNetbar()}
+function leaveGame(note){const g=NET.game,wasHost=NET.role==='host';NET.game=null;NET.role='solo';NET.others.clear();NET.ents.clear();
+  if(g)g.leave().catch(()=>{});if(wasHost&&NET.room)NET.room.presence({hosting:null}).catch(()=>{});
+  updNetbar();
+  if(wasHost&&L){PL=[P];if(G.mode==='menu'&&G.menuKind==='')hideMenu();banner('You stopped hosting. Playing solo now.')}
+  else{dlg.hidden=true;title(note)}}
+$('#netLeave').addEventListener('click',()=>leaveGame());
+function makeSupabaseRoom(cfg){
+  const sb=window.supabase.createClient(cfg.url,cfg.key,{auth:{persistSession:false,autoRefreshToken:false},realtime:{params:{eventsPerSecond:30}}});
+  const me=Math.random().toString(36).slice(2,10)+Date.now().toString(36).slice(-4);
+  const lobby=sb.channel('botc-lobby',{config:{presence:{key:me}}});
+  let lobbyMe={},lobbyPeers=[],lobbyFns=[],lobbyReady=false;
+  lobby.on('presence',{event:'sync'},()=>{const st=lobby.presenceState();lobbyPeers=Object.entries(st).map(([k,arr])=>({peer:k,sameTab:k===me,presence:arr[arr.length-1]||{}}));lobbyFns.forEach(f=>{try{f({peers:lobbyPeers})}catch(e){}})})
+    .subscribe(st=>{if(st==='SUBSCRIBED'){lobbyReady=true;lobby.track(lobbyMe).catch(()=>{})}});
+  return{kind:'sb',peers:()=>lobbyPeers,onPeers(fn){lobbyFns.push(fn);return()=>{lobbyFns=lobbyFns.filter(f=>f!==fn)}},
+    async presence(patch){for(const [k,v] of Object.entries(patch)){if(v===null)delete lobbyMe[k];else lobbyMe[k]=v}if(lobbyReady)await lobby.track(lobbyMe)},
+    join(name){return new Promise((resolve,reject)=>{
+      const ch=sb.channel(name,{config:{broadcast:{self:false,ack:false}}}),others=new Map();let mine={},live=false,done=false;
+      ch.on('broadcast',{event:'st'},({payload})=>{if(payload&&typeof payload.p==='string'&&payload.p!==me&&payload.s&&typeof payload.s==='object')others.set(payload.p,{presence:payload.s,at:performance.now()})});
+      ch.on('broadcast',{event:'bye'},({payload})=>{if(payload&&typeof payload.p==='string')others.delete(payload.p)});
+      const api={presence(patch){for(const [k,v] of Object.entries(patch)){if(v===null)delete mine[k];else mine[k]=v}if(!live)return Promise.resolve();return ch.send({type:'broadcast',event:'st',payload:{p:me,s:mine}}).then(()=>{})},
+        peers(){const now=performance.now(),out=[{peer:me,sameTab:true,presence:mine}];for(const [k,v] of others){if(now-v.at>5000){others.delete(k);continue}out.push({peer:k,sameTab:false,presence:v.presence})}return out},
+        async leave(){if(live){try{await ch.send({type:'broadcast',event:'bye',payload:{p:me}})}catch(e){}}live=false;await sb.removeChannel(ch)}};
+      const timer=setTimeout(()=>{if(!done){done=true;sb.removeChannel(ch);reject(new Error('timeout'))}},10000);
+      ch.subscribe(st=>{if(st==='SUBSCRIBED'&&!done){done=true;live=true;clearTimeout(timer);resolve(api)}else if((st==='CHANNEL_ERROR'||st==='TIMED_OUT')&&!done){done=true;clearTimeout(timer);sb.removeChannel(ch);reject(new Error(st))}else if(st==='CLOSED')live=false})})}}}
+(async()=>{try{if(window.SB_CONFIG&&window.supabase&&window.supabase.createClient)NET.room=makeSupabaseRoom(window.SB_CONFIG);else NET.room=window.claude&&window.claude.use?await window.claude.use('room'):null}catch(e){NET.room=null}
+  if(NET.room){NET.room.onPeers(()=>renderLobby(),()=>{});if(!menu.hidden&&$('#mpMsg')&&$('#mpHostNew').disabled)mpMenu()}})();
+
+/* ================= Loop ================= */
+let last=0;
+function frame(ts){const t=ts/1000,dt=Math.min(.05,last?t-last:0);last=t;G.t=t;
+  if(NET.role==='guest')guestUpdate(dt);else if(G.mode==='play'&&L)update(dt);
+  netTick();
+  G.shake=Math.max(0,G.shake-dt);
+  for(const p of G.parts){p.x+=p.vx*dt;p.y+=p.vy*dt;p.vx*=.9;p.vy*=.9;p.life-=dt}G.parts=G.parts.filter(p=>p.life>0);
+  G.floats=G.floats.filter(f=>G.t-f.t0<1.1);
+  document.body.classList.toggle('talking',!dlg.hidden);
+  render();G.pressed.clear();requestAnimationFrame(frame)}
+requestAnimationFrame(frame);
+title();
+</script>
