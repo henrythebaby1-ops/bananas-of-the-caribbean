@@ -36,13 +36,21 @@ A top-down action RPG. Every banana in Europe has come alive and run off to the 
 23. The Pomegranates of Mars
 24. The Cherries of Saturn
 25. The Starfruit of the Sun
+26. The Durians of Venus
+27. The Jackfruits of Jupiter (the wind never stops)
+28. The Blue Raspberries of Neptune
+29. The Figs of Pluto
+30. The Black Hole (it pulls you in)
+
+**Part 4: Beyond the universe**
+31. Beyond the Universe (Fruitus Maximus, the Fruit of Everything)
 
 ## How to play
 
 - **Computer:** WASD or arrow keys to move, J or Space to swing your sword, K to eat, Shift to dash, Q for a snack.
 - **Phone:** joystick and buttons appear under the game. Turn your phone sideways for a bigger view.
 
-Hit an enemy with your sword to peel it, then get close and eat it before the peel grows back. Bosses get furious when they're half eaten.
+Hit an enemy with your sword to peel it, then get close and eat it before the peel grows back. Bosses get furious when they're half eaten. From chapter 9 on, every chapter is a little harder than the last: enemies have more health, hit harder, move faster, and bosses attack more often.
 
 ## Play with friends
 

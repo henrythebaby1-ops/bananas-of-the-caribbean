@@ -200,7 +200,25 @@ const ENEMY={
   ringCherry:{name:'The Ring Cherry of Saturn',fruit:'cherry',ai:'walker',peel:245,hp:470,speed:66,dmg:13,size:3.8,xp:290,coins:155,sight:999,look:'ring',boss:true,tough:.6,regrow:5,regrowFrac:.35,attacks:['ring','summon','spread','rain','wave','slam'],rate:2.3,shot:'laser',shotDmg:9,rain:'meteor',summon:'ufoCherry',snack:2},
   flare:{name:'Solar Flare Starfruit',fruit:'starfruit',ai:'walker',peel:80,hp:108,speed:102,dmg:15,size:1.1,xp:64,coins:22,sight:280,dash:1.7,look:'sunflare'},
   sunspot:{name:'Sunspot Starfruit',fruit:'starfruit',ai:'shooter',peel:70,hp:96,speed:76,dmg:14,size:1.05,xp:64,coins:22,sight:340,shot:'fire',shotDmg:13},
-  solar:{name:'The Solar Starfruit',fruit:'starfruit',ai:'walker',peel:260,hp:500,speed:56,dmg:14,size:4.2,xp:0,coins:0,sight:999,look:'sunflare',boss:true,tough:.6,regrow:4.5,regrowFrac:.3,needDiamond:true,attacks:['wave','ring','rain','slam','spread','summon','wave'],rate:2.2,shot:'fire',shotDmg:10,rain:'fire',summon:'flare'},
+  solar:{name:'The Solar Starfruit',fruit:'starfruit',ai:'walker',peel:260,hp:500,speed:56,dmg:14,size:4.2,xp:300,coins:160,snack:2,sight:999,look:'sunflare',boss:true,tough:.6,regrow:4.5,regrowFrac:.3,needDiamond:true,attacks:['wave','ring','rain','slam','spread','summon','wave'],rate:2.2,shot:'fire',shotDmg:10,rain:'fire',summon:'flare'},
+  stinker:{name:'Stinky Durian',fruit:'durian',skin:'shell',ai:'walker',peel:80,hp:105,speed:96,dmg:14,size:1.15,xp:66,coins:22,sight:270,dash:2,poison:.35},
+  durianSpiker:{name:'Durian Spiker',fruit:'durian',skin:'shell',ai:'shooter',peel:70,hp:95,speed:72,dmg:13,size:1.05,xp:66,coins:22,sight:340,shot:'spike',shotDmg:13},
+  durianQueen:{name:'The Durian Queen of Venus',fruit:'durian',skin:'shell',ai:'walker',peel:265,hp:510,speed:62,dmg:14,size:3.9,xp:300,coins:160,sight:999,look:'tiara',boss:true,tough:.58,regrow:4.5,regrowFrac:.35,poison:.4,needDiamond:true,attacks:['spread','freeze','summon','ring','rain','slam'],rate:2.2,shot:'spike',shotDmg:10,rain:'meteor',summon:'stinker',snack:2},
+  jackRoller:{name:'Jackfruit Roller',fruit:'jackfruit',ai:'walker',peel:84,hp:112,speed:104,dmg:15,size:1.2,xp:70,coins:23,sight:280,dash:1.6},
+  jackThrower:{name:'Jackfruit Thrower',fruit:'jackfruit',ai:'shooter',peel:74,hp:100,speed:72,dmg:14,size:1.1,xp:70,coins:23,sight:340,shot:'chunk',shotDmg:14},
+  jackGiant:{name:'The Great Red Jackfruit',fruit:'jackfruit',ai:'walker',peel:270,hp:520,speed:62,dmg:14,size:4,xp:310,coins:165,sight:999,look:'stormcloud',boss:true,tough:.58,regrow:4.5,regrowFrac:.35,needDiamond:true,attacks:['wave','charge','summon','spread','rain','slam'],rate:2.2,shot:'chunk',shotDmg:10,rain:'meteor',summon:'jackRoller',snack:2},
+  berryDiver:{name:'Blue Raspberry Diver',fruit:'blueraz',ai:'walker',peel:86,hp:114,speed:108,dmg:15,size:1,xp:72,coins:24,sight:280,dash:1.6},
+  berryFrost:{name:'Frost Raspberry',fruit:'blueraz',ai:'shooter',peel:76,hp:104,speed:74,dmg:14,size:1.05,xp:72,coins:24,sight:340,shot:'ice',shotDmg:14,look:'beanie'},
+  triton:{name:'King Triton Raspberry',fruit:'blueraz',ai:'walker',peel:275,hp:530,speed:64,dmg:15,size:4,xp:320,coins:170,sight:999,look:'crown',boss:true,tough:.58,regrow:4.5,regrowFrac:.35,needDiamond:true,attacks:['ring','freeze','charge','summon','rain','spread'],rate:2.1,shot:'ice',shotDmg:11,rain:'icicle',summon:'berryDiver',snack:2},
+  figScout:{name:'Pluto Fig',fruit:'fig',ai:'walker',peel:88,hp:118,speed:104,dmg:15,size:1,xp:74,coins:25,sight:280,dash:1.7,look:'beanie'},
+  figSnow:{name:'Snowball Fig',fruit:'fig',ai:'shooter',peel:78,hp:106,speed:74,dmg:14,size:1.05,xp:74,coins:25,sight:340,shot:'snow',shotDmg:14},
+  lonelyFig:{name:'The Lonely Fig of Pluto',fruit:'fig',ai:'walker',peel:280,hp:540,speed:66,dmg:15,size:4,xp:330,coins:175,sight:340,look:'beanie',boss:true,tough:.58,regrow:4.5,regrowFrac:.35,needDiamond:true,attacks:['freeze','spread','rain','summon','slam','ring'],rate:2.1,shot:'snow',shotDmg:11,rain:'icicle',summon:'figScout',snack:2},
+  voidDragon:{name:'Void Dragonfruit',fruit:'dragonfruit',ai:'walker',peel:90,hp:122,speed:108,dmg:16,size:1.05,xp:78,coins:26,sight:300,dash:1.6},
+  voidFlyer:{name:'Gravity Dragonfruit',fruit:'dragonfruit',ai:'flyer',peel:80,hp:110,speed:135,dmg:15,size:1,xp:78,coins:26,look:'horns'},
+  holeBoss:{name:'The Black Hole Dragonfruit',fruit:'dragonfruit',ai:'walker',peel:290,hp:560,speed:60,dmg:16,size:4.1,xp:340,coins:180,sight:999,look:'horns',boss:true,tough:.58,regrow:4.5,regrowFrac:.35,needDiamond:true,attacks:['wave','ring','summon','slam','spread','rain'],rate:2,shot:'laser',shotDmg:12,rain:'meteor',summon:'voidFlyer',snack:2},
+  cosmicSalad:{name:'Cosmic Fruit Salad',fruit:'cosmic',ai:'walker',peel:94,hp:128,speed:110,dmg:16,size:1.1,xp:82,coins:28,sight:300,dash:1.5},
+  ghost:{name:'Ghost Banana',ai:'flyer',peel:84,hp:116,speed:140,dmg:16,size:1.1,xp:82,coins:28,look:'halo'},
+  overlord:{name:'Fruitus Maximus, the Fruit of Everything',fruit:'cosmic',ai:'walker',peel:320,hp:620,speed:62,dmg:16,size:4.4,xp:0,coins:0,sight:999,look:'halo',boss:true,tough:.55,regrow:4,regrowFrac:.3,needDiamond:true,attacks:['wave','ring','rain','freeze','slam','summon','spread','charge'],rate:1.9,shot:'laser',shotDmg:12,rain:'meteor',summon:['ghost','cosmicSalad','flare','ufoCherry']},
   plum:{name:'Frozen Plum',fruit:'plum',skin:'ice',ai:'walker',peel:66,hp:90,speed:82,dmg:13,size:1.1,xp:50,coins:18,sight:260,dash:2.2},
   snowPlum:{name:'Snowball Plum',fruit:'plum',skin:'ice',ai:'shooter',peel:56,hp:80,speed:70,dmg:11,size:1.05,xp:52,coins:18,sight:320,shot:'snow',shotDmg:10,look:'beanie'},
   frozenPlum:{name:'The Frozen Plum',fruit:'plum',skin:'ice',ai:'walker',peel:230,hp:440,speed:55,dmg:12,size:4,xp:260,coins:140,snack:2,sight:999,look:'icecrown',boss:true,tough:.6,regrow:4.5,regrowFrac:.3,needDiamond:true,attacks:['ring','rain','freeze','slam','spread','summon','wave'],rate:2.4,shot:'ice',shotDmg:7,rain:'icicle',summon:'plum'}
@@ -223,13 +241,21 @@ const FRUIT={
   pomegranate:{id:'pomegranate',shape:'round',skin:'#b8202f',flesh:'#ff8a96',line:'#5a0a14',stem:false},
   cherry:{id:'cherry',shape:'round',skin:'#c0122a',flesh:'#ff6b7f',line:'#5a0812',stem:true},
   starfruit:{id:'starfruit',shape:'star',skin:'#ffd23a',flesh:'#fff3a0',line:'#a37a00',stem:false},
+  durian:{id:'durian',shape:'round',skin:'#a8b83a',flesh:'#fff1a8',line:'#4a5a10',stem:true},
+  jackfruit:{id:'jackfruit',shape:'tall',skin:'#9bb83a',flesh:'#ffd23a',line:'#4a5a10',stem:false},
+  blueraz:{id:'blueraz',shape:'round',skin:'#2a6fd6',flesh:'#8fc3ff',line:'#0a2a6a',stem:false},
+  fig:{id:'fig',shape:'round',skin:'#5a2a5a',flesh:'#ff9a7a',line:'#2a0a2a',stem:true},
+  dragonfruit:{id:'dragonfruit',shape:'tall',skin:'#e83a8a',flesh:'#ffffff',line:'#7a0a3a',stem:false},
+  cosmic:{id:'cosmic',shape:'round',skin:'#c77dff',flesh:'#ffffff',line:'#2a1a4a',stem:false},
   plum:{id:'plum',shape:'round',skin:'rgba(205,238,252,.8)',flesh:'#6a2c70',line:'#3a1440',stem:true}
 };
+/* Difficulty climbs after chapter 9: enemies get more health, hit harder, move faster and bosses attack more often. */
+function diff(i){const k=Math.max(0,(i|0)-8);return{hp:1+k*.04,dm:1+k*.025,sp:1+k*.008,rate:1+k*.015}}
 const SKIN_OFF={shell:'Shell cracked!',peel:'Peeled!',skin:'Skinned!',rind:'Rind off!',ice:'Ice cracked!'};
 const SKIN_BACK={shell:'Shell grew back!',peel:'Peel grew back!',skin:'Skin grew back!',rind:'Rind grew back!',ice:'Ice froze back!'};
 const SPAWN={'1':'scout','2':'bandit','3':'gladiator','4':'whale','5':'whaleBig','6':'sky','7':'blimp','8':'boss','9':'snake','K':'snakeKing','F':'final',
-  w:'melon',v:'seedMelon',Z:'melonBoss',a:'apple',b:'greenApple',G:'appleKing',t:'tangerine',l:'lantern',D:'dragon',u:'plum',y:'snowPlum',O:'frozenPlum',k:'grapeSoldier',q:'grapeCannon',V:'grapeBoss',o:'coconutRoller',x:'coconutThrower',J:'kahuna',f:'pinePunk',z:'pineSpiky',N:'pineRex',e:'kiwiRunner',h:'kiwiSpitter','&':'kiwiBoss','!':'ninja','?':'shuriken','$':'shogun','*':'mummy','+':'squirter','=':'pharaoh','~':'dancer',';':'toucan',':':'mangoKing','ä':'rhino','ö':'papayaSpit','Ä':'lionPapaya','é':'orangeDiver','è':'zester','É':'orangeGiant','ñ':'moonBerry','ç':'blaster','Ñ':'commander','ü':'martian','û':'rayGunner','Ü':'emperor','ï':'ufoCherry','î':'comet','Ï':'ringCherry','ô':'flare','ò':'sunspot','Ô':'solar'};
-const FLOOR={g:'#78b257',',':'#d6bd86',s:'#ecd59a',p:'#a8743f',c:'#f3f8fb',r:'#d4bc92',j:'#4f7d36',d:'#e3b778',i:'#cfeaf5',n:'#f4f8fb','`':'#b8bcc4','^':'#c1522f','_':'#cfc3e8','|':'#ffb02e'};
+  w:'melon',v:'seedMelon',Z:'melonBoss',a:'apple',b:'greenApple',G:'appleKing',t:'tangerine',l:'lantern',D:'dragon',u:'plum',y:'snowPlum',O:'frozenPlum',k:'grapeSoldier',q:'grapeCannon',V:'grapeBoss',o:'coconutRoller',x:'coconutThrower',J:'kahuna',f:'pinePunk',z:'pineSpiky',N:'pineRex',e:'kiwiRunner',h:'kiwiSpitter','&':'kiwiBoss','!':'ninja','?':'shuriken','$':'shogun','*':'mummy','+':'squirter','=':'pharaoh','~':'dancer',';':'toucan',':':'mangoKing','ä':'rhino','ö':'papayaSpit','Ä':'lionPapaya','é':'orangeDiver','è':'zester','É':'orangeGiant','ñ':'moonBerry','ç':'blaster','Ñ':'commander','ü':'martian','û':'rayGunner','Ü':'emperor','ï':'ufoCherry','î':'comet','Ï':'ringCherry','ô':'flare','ò':'sunspot','Ô':'solar','à':'stinker','á':'durianSpiker','À':'durianQueen','ì':'jackRoller','í':'jackThrower','Ì':'jackGiant','ù':'berryDiver','ú':'berryFrost','Ù':'triton','ë':'figScout','ê':'figSnow','Ë':'lonelyFig','ã':'voidDragon','õ':'voidFlyer','Ã':'holeBoss','å':'cosmicSalad','ø':'ghost','Å':'overlord'};
+const FLOOR={g:'#78b257',',':'#d6bd86',s:'#ecd59a',p:'#a8743f',c:'#f3f8fb',r:'#d4bc92',j:'#4f7d36',d:'#e3b778',i:'#cfeaf5',n:'#f4f8fb','`':'#b8bcc4','^':'#c1522f','_':'#cfc3e8','|':'#ffb02e',')':'#c9b35a','(':'#e8d2a8','[':'#9cc8f0',']':'#a9a3b8','{':'#3a2a5a','}':'#2a2a4a'};
 const SOLID=new Set(['#','T','H','W','S','C','X','B','P','R','m','M','Y','A','Q','U','L','I','%']);
 
 const LEVELS=[
@@ -691,7 +717,7 @@ const LEVELS=[
        "SSSSSSSSSSSSSSSSSSSSSSSSSSSSSS"],
   intro:[['Narrator','The rings of Saturn. You land on a giant chunk of ring ice floating in space. UFO Cherries zoom in from the dark.'],['The Ring Cherry of Saturn','Nobody passes the rings! The Sun is ours!'],['Tip','Peel a UFO Cherry and it crashes onto the ice so you can eat it. Do not fall behind the Comet Cherries.']],
   outro:[['The Ring Cherry of Saturn','The Solar Starfruit... rules us all... it is too hot to eat...'],['Narrator','There is only one place left: the Sun itself. Good thing your diamond sword can take the heat.']]},
- {name:'The Starfruit of the Sun',floor:'|',wall:'mars',lava:true,space:false,final:true,goal:'final',goalText:'Peel and eat the Solar Starfruit',arrive:[['rocket','Blasting off toward the Sun']],
+ {name:'The Starfruit of the Sun',floor:'|',wall:'mars',lava:true,exit:'rocket',exitText:'Blast off to Venus',clearText:'The Sun is cooling down! Back to the rocket.',goal:'Starfruit',arrive:[['rocket','Blasting off toward the Sun']],
   map:["WWWWWWWWWWWWWWWWWWWWWWWWWWWWWW",
        "WW..........................WW",
        "W...@......ô..........ò......W",
@@ -702,12 +728,102 @@ const LEVELS=[
        "W..ô...WW...............ò....W",
        "W......WW..........WWW.......W",
        "W............ò.....WWW....ô..W",
-       "WW..........................WW",
+       "WW............E.............WW",
        "WWW........................WWW",
        "WWWWWWWWWWWWWWWWWWWWWWWWWWWWWW"],
   intro:[['Narrator','The Sun. The ground glows, rivers of lava bubble everywhere, and at the center floats the ruler of the Fruit Empire.'],['The Solar Starfruit','So, a little hero ate my whole empire. Come closer, if you can stand the heat.'],['Tip','Do not touch the lava. Only the diamond sword can peel the Solar Starfruit. Dash through its shockwaves.']],
   outro:[['Narrator','You take the very last bite of the Solar Starfruit. It tastes like sunshine.'],
-         ['Narrator','From a little village in Europe all the way to the Sun, every evil fruit has been eaten. Back home, the old baker bakes you the biggest fruit cake in the universe.']]}
+         ['The Solar Starfruit','(fading) You think I was the ruler? I only served the Fruit of Everything... It waits beyond the edge of the universe...'],
+         ['Narrator','The rocket still has fuel. The planets are full of fruit, and somewhere past the stars is the biggest fruit of all. Next stop: Venus.']]},
+ {name:'The Durians of Venus',floor:')',wall:'mars',lava:true,lavaCols:['#6ab83a','#d6ff6a','#2a5a10'],patchCol:'rgba(140,220,60,.45)',exit:'rocket',exitText:'Blast off to Jupiter',clearText:'Venus is clear! Back to the rocket. Phew, what a smell.',goal:'Durians',arrive:[['rocket','Flying from the Sun to Venus']],
+  map:["WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW",
+       "WW............................WW",
+       "W..@.....à.........á.......à...W",
+       "W.......WWW..........R.........W",
+       "W..á....WWW.....à.........WW...W",
+       "W.........................WW...W",
+       "W....R.........À...............W",
+       "W..à.......WW...........á......W",
+       "W..........WW.......R..........W",
+       "W....á............à.......R....W",
+       "WW.............E..............WW",
+       "WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW"],
+  intro:[['Narrator','Venus. Thick yellow clouds, bubbling green acid, and the worst smell in the solar system. Durians!'],['The Durian Queen of Venus','Hold your nose, little hero. My durians are the stinkiest fruit in the universe.'],['Tip','Durians have a spiky shell, and their stink can poison you. The Queen leaves sticky acid puddles that slow you down. From here on, every chapter gets harder.']],
+  outro:[['The Durian Queen of Venus','(cracked open) Jupiter... the storm never ends there...'],['Narrator','Back to the rocket, quickly. Next stop: Jupiter.']]},
+ {name:'The Jackfruits of Jupiter',floor:'(',wall:'moon',gas:true,wind:true,exit:'rocket',exitText:'Blast off to Neptune',clearText:'The storm is calming! Back to the rocket.',goal:'Jackfruits',arrive:[['rocket','Flying out to Jupiter']],
+  map:["SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS",
+       "SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS",
+       "SSSS......................SSSSSS",
+       "SSS...@......ì.......í......SSSS",
+       "SS.......I...........ì.......SSS",
+       "SS..í..........Ì.........I....SS",
+       "SS.......ì...........í........SS",
+       "SSS....I.........ì......í....SSS",
+       "SSSS...........E.........SSSSSSS",
+       "SSSSSS..................SSSSSSSS",
+       "SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS",
+       "SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS"],
+  intro:[['Narrator','Jupiter. There is no ground, only a floating platform inside the biggest storm in the solar system.'],['The Great Red Jackfruit','I AM the Great Red Spot! Feel the wind!'],['Tip','The wind keeps pushing you around. Walk against it, and use the ice blocks as cover.']],
+  outro:[['The Great Red Jackfruit','Neptune... is colder than anything you have felt...'],['Narrator','Back to the rocket. Next stop: Neptune.']]},
+ {name:'The Blue Raspberries of Neptune',floor:'[',wall:'moon',space:true,exit:'rocket',exitText:'Blast off to Pluto',clearText:'Neptune is clear! Back to the rocket.',goal:'Raspberries',arrive:[['rocket','Flying out to Neptune']],
+  map:["################################",
+       "#..@.......I.........ù.....I...#",
+       "#.....ù.........ú..............#",
+       "#..I.......II.........I....ú...#",
+       "#..........II..................#",
+       "#....ú.............ù.....II....#",
+       "#.............Ù..........II....#",
+       "#..ù......I...........ú........#",
+       "#...............I..............#",
+       "#..I....ú...........ù......I...#",
+       "#................E.............#",
+       "################################"],
+  intro:[['Narrator','Neptune. Deep blue ice as far as you can see. The blue raspberries are sliding around on it like hockey players.'],['King Triton Raspberry','Welcome to the coldest kingdom in the solar system.'],['Tip','The whole floor is slippery ice. Grip boots help a lot here.']],
+  outro:[['King Triton Raspberry','Pluto... it is so far away... so lonely...'],['Narrator','Back to the rocket. Next stop: tiny, faraway Pluto.']]},
+ {name:'The Figs of Pluto',floor:']',wall:'moon',space:true,snow:true,exit:'rocket',exitText:'Fly into the dark',clearText:'Pluto is clear! But something is pulling on the rocket...',goal:'Figs',arrive:[['rocket','Flying to the edge of the solar system']],
+  map:["##############################",
+       "#..@.....R.......ë.......R...#",
+       "#....ë.......ê...............#",
+       "#..R......RR.........ê.......#",
+       "#.........RR.....ë......R....#",
+       "#....ê..........Ë............#",
+       "#..ë.....R............ë......#",
+       "#...........ê.......R....ê...#",
+       "#.......E....................#",
+       "##############################"],
+  intro:[['Narrator','Pluto. Tiny, dark and freezing. The Sun looks like just another star from here.'],['The Lonely Fig of Pluto','Nobody ever visits Pluto. I will not let you leave!'],['Tip','Snowball Figs throw hard, and the Lonely Fig freezes the ground around you.']],
+  outro:[['The Lonely Fig of Pluto','Thank you... for visiting... Beware the black hole...'],['Narrator','As you take off, something grabs the rocket and pulls it into the dark. A black hole!']]},
+ {name:'The Black Hole',floor:'{',wall:'moon',space:true,hole:true,exit:'rocket',exitText:'Escape the black hole',clearText:'You beat the black hole! Get to the rocket before it pulls you in!',goal:'Dragonfruits',arrive:[['rocket','Getting pulled into a black hole']],
+  map:["SSSSSSSSSSSSSSSSSSSSSSSSSSSSSS",
+       "SSSS......................SSSS",
+       "SS..@......ã.........õ......SS",
+       "S..õ......................ã..S",
+       "S............................S",
+       "S..ã.......................õ.S",
+       "S.............Ã..............S",
+       "S..õ.......................ã.S",
+       "S............................S",
+       "S..ã......................õ..S",
+       "SS.............E............SS",
+       "SSSS......................SSSS",
+       "SSSSSSSSSSSSSSSSSSSSSSSSSSSSSS"],
+  intro:[['Narrator','The Black Hole. Space twists in a giant spiral, and everything slowly slides toward the middle.'],['The Black Hole Dragonfruit','Nothing escapes my black hole. Not light, not time, and definitely not you.'],['Tip','The black hole pulls you toward the center, and touching it hurts a lot. Keep walking away from it while you fight.']],
+  outro:[['The Black Hole Dragonfruit','You... escaped... Then go. Go beyond. He is waiting...'],['Narrator','The rocket shoots out of the black hole so fast that it flies right off the edge of the universe.']]},
+ {name:'Beyond the Universe',floor:'}',wall:'moon',rainbow:true,final:true,goal:'final',goalText:'Peel and eat the Fruit of Everything',arrive:[['rocket','Flying off the edge of the universe']],
+  map:["SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS",
+       "SSSSS........................SSSSS",
+       "SSS...@.....å.........ø........SSS",
+       "SS..........................å...SS",
+       "SS...ø.........................SS",
+       "SS.........å......Å.......ø....SS",
+       "SS.............................SS",
+       "SS...å..................ø......SS",
+       "SSS..........ø.........å......SSS",
+       "SSSSS........................SSSSS",
+       "SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS"],
+  intro:[['Narrator','Beyond the universe. There are no stars here, just swirling colors. Floating in the middle is a fruit made of every fruit there is.'],['Fruitus Maximus','I am the Fruit of Everything. Every banana, every plum, every starfruit came from me. And now you will be my dessert.'],['Tip','This is the final fight and the hardest one. It uses every attack you have seen and calls fruit from every world. Only the diamond sword can peel it.']],
+  outro:[['Narrator','You take the very last bite of the Fruit of Everything. It tastes like every fruit at once.'],
+         ['Narrator','The colors fade, and the rocket drifts gently all the way back home. From a little village in Europe to beyond the universe, every evil fruit has been eaten. The old baker bakes you the biggest fruit cake that has ever existed.']]}
 ];
 const CONTROLS_DESK='Move with WASD or the arrow keys. J or Space swings your sword, K eats, Shift dashes through attacks, and Q eats a coconut snack to heal.';
 const CONTROLS_TOUCH='Move with the joystick. Sword peels, Eat bites, Dash zips through attacks, and Snack heals you.';
@@ -777,6 +893,10 @@ function drawLook(c,s,look,t){
   if(look==='dragon'){c.fillStyle='#c0392b';for(let k=0;k<5;k++){const x=(k-2)*s*.1;c.beginPath();c.moveTo(x-s*.05,-s*.05);c.lineTo(x,-s*.22-(k%2)*s*.06);c.lineTo(x+s*.05,-s*.05);c.fill()}
     c.fillStyle='#ffd447';for(const sd of [-1,1]){c.beginPath();c.moveTo(sd*s*.12,-s*.05);c.quadraticCurveTo(sd*s*.38,-s*.28,sd*s*.32,-s*.5);c.lineTo(sd*s*.22,-s*.1);c.closePath();c.fill()}}
   if(look==='beanie'){c.fillStyle='#3b6fd1';c.beginPath();c.arc(0,-s*.04,s*.26,Math.PI,0);c.fill();c.fillStyle='#f4f8fb';c.fillRect(-s*.27,-s*.08,s*.54,s*.07);circ(c,0,-s*.33,s*.07)}
+  if(look==='tiara'){c.fillStyle='#ffd447';c.beginPath();c.moveTo(-s*.2,-s*.04);c.lineTo(-s*.12,-s*.18);c.lineTo(-s*.05,-s*.08);c.lineTo(0,-s*.24);c.lineTo(s*.05,-s*.08);c.lineTo(s*.12,-s*.18);c.lineTo(s*.2,-s*.04);c.closePath();c.fill();c.fillStyle='#ff6fa5';circ(c,0,-s*.12,s*.04)}
+  if(look==='stormcloud'){c.fillStyle='#4a4a5a';ell(c,-s*.12,-s*.3,s*.2,s*.1);ell(c,s*.12,-s*.32,s*.22,s*.12);ell(c,0,-s*.38,s*.18,s*.1);if(Math.sin(t*7)>.6){c.strokeStyle='#ffd447';c.lineWidth=Math.max(2,s*.04);c.beginPath();c.moveTo(s*.05,-s*.24);c.lineTo(-s*.04,-s*.12);c.lineTo(s*.04,-s*.12);c.lineTo(-s*.05,s*.0);c.stroke()}}
+  if(look==='horns'){c.fillStyle='#5a1a7a';for(const sd of [-1,1]){c.beginPath();c.moveTo(sd*s*.08,-s*.05);c.quadraticCurveTo(sd*s*.3,-s*.12,sd*s*.28,-s*.42);c.lineTo(sd*s*.18,-s*.08);c.closePath();c.fill()}}
+  if(look==='halo'){c.strokeStyle=`rgba(255,212,71,${.7+.3*Math.sin(t*3)})`;c.lineWidth=Math.max(2,s*.05);c.beginPath();c.ellipse(0,-s*.3,s*.28,s*.08,0,0,Math.PI*2);c.stroke()}
   if(look==='mane'){c.fillStyle='#b8561a';for(let k=0;k<9;k++){const a=Math.PI+k/8*Math.PI;c.beginPath();c.moveTo(Math.cos(a)*s*.2,Math.sin(a)*s*.12+s*.05);c.lineTo(Math.cos(a)*s*.62,Math.sin(a)*s*.4+s*.05);c.lineTo(Math.cos(a+.2)*s*.25,Math.sin(a+.2)*s*.15+s*.05);c.fill()}}
   if(look==='safari'){c.fillStyle='#cdb37a';ell(c,0,-s*.06,s*.42,s*.08);c.beginPath();c.arc(0,-s*.08,s*.24,Math.PI,0);c.fill();c.fillStyle='#7a5a2a';c.fillRect(-s*.24,-s*.13,s*.48,s*.04)}
   if(look==='antenna'||look==='alienking'){c.strokeStyle='#2f8f4f';c.lineWidth=Math.max(1.5,s*.03);for(const sd of [-1,1]){c.beginPath();c.moveTo(sd*s*.1,-s*.04);c.lineTo(sd*s*.22,-s*.38);c.stroke();c.fillStyle=`rgba(127,255,106,${.7+.3*Math.sin(t*5+sd)})`;circ(c,sd*s*.22,-s*.4,s*.06)}
@@ -799,6 +919,11 @@ function drawRoundFruit(c,f,s,pf,shy,look,t){
   if(f.id==='tangerine'||f.id==='orange'){c.strokeStyle='rgba(255,255,255,.5)';c.lineWidth=Math.max(1,s*.02);for(let k=0;k<8;k++){const a=k/8*Math.PI*2;c.beginPath();c.moveTo(0,0);c.lineTo(Math.cos(a)*s*.5,Math.sin(a)*s*.5);c.stroke()}}
   if(f.id==='melon'){c.fillStyle='#1b1209';for(const [x,y] of [[-.4,-.1],[-.2,.15],[0,-.2],[.2,.12],[.4,-.05],[-.05,.3],[.3,-.28],[-.3,-.3]])ell(c,x*s,y*s,s*.025,s*.045)}
   if(f.id==='apple'){c.fillStyle='rgba(190,160,80,.35)';ell(c,0,s*.08,s*.07,s*.17)}
+  if(f.id==='durian'){c.fillStyle='rgba(255,220,120,.6)';ell(c,-s*.15,0,s*.15,s*.25);ell(c,s*.17,0,s*.15,s*.25)}
+  if(f.id==='jackfruit'){c.fillStyle='#f2b81a';for(let k=0;k<6;k++)ell(c,(k%2?.15:-.15)*s,(-.35+k*.14)*s,s*.1,s*.06)}
+  if(f.id==='fig'){c.strokeStyle='rgba(255,255,255,.45)';c.lineWidth=Math.max(1,s*.02);for(let k=0;k<10;k++){const a=k/10*Math.PI*2;c.beginPath();c.moveTo(0,0);c.lineTo(Math.cos(a)*s*.42,Math.sin(a)*s*.42);c.stroke()}}
+  if(f.id==='dragonfruit'){c.fillStyle='#1b1209';for(let k=0;k<26;k++)circ(c,(hr(k,13)-.5)*s*.75,(hr(k,14)-.5)*s*1.0,s*.018)}
+  if(f.id==='cosmic'){for(let k=0;k<12;k++){c.fillStyle=`hsl(${k*30},90%,65%)`;circ(c,(hr(k,15)-.5)*s*.8,(hr(k,16)-.5)*s*.8,s*.035)}}
   if(f.id==='papaya'){c.fillStyle='#1b1209';for(let k=0;k<12;k++){const a=k/12*Math.PI*2;circ(c,Math.cos(a)*s*.18,Math.sin(a)*s*.1,s*.03)}}
   if(f.id==='pomegranate'){c.fillStyle='#d1102a';for(let k=0;k<24;k++)ell(c,(hr(k,11)-.5)*s*.8,(hr(k,12)-.5)*s*.8,s*.035,s*.045)}
   if(f.id==='cherry'){c.fillStyle='#e8c09a';ell(c,0,s*.02,s*.1,s*.13)}
@@ -810,12 +935,16 @@ function drawRoundFruit(c,f,s,pf,shy,look,t){
   if(f.id==='pineapple'){c.fillStyle='rgba(200,150,20,.35)';for(let y=-3;y<=3;y++)ell(c,0,y*s*.16,s*.04,s*.04)}
   if(f.id==='plum'){c.fillStyle='rgba(255,255,255,.22)';ell(c,-s*.22,-s*.25,s*.13,s*.07,-.4)}
   if(pf>0){c.save();fruitPath(c,f,s);c.clip();const hw=(f.shape==='melon'?.72:f.shape==='tall'?.5:f.shape==='star'?.62:.55)*s,cut=-hw+2*hw*(1-pf);c.beginPath();c.rect(cut,-s,2*s,2*s);c.clip();
-    c.fillStyle=f.skin;c.fillRect(cut,-s,2*s,2*s);
+    c.fillStyle=f.id==='cosmic'?`hsl(${(t*80)%360},85%,62%)`:f.skin;c.fillRect(cut,-s,2*s,2*s);
     if(f.id==='apple'){c.fillStyle='rgba(255,255,255,.4)';ell(c,-s*.24,-s*.24,s*.1,s*.06,-.6)}
     if(f.id==='tangerine'||f.id==='orange'){c.fillStyle='rgba(160,70,0,.25)';for(let k=0;k<14;k++)circ(c,(hr(k,1)-.5)*s,(hr(k,2)-.5)*s,s*.02)}
     if(f.id==='melon'){c.strokeStyle='#1f5a22';c.lineWidth=s*.07;for(let k=-3;k<=3;k++){const x=k*s*.2;c.beginPath();c.moveTo(x,-s*.55);c.quadraticCurveTo(x+s*.1,0,x,s*.55);c.stroke()}}
     if(f.id==='coconut'){c.strokeStyle='rgba(40,20,5,.5)';c.lineWidth=Math.max(1,s*.02);for(let k=0;k<26;k++){const x=(hr(k,3)-.5)*s*1.1,y=(hr(k,4)-.5)*s*1.1;c.beginPath();c.moveTo(x,y);c.lineTo(x+s*.06,y+s*.04);c.stroke()}}
     if(f.id==='pineapple'){c.strokeStyle='rgba(120,80,10,.6)';c.lineWidth=Math.max(1,s*.025);for(let k=-6;k<=6;k++){c.beginPath();c.moveTo(k*s*.16-s*.6,-s*.7);c.lineTo(k*s*.16+s*.6,s*.7);c.moveTo(k*s*.16+s*.6,-s*.7);c.lineTo(k*s*.16-s*.6,s*.7);c.stroke()}}
+    if(f.id==='durian'||f.id==='jackfruit'){c.fillStyle='rgba(60,70,10,.35)';for(let k=0;k<30;k++)circ(c,(hr(k,17)-.5)*s*1.1,(hr(k,18)-.5)*s*1.3,s*.025)}
+    if(f.id==='blueraz'){c.fillStyle='rgba(150,200,255,.5)';for(let k=0;k<16;k++)circ(c,(hr(k,19)-.5)*s*.95,(hr(k,20)-.5)*s*.95,s*.08);c.fillStyle='rgba(255,255,255,.35)';ell(c,-s*.2,-s*.25,s*.12,s*.07,-.4)}
+    if(f.id==='fig'){c.strokeStyle='rgba(170,110,170,.5)';c.lineWidth=Math.max(1,s*.03);for(let k=-2;k<=2;k++){c.beginPath();c.moveTo(k*s*.1,-s*.55);c.quadraticCurveTo(k*s*.25,0,k*s*.1,s*.55);c.stroke()}}
+    if(f.id==='cosmic'){c.fillStyle='rgba(255,255,255,.8)';for(let k=0;k<10;k++){const tw=.5+.5*Math.sin(t*4+k);circ(c,(hr(k,21)-.5)*s,(hr(k,22)-.5)*s,s*.02*(1+tw))}}
     if(f.id==='papaya'){c.fillStyle='rgba(110,170,60,.5)';ell(c,-s*.35,-s*.1,s*.3,s*.25)}
     if(f.id==='blueberry'){c.fillStyle='rgba(200,210,255,.3)';ell(c,-s*.2,-s*.25,s*.18,s*.1,-.4);c.fillStyle='#1a2260';for(let k=0;k<5;k++){const a=k/5*Math.PI*2;ell(c,s*.0+Math.cos(a)*s*.06,s*.3+Math.sin(a)*s*.04,s*.05,s*.025,a)}}
     if(f.id==='pomegranate'){c.fillStyle='rgba(255,255,255,.25)';ell(c,-s*.22,-s*.25,s*.13,s*.07,-.4)}
@@ -829,6 +958,8 @@ function drawRoundFruit(c,f,s,pf,shy,look,t){
     if(f.id==='plum'){c.strokeStyle='rgba(255,255,255,.75)';c.lineWidth=Math.max(1,s*.025);c.beginPath();c.moveTo(-s*.3,-s*.3);c.lineTo(-s*.1,-s*.1);c.lineTo(-s*.2,s*.15);c.moveTo(s*.2,-s*.35);c.lineTo(s*.32,-s*.05);c.stroke();c.fillStyle='rgba(255,255,255,.55)';ell(c,-s*.25,-s*.3,s*.12,s*.05,-.5)}
     c.restore()}
   c.lineWidth=Math.max(2,s*.04);c.strokeStyle=f.line;fruitPath(c,f,s);c.stroke();
+  if(pf>0&&f.id==='durian'){c.fillStyle='#6a7a20';for(let k=0;k<16;k++){const a=k/16*Math.PI*2;c.beginPath();c.moveTo(Math.cos(a-.12)*s*.53,Math.sin(a-.12)*s*.53);c.lineTo(Math.cos(a)*s*.68,Math.sin(a)*s*.68);c.lineTo(Math.cos(a+.12)*s*.53,Math.sin(a+.12)*s*.53);c.fill()}}
+  if(pf>0&&f.id==='dragonfruit'){for(let k=0;k<10;k++){const a=k/10*Math.PI*2,x=Math.cos(a)*s*.48,y=Math.sin(a)*s*.62;c.fillStyle='#e83a8a';c.beginPath();c.moveTo(x*.85,y*.85);c.lineTo(x*1.25,y*1.18);c.lineTo(x*.95+s*.06,y*.95);c.fill();c.fillStyle='#5fa548';circ(c,x*1.22,y*1.15,s*.03)}}
   const top=f.shape==='melon'?-s*.5:f.shape==='tall'?-s*.65:f.shape==='star'?-s*.62:-s*.55;
   if(f.stem&&look!=='icecrown'&&look!=='beanie'){c.fillStyle='#5b4218';c.fillRect(-s*.03,top-s*.12,s*.06,s*.15);c.fillStyle='#4f9a3a';ell(c,s*.12,top-s*.07,s*.12,s*.05,-.5)}
   if(f.id==='strawberry'){c.fillStyle='#3f8f3f';for(let k=-2;k<=2;k++){c.beginPath();c.moveTo(0,top+s*.08);c.lineTo(k*s*.16,top-s*.06+Math.abs(k)*s*.05);c.lineTo(k*s*.1+s*.04,top+s*.12);c.fill()}}
@@ -890,7 +1021,7 @@ function isFloorAt(x,y){const ch=tileAt(Math.floor(x/T),Math.floor(y/T));return 
 
 function buildLevel(i,withEnemies){
   const def=LEVELS[i],rows=def.map,mh=rows.length,mw=Math.max(...rows.map(r=>r.length));
-  L={def,i,mw,mh,grid:[],enemies:[],proj:[],bombs:[],waves:[],patches:[],pickups:[],rail:[],exit:null,start:{x:0,y:0},shop:null,cleared:false,nearShop:false,endT:0};
+  L={D:diff(i),def,i,mw,mh,grid:[],enemies:[],proj:[],bombs:[],waves:[],patches:[],pickups:[],rail:[],exit:null,start:{x:0,y:0},shop:null,cleared:false,nearShop:false,endT:0};
   const spawns=[];
   for(let y=0;y<mh;y++){const row=[];for(let x=0;x<mw;x++){let ch=rows[y][x]??'#';const left=rows[y][x-1];
       if(ch==='.')ch=def.floor;
@@ -918,6 +1049,12 @@ function prerender(){const c=document.createElement('canvas');c.width=L.mw*T*DPR
   for(let y=0;y<L.mh;y++)for(let x=0;x<L.mw;x++)drawTile(g,x,y);L.canvas=c}
 function floorDetail(g,f,x,y,px,py){
   if(f==='g'){g.fillStyle='rgba(40,90,30,.35)';for(let i=0;i<3;i++)g.fillRect(px+hr(x,y,i)*28,py+hr(x,y,i+7)*26,2,5);if(hr(x,y,9)>.94){g.fillStyle='#f4e04d';circ(g,px+16,py+16,2.5)}}
+  if(f===')'){g.fillStyle='rgba(120,100,20,.35)';for(let i=0;i<3;i++)circ(g,px+hr(x,y,i)*30,py+hr(x,y,i+5)*30,1.6)}
+  if(f==='('){g.fillStyle='rgba(180,120,60,.25)';g.fillRect(px,py+8+hr(x,y)*14,T,3)}
+  if(f==='['){g.strokeStyle='rgba(255,255,255,.7)';g.lineWidth=1;if(hr(x,y,2)>.6){g.beginPath();g.moveTo(px+hr(x,y,3)*20,py+4);g.lineTo(px+12+hr(x,y,4)*10,py+18);g.stroke()}g.fillStyle='rgba(255,255,255,.3)';g.fillRect(px+4,py+4,10,3)}
+  if(f===']'){g.fillStyle='rgba(255,255,255,.5)';for(let i=0;i<2;i++)circ(g,px+hr(x,y,i)*30,py+hr(x,y,i+5)*30,1.6)}
+  if(f==='{'){g.fillStyle='rgba(170,110,255,.3)';if(hr(x,y,2)>.6)circ(g,px+hr(x,y,3)*30,py+hr(x,y,4)*30,2)}
+  if(f==='}'){g.fillStyle=`hsla(${(x*20+y*30)%360},90%,65%,.55)`;circ(g,px+hr(x,y,3)*30,py+hr(x,y,4)*30,2.2);g.fillStyle=`hsla(${(x*20+y*30+180)%360},90%,65%,.35)`;g.fillRect(px,py+T-2,T,2)}
   if(f==='`'){g.fillStyle='rgba(90,95,105,.35)';for(let i=0;i<3;i++)circ(g,px+hr(x,y,i)*30,py+hr(x,y,i+5)*30,1.4);if(hr(x,y,9)>.82){g.strokeStyle='rgba(80,85,95,.55)';g.lineWidth=2;g.beginPath();g.arc(px+16,py+16,7+hr(x,y,3)*5,0,7);g.stroke()}}
   if(f==='^'){g.fillStyle='rgba(90,25,10,.35)';for(let i=0;i<4;i++)circ(g,px+hr(x,y,i)*30,py+hr(x,y,i+5)*30,1.6);if(hr(x,y,8)>.9){g.fillStyle='#8a3a22';ell(g,px+14,py+18,5,3)}}
   if(f==='_'){g.fillStyle='rgba(255,255,255,.35)';if(hr(x,y,2)>.7)circ(g,px+hr(x,y,3)*30,py+hr(x,y,4)*30,1.5);g.fillStyle='rgba(120,100,170,.2)';g.fillRect(px,py+15,T,2)}
@@ -934,11 +1071,13 @@ function floorDetail(g,f,x,y,px,py){
 function drawTile(g,x,y){const ch=tileAt(x,y),px=x*T,py=y*T,def=L.def;const floor=FLOOR[ch]?ch:def.floor;
   g.fillStyle=FLOOR[floor];g.fillRect(px,py,T,T);floorDetail(g,floor,x,y,px,py);
   switch(ch){
-    case 'W':if(def.lava){g.fillStyle='#ff5a1f';g.fillRect(px,py,T,T);g.fillStyle='#ffd23a';circ(g,px+hr(x,y)*28+2,py+hr(x,y,2)*28+2,4);g.fillStyle='#7a1e08';const nb=(dx,dy)=>{const t=tileAt(x+dx,y+dy);return t!==null&&t!=='W'};if(nb(0,-1))g.fillRect(px,py,T,4);if(nb(0,1))g.fillRect(px,py+T-4,T,4);if(nb(-1,0))g.fillRect(px,py,4,T);if(nb(1,0))g.fillRect(px+T-4,py,4,T);break}
+    case 'W':if(def.lava){const lc=def.lavaCols||['#ff5a1f','#ffd23a','#7a1e08'];g.fillStyle=lc[0];g.fillRect(px,py,T,T);g.fillStyle=lc[1];circ(g,px+hr(x,y)*28+2,py+hr(x,y,2)*28+2,4);g.fillStyle=lc[2];const nb=(dx,dy)=>{const t=tileAt(x+dx,y+dy);return t!==null&&t!=='W'};if(nb(0,-1))g.fillRect(px,py,T,4);if(nb(0,1))g.fillRect(px,py+T-4,T,4);if(nb(-1,0))g.fillRect(px,py,4,T);if(nb(1,0))g.fillRect(px+T-4,py,4,T);break}
     {g.fillStyle='#2a86ab';g.fillRect(px,py,T,T);if(hr(x,y)>.6){g.fillStyle='rgba(255,255,255,.1)';g.fillRect(px+4,py+10,14,2)}
       g.fillStyle='#bfe8f3';const nb=(dx,dy)=>{const t=tileAt(x+dx,y+dy);return t!==null&&t!=='W'};
       if(nb(0,-1))g.fillRect(px,py,T,4);if(nb(0,1))g.fillRect(px,py+T-4,T,4);if(nb(-1,0))g.fillRect(px,py,4,T);if(nb(1,0))g.fillRect(px+T-4,py,4,T);break}
-    case 'S':if(def.space){g.fillStyle='#0b0b24';g.fillRect(px,py,T,T);if(hr(x,y)>.55){g.fillStyle=hr(x,y,5)>.85?'#ffd447':'#ffffff';g.fillRect(px+hr(x,y,2)*30,py+hr(x,y,3)*30,1.6,1.6)}break}
+    case 'S':if(def.gas){const band=['#c9925a','#e6c08a','#b8703a','#f0d9b0'][Math.floor(y/2)%4];g.fillStyle=band;g.fillRect(px,py,T,T);g.fillStyle='rgba(255,255,255,.12)';g.fillRect(px,py+hr(x,y)*24,T,4);break}
+    if(def.rainbow){g.fillStyle=`hsl(${(x*14+y*22)%360},55%,16%)`;g.fillRect(px,py,T,T);if(hr(x,y)>.55){g.fillStyle='#ffffff';g.fillRect(px+hr(x,y,2)*30,py+hr(x,y,3)*30,1.6,1.6)}break}
+    if(def.space){g.fillStyle='#0b0b24';g.fillRect(px,py,T,T);if(hr(x,y)>.55){g.fillStyle=hr(x,y,5)>.85?'#ffd447':'#ffffff';g.fillRect(px+hr(x,y,2)*30,py+hr(x,y,3)*30,1.6,1.6)}break}
     {g.fillStyle='#9ad3f2';g.fillRect(px,py,T,T);if(hr(x,y)>.72){g.fillStyle='rgba(255,255,255,.55)';ell(g,px+16,py+16,13,5)}break}
     case '#':{if(def.wall==='stone'){g.fillStyle='#a9824f';g.fillRect(px,py,T,T);g.strokeStyle='rgba(70,45,20,.45)';g.lineWidth=1.5;g.beginPath();g.moveTo(px,py+.5);g.lineTo(px+T,py+.5);g.moveTo(px,py+16.5);g.lineTo(px+T,py+16.5);const a=y%2?8:24,b=y%2?24:8;g.moveTo(px+a,py);g.lineTo(px+a,py+16);g.moveTo(px+b,py+16);g.lineTo(px+b,py+32);g.stroke()}
       else if(def.wall==='adobe'){g.fillStyle='#c98d55';g.fillRect(px,py,T,T);g.strokeStyle='rgba(110,60,20,.4)';g.lineWidth=1.5;g.beginPath();g.moveTo(px,py+10.5);g.lineTo(px+T,py+10.5);g.moveTo(px,py+21.5);g.lineTo(px+T,py+21.5);g.stroke()}
@@ -969,7 +1108,7 @@ function drawTile(g,x,y){const ch=tileAt(x,y),px=x*T,py=y*T,def=L.def;const floo
 
 /* ================= Entities ================= */
 let EID=0;
-function spawn(key,x,y,minion){const d=ENEMY[key];const e={id:++EID,key,def:d,x,y,r:15*d.size,cr:Math.min(14,15*d.size*.8),hp:d.hp,maxHp:d.hp,peel:d.peel||0,maxPeel:d.peel||0,t:Math.random()*5,cd:rnd(.8,2),shootCd:2,summonCd:7,waveCd:3,alpha:1,dead:false,wt:0,wa:0,pause:false,flip:false,hitFlash:0,peeledT:0,windT:0,dashT:0,dashDir:0,minion,state:'swim',upT:0,tx:x,ty:y,ang:Math.random()*6,aggro:minion,landed:false,moving:false,trail:[],atkCd:2.5,atkI:0,enraged:false,slam:null,air:0};
+function spawn(key,x,y,minion){const d=ENEMY[key];const e={id:++EID,key,def:d,x,y,r:15*d.size,cr:Math.min(14,15*d.size*.8),hp:Math.round(d.hp*L.D.hp),maxHp:Math.round(d.hp*L.D.hp),peel:Math.round((d.peel||0)*L.D.hp),maxPeel:Math.round((d.peel||0)*L.D.hp),t:Math.random()*5,cd:rnd(.8,2),shootCd:2,summonCd:7,waveCd:3,alpha:1,dead:false,wt:0,wa:0,pause:false,flip:false,hitFlash:0,peeledT:0,windT:0,dashT:0,dashDir:0,minion,state:'swim',upT:0,tx:x,ty:y,ang:Math.random()*6,aggro:minion,landed:false,moving:false,trail:[],atkCd:2.5,atkI:0,enraged:false,slam:null,air:0};
   if(['whale','flyer','blimp'].includes(d.ai))e.aggro=true;if(d.ai==='whale')pickWhaleTarget(e);L.enemies.push(e);return e}
 function pickWhaleTarget(e){const r=L.rail;if(!r.length){e.tx=e.x;e.ty=e.y;return}const sorted=r.map(p=>[p,Math.hypot(p.x-P_x(),p.y-P_y())]).sort((a,b)=>a[1]-b[1]).slice(0,6);const p=sorted[Math.floor(Math.random()*sorted.length)][0];e.tx=p.x;e.ty=p.y}
 const P_x=()=>P?P.x:L.start.x,P_y=()=>P?P.y:L.start.y;
@@ -1007,7 +1146,7 @@ function eat(pl){const P=pl;if(P.biteCd>0||P.down)return;if(P.jawLock){if(P.loca
   if(best.hp<=0)kill(best)}
 function dash(pl){const P=pl;if(P.dashCd>0||P.down)return;P.dashT=.17;P.dashCd=.7;P.dashDir=P.face;addParts(P.x,P.y+6,'rgba(255,255,255,.8)',6,80)}
 function snack(pl){const P=pl;if(P.down)return;if(S.snacks<=0){if(P.local)hint('No snacks left');return}if(P.hp>=S.maxHp){if(P.local)hint('Already at full health');return}S.snacks--;const h=Math.round(S.maxHp*.5);P.hp=Math.min(S.maxHp,P.hp+h);addFloat(P.x,P.y-60,`+${h}`,'#9be37a');addParts(P.x,P.y,'#9be37a',8)}
-function hurtPlayer(pl,dmg,fx,fy,poison){if(!pl||pl.down||pl.inv>0||pl.dashT>0||G.mode!=='play')return;pl.hp=Math.max(0,pl.hp-dmg);pl.inv=.8;
+function hurtPlayer(pl,dmg,fx,fy,poison){if(!pl||pl.down||pl.inv>0||pl.dashT>0||G.mode!=='play')return;dmg=Math.round(dmg*L.D.dm);pl.hp=Math.max(0,pl.hp-dmg);pl.inv=.8;
   if(pl.local){const a=Math.atan2(pl.y-fy,pl.x-fx);pl.kx=Math.cos(a)*260;pl.ky=Math.sin(a)*260;G.shake=Math.max(G.shake,.2)}
   addFloat(pl.x,pl.y-50,`-${dmg}`,'#ff7b6b');
   if(poison&&Math.random()<poison){pl.poison=4;pl.poisonTick=1;addFloat(pl.x,pl.y-74,'Poisoned!','#b9e27a')}
@@ -1020,11 +1159,11 @@ function kill(e){if(e.dead)return;e.dead=true;e.hp=0;const d=e.def;
   const sn=d.snack||(!e.minion&&Math.random()<.15?1:0);for(let i=0;i<sn;i++)L.pickups.push({kind:'snack',x:e.x,y:e.y,vx:rnd(-90,90),vy:rnd(-90,90)});
   if(d.drop==='diamond'){S.diamond=true;L.pickups.push({kind:'diamond',x:e.x,y:e.y,vx:0,vy:0})}
   if(d.boss){G.shake=.45;for(const m of L.enemies)if(m.minion&&!m.dead){m.dead=true;addParts(m.x,m.y,'#ffffff',8)}}}
-function summon(e,key){for(let k=0;k<2;k++){let x=e.x,y=e.y;
+function summon(e,keys){for(let k=0;k<2;k++){let x=e.x,y=e.y;const key=Array.isArray(keys)?keys[Math.floor(Math.random()*keys.length)]:keys;
     if(ENEMY[key].ai==='flyer'){const a=Math.random()*6.28;x=clamp(e.x+Math.cos(a)*220,24,L.mw*T-24);y=clamp(e.y+Math.sin(a)*220,24,L.mh*T-24)}
     else for(let tries=0;tries<10;tries++){const a=Math.random()*6.28;x=e.x+Math.cos(a)*(e.r+34);y=e.y+Math.sin(a)*(e.r+34);if(!blocked(x,y,14))break}
     spawn(key,x,y,true);addParts(x,y,'#ffffff',8)}
-  addFloat(e.x,e.y-e.r-44,{snake:'Guards, get them!',sky:'Sky bananas, attack!',melon:'¡Amigos, ayuda!',apple:'Apples, roll out!',lantern:'Lanterns, burn bright!',plum:'Plums, freeze them!'}[key]||'Minions, help me!','#ffffff')}
+  addFloat(e.x,e.y-e.r-44,{snake:'Guards, get them!',sky:'Sky bananas, attack!',melon:'¡Amigos, ayuda!',apple:'Apples, roll out!',lantern:'Lanterns, burn bright!',plum:'Plums, freeze them!'}[keys]||(Array.isArray(keys)?'Fruits of every world, attack!':'Minions, help me!'),'#ffffff')}
 function bossAttack(e,kind,ang,P){const d=e.def,mad=e.enraged;
   if(kind==='spread'){const n=mad?5:3;for(let k=0;k<n;k++)shoot(e.x,e.y,ang+(k-(n-1)/2)*.2,215,d.shot,d.shotDmg,d.shot==='venom'?.3:0)}
   if(kind==='ring'){const n=mad?14:10;for(let k=0;k<n;k++)shoot(e.x,e.y,k/n*Math.PI*2+e.t,165,d.shot,d.shotDmg,d.shot==='venom'?.3:0)}
@@ -1044,9 +1183,11 @@ function updPlayer(dt){const guest=NET.role==='guest';
   if(P.down){P.moving=false;P.dashT=0;return}
   let mx=(G.keys.right?1:0)-(G.keys.left?1:0)+G.joy.x,my=(G.keys.down?1:0)-(G.keys.up?1:0)+G.joy.y;const m=Math.hypot(mx,my);if(m>1){mx/=m;my/=m}
   P.moving=m>.15;if(P.moving)P.face=Math.atan2(my,mx);
-  const slow=L.patches.some(p=>Math.hypot(P.x-p.x,P.y-p.y)<p.r)?.45:1,onIce=['i','`'].includes(tileAt(Math.floor(P.x/T),Math.floor(P.y/T)))&&!S.boots;
+  const slow=L.patches.some(p=>Math.hypot(P.x-p.x,P.y-p.y)<p.r)?.45:1,onIce=['i','`','['].includes(tileAt(Math.floor(P.x/T),Math.floor(P.y/T)))&&!S.boots;
   const tvx=mx*155*slow,tvy=my*155*slow;if(onIce){const k=Math.min(1,dt*2.2);P.vx+=(tvx-P.vx)*k;P.vy+=(tvy-P.vy)*k}else{P.vx=tvx;P.vy=tvy}
   if(P.dashT>0){P.dashT-=dt;moveBody(P,Math.cos(P.dashDir)*440*dt,Math.sin(P.dashDir)*440*dt)}else{const ox=P.x,oy=P.y;moveBody(P,P.vx*dt,P.vy*dt);if(P.x===ox)P.vx=0;if(P.y===oy)P.vy=0}
+  if(L.def.wind)moveBody(P,Math.sin(G.t*.35)*80*dt,Math.cos(G.t*.23)*22*dt);
+  if(L.def.hole){const hx=L.mw*T/2,hy=L.mh*T/2,dx=hx-P.x,dy=hy-P.y,d=Math.hypot(dx,dy)||1,f=Math.min(85,9000/d);moveBody(P,dx/d*f*dt*.6,dy/d*f*dt*.6)}
   if(Math.abs(P.kx)+Math.abs(P.ky)>4){moveBody(P,P.kx*dt,P.ky*dt);const k=Math.pow(.002,dt);P.kx*=k;P.ky*=k}else{P.kx=P.ky=0}
   if(P.moving)P.walk+=dt*12;
   if(G.pressed.has('attack'))guest?guestAct('s'):swing(P);if(G.pressed.has('eat'))guest?guestAct('e'):eat(P);if(G.pressed.has('dash'))dash(P);if(G.pressed.has('snack'))guest?guestAct('q'):snack(P)}
@@ -1061,7 +1202,7 @@ function updEnemy(e,dt){const d=e.def;e.t+=dt;e.hitFlash-=dt;
   if(e.slam){const sl=e.slam;sl.t+=dt;const p=Math.min(1,sl.t/sl.dur);e.x=lerp(sl.fx,sl.tx,p);e.y=lerp(sl.fy,sl.ty,p);e.air=Math.sin(p*Math.PI)*150;
     if(p>=1){e.slam=null;e.air=0;G.shake=.5;L.waves.push({x:e.x,y:e.y,rad:e.r,max:230,dmg:d.dmg,hit:false});addParts(e.x,e.y,'#d8c08a',26,260);for(const pl of PL)if(!pl.down&&Math.hypot(pl.x-e.x,pl.y-e.y)<e.r+40)hurtPlayer(pl,d.dmg,e.x,e.y)}
     return}
-  const mv=(a,sp,mode)=>{sp*=spd;const vx=Math.cos(a)*sp*dt,vy=Math.sin(a)*sp*dt;if(Math.abs(vx)>.05)e.flip=vx<0;moveBody(e,vx,vy,mode);e.moving=true};
+  const mv=(a,sp,mode)=>{sp*=spd*L.D.sp;const vx=Math.cos(a)*sp*dt,vy=Math.sin(a)*sp*dt;if(Math.abs(vx)>.05)e.flip=vx<0;moveBody(e,vx,vy,mode);e.moving=true};
   switch(d.ai){
     case 'walker':{
       if(!e.aggro&&dist<d.sight)e.aggro=true;
@@ -1111,7 +1252,7 @@ function updEnemy(e,dt){const d=e.def;e.t+=dt;e.hitFlash-=dt;
       const segR=24*d.size*.42;for(let i=1;i<=9;i++){const pt=e.trail[i*12];if(pt)for(const pl of PL)if(!pl.down&&Math.hypot(pl.x-pt[0],pl.y-pt[1])<segR+pl.r-4)hurtPlayer(pl,Math.round(d.dmg*.7),pt[0],pt[1])}
       break}
   }
-  if(e.aggro&&!e.minion&&d.attacks&&!e.slam){e.atkCd-=dt;if(e.atkCd<=0){bossAttack(e,d.attacks[e.atkI++%d.attacks.length],ang,P);e.atkCd=d.rate*(e.enraged?.8:1)}}
+  if(e.aggro&&!e.minion&&d.attacks&&!e.slam){e.atkCd-=dt;if(e.atkCd<=0){bossAttack(e,d.attacks[e.atkI++%d.attacks.length],ang,P);e.atkCd=d.rate*(e.enraged?.8:1)/L.D.rate}}
   const canHurt=d.ai!=='whale'&&!(peeled&&!d.boss);
   if(canHurt)for(const pl of PL)if(!pl.down&&Math.hypot(pl.x-e.x,pl.y-e.y)<e.r+pl.r-2)hurtPlayer(pl,d.dmg,e.x,e.y,d.poison)}
 
@@ -1130,6 +1271,7 @@ function update(dt){
   L.bombs=L.bombs.filter(b=>b.t>0);
   for(const w of L.waves){w.rad+=230*dt;if(!w.hits)w.hits=[];for(const pl of alive()){const d=Math.hypot(pl.x-w.x,pl.y-w.y);if(!w.hits.includes(pl)&&Math.abs(d-w.rad)<14&&pl.dashT<=0&&pl.inv<=0){w.hits.push(pl);hurtPlayer(pl,w.dmg,w.x,w.y)}}}
   L.waves=L.waves.filter(w=>w.rad<w.max);
+  if(L.def.hole){const hx=L.mw*T/2,hy=L.mh*T/2;for(const pl of alive())if(Math.hypot(pl.x-hx,pl.y-hy)<46)hurtPlayer(pl,10,hx,hy)}
   if(G.mode!=='play')return;
   for(const p of L.pickups){const pl=nearestPlayer(p.x,p.y);if(!pl)break;const d=Math.hypot(pl.x-p.x,pl.y-p.y);
     if(d<80){const a=Math.atan2(pl.y-p.y,pl.x-p.x);p.vx=Math.cos(a)*320;p.vy=Math.sin(a)*320}
@@ -1221,21 +1363,24 @@ function drawPickups(){for(const p of L.pickups){const b=Math.sin(G.t*6+p.x)*2;
   if(p.kind==='snack'){ctx.fillStyle='#6b4423';circ(ctx,p.x,p.y+b,8);ctx.fillStyle='#3a2414';circ(ctx,p.x-2,p.y-2+b,1.5);circ(ctx,p.x+2,p.y-2+b,1.5)}
   if(p.kind==='diamond'){ctx.fillStyle='#7fe8f4';ctx.beginPath();ctx.moveTo(p.x-10,p.y-4+b);ctx.lineTo(p.x,p.y-14+b);ctx.lineTo(p.x+10,p.y-4+b);ctx.lineTo(p.x,p.y+12+b);ctx.closePath();ctx.fill();ctx.fillStyle='rgba(255,255,255,.7)';circ(ctx,p.x-3,p.y-6+b,2)}}}
 function drawHazards(){
-  for(const p of L.patches){ctx.globalAlpha=Math.min(1,p.t);ctx.fillStyle='rgba(190,235,255,.55)';circ(ctx,p.x,p.y,p.r);ctx.strokeStyle='rgba(255,255,255,.8)';ctx.lineWidth=2;ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,7);ctx.stroke();ctx.globalAlpha=1}
+  for(const p of L.patches){ctx.globalAlpha=Math.min(1,p.t);ctx.fillStyle=L.def.patchCol||'rgba(190,235,255,.55)';circ(ctx,p.x,p.y,p.r);ctx.strokeStyle='rgba(255,255,255,.8)';ctx.lineWidth=2;ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,7);ctx.stroke();ctx.globalAlpha=1}
   const RAIN={papaya:'#f2a33a',orange:'#ff9a1a',meteor:'#8a8f99',lemon:'#f7e03c',mango:'#f4a12c',strawberry:'#e0303f',kiwi:'#8a6a3a',grape:'#6b2fa0',pineapple:'#d9a521',banana:'#f6c624',coconut:'#6b4423',apple:'#d93a2b',melon:'#3f8f3f',fire:'#ff8a2a',icicle:'#bfe8ff'};
   for(const b of L.bombs){const mx=b.max||1.1,f=1-b.t/mx;ctx.fillStyle=`rgba(224,87,63,${.15+.25*f})`;circ(ctx,b.x,b.y,b.r);ctx.strokeStyle='#e0573f';ctx.lineWidth=2;ctx.beginPath();ctx.arc(b.x,b.y,b.r,0,7);ctx.stroke();
     const fy=b.y-(1-f)*160;ctx.fillStyle=RAIN[b.kind]||'#f6c624';if(b.kind==='icicle'){ctx.beginPath();ctx.moveTo(b.x-6,fy-14);ctx.lineTo(b.x+6,fy-14);ctx.lineTo(b.x,fy+8);ctx.fill()}else circ(ctx,b.x,fy,b.kind==='melon'?10:7)}
   for(const w of L.waves){ctx.strokeStyle='rgba(255,230,120,.85)';ctx.lineWidth=8;ctx.beginPath();ctx.arc(w.x,w.y,w.rad,0,7);ctx.stroke();ctx.strokeStyle='rgba(255,255,255,.6)';ctx.lineWidth=2;ctx.beginPath();ctx.arc(w.x,w.y,w.rad-6,0,7);ctx.stroke()}
   for(const p of L.proj){const col={coconut:'#6b4423',spout:'#bfe8f3',venom:'#8fd14f',chunk:'#f6c624',seed:'#2b1b0e',fire:'#ff8a2a',snow:'#ffffff',ice:'#bfe8ff',grape:'#6b2fa0',spike:'#d9a521',star:'#9aa4ad',juice:'#f7e03c',laser:'#7fff6a'}[p.kind]||'#fff';if(p.kind==='fire'){ctx.fillStyle='rgba(255,180,60,.35)';circ(ctx,p.x,p.y,p.r*1.8)}ctx.fillStyle='rgba(0,0,0,.2)';circ(ctx,p.x+3,p.y+6,p.r);ctx.fillStyle=col;circ(ctx,p.x,p.y,p.r);if(p.kind==='spout'){ctx.fillStyle='rgba(255,255,255,.7)';circ(ctx,p.x-2,p.y-2,2.5)}}}
-function drawWaterAnim(x0,y0,x1,y1){ctx.strokeStyle=L.def.lava?'rgba(255,230,120,.55)':'rgba(255,255,255,.22)';ctx.lineWidth=2;
+function drawWaterAnim(x0,y0,x1,y1){ctx.strokeStyle=L.def.lava?(L.def.lavaCols?'rgba(220,255,140,.5)':'rgba(255,230,120,.55)'):'rgba(255,255,255,.22)';ctx.lineWidth=2;
   for(let y=y0;y<=y1;y++)for(let x=x0;x<=x1;x++){if(tileAt(x,y)!=='W'||hr(x,y,4)<.55)continue;const px=x*T+8+Math.sin(G.t*1.6+x+y)*4,py=y*T+14+hr(x,y,6)*8;ctx.beginPath();ctx.moveTo(px,py);ctx.quadraticCurveTo(px+6,py-3,px+12,py);ctx.stroke()}}
 function drawWorld(){const mwp=L.mw*T,mhp=L.mh*T,Z=G.zoom||1,VW=W/Z,VH=H/Z;
   G.cam.x=mwp<=VW?(mwp-VW)/2:clamp(P.x-VW/2,0,mwp-VW);G.cam.y=mhp<=VH?(mhp-VH)/2:clamp(P.y-VH/2,0,mhp-VH);
   const sh=RM?0:G.shake*26,sx=(Math.random()-.5)*sh,sy=(Math.random()-.5)*sh;
-  ctx.fillStyle=L.def.space?'#0b0b24':L.def.lava?'#ff5a1f':L.def.floor==='c'?'#9ad3f2':'#2a86ab';ctx.fillRect(0,0,W,H);
+  ctx.fillStyle=L.def.gas?'#c9925a':L.def.rainbow?'#1a1030':L.def.space?'#0b0b24':L.def.lava?(L.def.lavaCols||['#ff5a1f'])[0]:L.def.floor==='c'?'#9ad3f2':'#2a86ab';ctx.fillRect(0,0,W,H);
   ctx.save();ctx.scale(Z,Z);ctx.translate(Math.round(-G.cam.x+sx),Math.round(-G.cam.y+sy));
   ctx.drawImage(L.canvas,0,0,mwp,mhp);
   drawWaterAnim(Math.floor(G.cam.x/T),Math.floor(G.cam.y/T),Math.ceil((G.cam.x+VW)/T),Math.ceil((G.cam.y+VH)/T));
+  if(L.def.hole){const hx=L.mw*T/2,hy=L.mh*T/2,gr=ctx.createRadialGradient(hx,hy,8,hx,hy,150);gr.addColorStop(0,'rgba(0,0,0,1)');gr.addColorStop(.3,'rgba(20,0,40,.95)');gr.addColorStop(1,'rgba(90,30,160,0)');ctx.fillStyle=gr;circ(ctx,hx,hy,150);
+    for(let k=0;k<4;k++){ctx.strokeStyle=`rgba(190,130,255,${.5-k*.08})`;ctx.lineWidth=3;ctx.beginPath();ctx.arc(hx,hy,50+k*24,G.t*(1.6-k*.25)+k,G.t*(1.6-k*.25)+k+2.4);ctx.stroke()}
+    ctx.strokeStyle=`rgba(255,200,120,${.7+.3*Math.sin(G.t*6)})`;ctx.lineWidth=3;ctx.beginPath();ctx.arc(hx,hy,44,0,7);ctx.stroke()}
   drawExit();drawMerchant();drawPickups();
   for(const e of L.enemies)if(e.def.ai==='whale'&&e.state==='swim'&&!e.dead){const s=24*e.def.size;ctx.fillStyle='rgba(8,40,60,.4)';ell(ctx,e.x,e.y,s,s*.4,Math.atan2(e.ty-e.y,e.tx-e.x));ctx.strokeStyle='rgba(255,255,255,.25)';ctx.lineWidth=2;ctx.beginPath();ctx.ellipse(e.x,e.y,s*1.2,s*.55,0,0,7);ctx.stroke()}
   const list=L.enemies.filter(e=>!(e.def.ai==='whale'&&e.state==='swim'&&!e.dead));list.push(...PL);list.sort((a,b)=>a.y-b.y);
@@ -1244,6 +1389,7 @@ function drawWorld(){const mwp=L.mw*T,mhp=L.mh*T,Z=G.zoom||1,VW=W/Z,VH=H/Z;
   for(const p of G.parts){ctx.globalAlpha=Math.max(0,p.life/p.max);ctx.fillStyle=p.color;circ(ctx,p.x,p.y,p.r)}ctx.globalAlpha=1;
   for(const f of G.floats){const p=(G.t-f.t0)/1.1;ctx.globalAlpha=Math.max(0,1-p);txt(f.text,f.x,f.y-p*40,f.text.length>12?20:26,f.color)}ctx.globalAlpha=1;
   ctx.restore();
+  if(L.def.wind){ctx.strokeStyle='rgba(255,255,255,.35)';ctx.lineWidth=2;const dir=Math.sign(Math.sin(G.t*.35))||1;for(let i=0;i<24;i++){const x=((i*131+G.t*420*dir)%W+W)%W,y=(i*67)%H;ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(x-40*dir,y);ctx.stroke()}}
   if(L.def.snow){ctx.fillStyle='rgba(255,255,255,.75)';for(let i=0;i<60;i++){const x=((i*97+G.t*(18+i%5*6))%W+W)%W,y=((i*53+G.t*(40+i%7*8))%H+H)%H;circ(ctx,x,y,1+(i%3)*.7)}}
   drawHUD()}
 function bar(x,y,w,h,f,col){ctx.fillStyle='rgba(0,0,0,.45)';rr(ctx,x,y,w,h,h/2);ctx.fill();if(f>0){ctx.fillStyle=col;rr(ctx,x,y,Math.max(h,w*clamp(f,0,1)),h,h/2);ctx.fill()}}
@@ -1314,7 +1460,7 @@ function showMenu(html,cls=''){menu.innerHTML=`<div class="card ${cls}">${html}<
 function hideMenu(){menu.hidden=true;menu.innerHTML=''}
 function title(note){G.mode='title';G.menuKind='';L=null;PL=[];P=null;dlg.hidden=true;where.textContent='';const sv=loadSave();const can=sv&&!sv.done;
   showMenu(`<p class="eyebrow">A top-down banana adventure</p><h1>The Bananas of the Caribbean</h1>
-  <p>Every banana in Europe has come alive and run off to the Caribbean. Fight your way from a little village to Rome, sail past the banana whales, battle the sky bananas, beat the Banana Boss and the Snake King, and peel the Final Banana with a diamond sword. Then the real trouble starts: watermelons in Mexico, Canada’s favorite apples, the tangerines of China, the kiwis of India, the grapes of France, the coconuts of Hawaii, the pineapples of Australia, the strawberries of Japan, the lemons of Egypt, the mangoes of Brazil, the papayas of Kenya, the oranges of South Africa, and the Frozen Plum of Antarctica. And that is not even the end: the real boss is in outer space.</p>
+  <p>Every banana in Europe has come alive and run off to the Caribbean. Fight your way from a little village to Rome, sail past the banana whales, battle the sky bananas, beat the Banana Boss and the Snake King, and peel the Final Banana with a diamond sword. Then the real trouble starts: watermelons in Mexico, Canada’s favorite apples, the tangerines of China, the kiwis of India, the grapes of France, the coconuts of Hawaii, the pineapples of Australia, the strawberries of Japan, the lemons of Egypt, the mangoes of Brazil, the papayas of Kenya, the oranges of South Africa, and the Frozen Plum of Antarctica. Then it is off to the Moon, Mars, Saturn, the Sun, the outer planets, a black hole, and beyond the universe itself.</p>
   ${note?`<p class="note" id="mNote"></p>`:''}
   <div class="row"><button class="btn primary" id="mNew">New adventure</button>${can?`<button class="btn" id="mCont">Continue<small>Chapter ${sv.level+1}, level ${sv.lvl}</small></button>`:''}<button class="btn" id="mFriends">Play with friends<small>Online co-op, up to 4 players</small></button></div>`);
   if(note)$('#mNote').textContent=note;$('#mFriends').onclick=()=>mpMenu();
@@ -1322,7 +1468,7 @@ function title(note){G.mode='title';G.menuKind='';L=null;PL=[];P=null;dlg.hidden
 function die(){G.mode='menu';G.menuKind='wipe';const name=(L.enemies.find(e=>e.def.boss&&!e.dead)||{}).def?.name;
   showMenu(`<p class="eyebrow">Knocked out</p><h2>${name?name+' wins this round':'The bananas got you'}</h2><p>${PL.length>1?'Your whole team':'You'} wake${PL.length>1?'s':''} up at the start of ${L.def.name} with full health. Remember: peel, then eat, and dash away from attacks.</p><div class="row"><button class="btn primary" id="mRetry">Try again</button></div>`);
   $('#mRetry').onclick=()=>{hideMenu();G.menuKind='';S=JSON.parse(L.snapshot);if(S.snacks<1)S.snacks=1;loadLevel(S.level,true)}}
-function showEnd(){G.mode='menu';G.menuKind='end';showMenu(`<p class="eyebrow">The end</p><h2>Every evil fruit is eaten</h2><p>You ate your way around the whole world, from the bananas of the Caribbean to the Frozen Plum of Antarctica, then blasted into space and ate the Moon’s blueberries, the pomegranates of Mars, the cherries of Saturn, and finally the Solar Starfruit itself. You finished at level ${S.lvl} with ${S.coins} coins.</p><div class="row"><button class="btn primary" id="mAgain">Play again</button></div>`);
+function showEnd(){G.mode='menu';G.menuKind='end';showMenu(`<p class="eyebrow">The end</p><h2>Every evil fruit is eaten</h2><p>You ate your way around the whole world, from the bananas of the Caribbean to the Frozen Plum of Antarctica, then blasted into space, ate your way past the Sun, Venus, Jupiter, Neptune, Pluto and a black hole, and finally ate the Fruit of Everything beyond the edge of the universe. You finished at level ${S.lvl} with ${S.coins} coins.</p><div class="row"><button class="btn primary" id="mAgain">Play again</button></div>`);
   $('#mAgain').onclick=()=>{hideMenu();G.menuKind='';S=NEW();loadLevel(0)}}
 const SHOP=[{id:'snack',name:'Coconut snack',desc:'Heals half your health.',cost:15},{id:'stone',name:'Whetstone',desc:'+3 strength for peeling and biting.',cost:40},{id:'belly',name:'Iron stomach',desc:'+12 max health.',cost:40},{id:'boots',name:'Grip boots',desc:'No more slipping on ice.',cost:60}];
 let shopMsg='';
@@ -1414,7 +1560,7 @@ function applySnap(sn){NET.lastSnap=sn;
   PL=[P,...NET.others.values()];
   const ids=new Set();
   for(const q of sn.en||[]){const [id,ki,x,y,hp,peel,fl,ang,pt,air,sl,tx,ty]=q;const key=KEYS[ki];if(!key)continue;ids.add(id);let e=NET.ents.get(id);
-    if(!e){const d=ENEMY[key];e={id,key,def:d,x,y,r:15*d.size,cr:14,hp,maxHp:d.hp,peel,maxPeel:d.peel||0,t:Math.random()*5,alpha:1,dead:false,flip:false,hitFlash:0,peeledT:0,windT:0,trail:[],ang:0,air:0,state:'swim',tx:x,ty:y,minion:false,moving:false,enraged:false,landed:false,slam:null};NET.ents.set(id,e)}
+    if(!e){const d=ENEMY[key];e={id,key,def:d,x,y,r:15*d.size,cr:14,hp,maxHp:Math.round(d.hp*L.D.hp),peel,maxPeel:Math.round((d.peel||0)*L.D.hp),t:Math.random()*5,alpha:1,dead:false,flip:false,hitFlash:0,peeledT:0,windT:0,trail:[],ang:0,air:0,state:'swim',tx:x,ty:y,minion:false,moving:false,enraged:false,landed:false,slam:null};NET.ents.set(id,e)}
     if(hp<e.hp||peel<e.peel)e.hitFlash=.12;
     Object.assign(e,{nx:x,ny:y,hp,peel,dead:!!(fl&1),flip:!!(fl&2),moving:!!(fl&4),windT:fl&8?.1:0,enraged:!!(fl&16),landed:!!(fl&32),state:fl&64?'up':'swim',minion:!!(fl&128),ang:ang/10,peeledT:pt/10,air,slam:sl?{tx:sl[0],ty:sl[1],t:sl[2],dur:10}:null,tx,ty,gone:false})}
   for(const e of NET.ents.values())if(!ids.has(e.id)){e.dead=true;e.gone=true}
@@ -1429,7 +1575,7 @@ function applySnap(sn){NET.lastSnap=sn;
   if(sn.m==='p'){G.mode='play';dlg.hidden=true}
   else if(sn.m==='d'&&sn.dl){G.mode='dialog';const lines=sn.dl[0]==='i'?introLines(LEVELS[sn.lv]):LEVELS[sn.lv].outro;if(lines[sn.dl[1]])guestLine(lines[sn.dl[1]])}
   else if(sn.m==='t'&&sn.tr){G.mode='travel';dlg.hidden=true;const legs=LEVELS[sn.lv].arrive||[];if(legs[sn.tr[0]])G.trav={legs,i:sn.tr[0],start:G.t-sn.tr[1]/10};else G.mode='wait'}
-  else{dlg.hidden=true;if(sn.mk==='end'){if(G.mode!=='menu'){G.mode='menu';showMenu(`<p class="eyebrow">The end</p><h2>Every evil fruit is eaten</h2><p>Your team ate its way from Europe all the way to the Sun. Your host can start a new adventure.</p><div class="row"><button class="btn primary" id="gEnd">Back to the title</button></div>`);$('#gEnd').onclick=()=>leaveGame()}}
+  else{dlg.hidden=true;if(sn.mk==='end'){if(G.mode!=='menu'){G.mode='menu';showMenu(`<p class="eyebrow">The end</p><h2>Every evil fruit is eaten</h2><p>Your team ate its way from Europe to beyond the edge of the universe. Your host can start a new adventure.</p><div class="row"><button class="btn primary" id="gEnd">Back to the title</button></div>`);$('#gEnd').onclick=()=>leaveGame()}}
     else{if(G.mode==='menu')hideMenu();G.mode='wait';G.waitMsg=sn.mk==='shop'?'The host is shopping…':sn.mk==='wipe'?'Everyone was knocked out. Waiting for the host to try again…':'Waiting for the host…'}}}
 function guestUpdate(dt){if(!L)return;
   if(G.mode==='play'){G.playT+=dt;updPlayer(dt)}
